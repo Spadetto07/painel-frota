@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Status de disponibilidade da frota das obras 720 e 731 - atualizado em 26/08/2026 as 19:06.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Disponibilidade da Frota">
+<meta property="og:description" content="Status dos 58 equipamentos das obras 720 e 731.">
+<meta name="theme-color" content="#1E5C7E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%9A%9C</text></svg>">
+<style>*{margin:0}html{-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<title>Disponibilidade da Frota</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --bg:#F4F6F8; --surf:#FFFFFF; --surf2:#EDF1F4; --surf3:#E4EAEF;
+  --line:#D6DEE5; --line-soft:#E6ECF1;
+  --ink:#141F29; --ink2:#475763; --ink3:#6E7E8A;
+  --accent:#1E5C7E; --accent-soft:#E3EDF3;
+  --ok:#3E9B6B; --bad:#A3231A; --warn:#C98A00; --warn-ink:#8A5D00; --mute:#5B6570;
+  --ok-bg:#E7F3EC; --bad-bg:#FAE9E7; --warn-bg:#FBF1DD; --mute-bg:#EAEEF1;
+  --shadow:0 1px 2px rgba(20,31,41,.06), 0 8px 24px -18px rgba(20,31,41,.35);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161B; --surf:#182129; --surf2:#1F2A33; --surf3:#26333D;
+    --line:#2E3C47; --line-soft:#243139;
+    --ink:#E8EEF2; --ink2:#A9B8C2; --ink3:#7C8B96;
+    --accent:#74B4D4; --accent-soft:#1C2F3B;
+    --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
+    --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161B; --surf:#182129; --surf2:#1F2A33; --surf3:#26333D;
+  --line:#2E3C47; --line-soft:#243139;
+  --ink:#E8EEF2; --ink2:#A9B8C2; --ink3:#7C8B96;
+  --accent:#74B4D4; --accent-soft:#1C2F3B;
+  --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
+  --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Barlow Condensed","IBM Plex Sans",system-ui,sans-serif;margin:0;text-wrap:balance;letter-spacing:.01em}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* ---------- masthead ---------- */
+.mast{background:var(--surf);border-bottom:1px solid var(--line)}
+.mast-in{padding:26px 0 22px;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+h1{font-size:clamp(30px,5.4vw,44px);font-weight:700;line-height:1.02;text-transform:uppercase;letter-spacing:.005em}
+.sub{color:var(--ink2);font-size:13.5px;margin-top:7px;max-width:58ch}
+.stamp{flex:0 0 auto;background:var(--surf2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r);padding:11px 15px;line-height:1.35}
+.stamp .k{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.stamp .k::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+.stamp .v{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:3px;white-space:nowrap}
+.stamp .v span{color:var(--accent)}
+.stamp .z{font-size:11.5px;color:var(--ink3);margin-top:2px}
+
+/* ---------- nav ---------- */
+nav.jump{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--surf) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.jump-in{display:flex;gap:6px;overflow-x:auto;padding:9px 20px;max-width:1180px;margin:0 auto;scrollbar-width:none}
+.jump-in::-webkit-scrollbar{display:none}
+.jump a{flex:0 0 auto;font-size:12.5px;font-weight:600;color:var(--ink2);text-decoration:none;padding:6px 12px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.jump a:hover{background:var(--surf2);color:var(--ink)}
+.jump a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- sections ---------- */
+section{padding:34px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+h2{font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.sec-note{font-size:12.5px;color:var(--ink3)}
+.rule{height:2px;background:var(--accent);width:36px;margin-bottom:12px;border-radius:2px}
+
+/* ---------- kpi ---------- */
+.kpis{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:12px;margin-top:22px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.kpi .val{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:52px;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi.hero{background:linear-gradient(160deg,var(--accent-soft),var(--surf) 70%);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
+.kpi.hero .val{font-size:64px;color:var(--accent)}
+.kpi .foot{font-size:12px;color:var(--ink3);margin-top:4px}
+.kpi.ok .val{color:var(--ok)} .kpi.bad .val{color:var(--bad)}
+.aside{font-size:12.5px;color:var(--ink3);margin-top:10px}
+
+/* ---------- category bars ---------- */
+.cats{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:6px 18px 14px;box-shadow:var(--shadow)}
+.catrow{display:grid;grid-template-columns:170px 1fr 116px;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.catrow:last-child{border-bottom:0}
+.catrow.total{border-top:2px solid var(--line);border-bottom:0;margin-top:4px;padding-top:12px;font-weight:600}
+.catname{font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:var(--surf2);position:relative}
+.bar i{display:block;height:100%;font-style:normal}
+.bar i.d{background:var(--ok);border-radius:4px 0 0 4px}
+.bar i.i{background:var(--bad);border-radius:0 4px 4px 0;margin-left:2px}
+.bar i.d.full{border-radius:4px}
+.bar i.i.only{border-radius:4px;margin-left:0}
+.catrow:hover .bar i{filter:brightness(1.08)}
+.catnums{display:flex;align-items:baseline;justify-content:flex-end;gap:9px;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.catnums b{font-family:"Barlow Condensed",sans-serif;font-size:21px;font-weight:700;color:var(--ink);min-width:52px;text-align:right}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:12px 0 0;padding-left:2px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+
+/* ---------- status pills ---------- */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:2.5px 9px 2.5px 7px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.p-ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.p-ok::before{background:var(--ok)}
+.p-bad{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.p-bad::before{background:var(--bad)}
+.p-warn{background:var(--warn-bg);color:var(--warn-ink);border-color:color-mix(in srgb,var(--warn) 34%,transparent)}
+.p-warn::before{background:var(--warn)}
+.p-mute{background:var(--mute-bg);color:var(--mute);border-color:color-mix(in srgb,var(--mute) 30%,transparent)}
+.p-mute::before{background:var(--mute)}
+
+/* ---------- down cards ---------- */
+.downs{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:12px}
+.dcard{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:var(--r);padding:13px 15px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:7px}
+.dcard.long{border-left-color:var(--bad);background:linear-gradient(100deg,var(--bad-bg),var(--surf) 55%)}
+.dtop{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.dpre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px;letter-spacing:.01em}
+.ddays{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1;color:var(--bad);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ddays small{font-family:"IBM Plex Sans",sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);display:block;text-align:right;margin-top:1px}
+.dmodel{font-size:12.5px;color:var(--ink3);margin-top:-4px}
+.ddef{font-size:13.5px;color:var(--ink);line-height:1.4}
+.dmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--ink3);border-top:1px solid var(--line-soft);padding-top:7px;margin-top:auto}
+.dmeta b{color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ---------- filters ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.chips{display:flex;gap:5px;background:var(--surf2);padding:3px;border-radius:8px;border:1px solid var(--line)}
+.chip{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);padding:5px 11px;border-radius:6px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--surf);color:var(--ink);box-shadow:var(--shadow)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+select,input[type="search"]{font:inherit;font-size:13px;color:var(--ink);background:var(--surf);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+input[type="search"]{min-width:190px;flex:1 1 190px;max-width:280px}
+select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.count{font-size:12.5px;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* ---------- table ---------- */
+.tablebox{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+thead th{position:sticky;top:0;background:var(--surf2);text-align:left;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surf2)}
+td.pre{font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap}
+td.dim{color:var(--ink3)}
+td.def{color:var(--ink2);max-width:34ch}
+.catlabel{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+.empty{padding:26px 14px;text-align:center;color:var(--ink3);font-size:13.5px}
+
+/* ---------- schedule ---------- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.phead{padding:14px 16px 12px;border-bottom:1px solid var(--line);background:var(--surf2)}
+.phead h3{font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.phead p{margin:4px 0 0;font-size:12.5px;color:var(--ink3)}
+.pstats{display:flex;gap:22px;padding:12px 16px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.pstat .k{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.pstat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums}
+.plist{margin:0;padding:0;list-style:none}
+.plist li{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:9px 16px;border-bottom:1px solid var(--line-soft);align-items:center}
+.plist li:last-child{border-bottom:0}
+.plist li.today{background:var(--accent-soft)}
+.pl-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.pl-pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13.5px}
+.pl-mod{font-size:12px;color:var(--ink3)}
+.pl-sub{grid-column:1/-1;font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+
+/* ---------- footer ---------- */
+footer{margin-top:38px;border-top:1px solid var(--line);background:var(--surf)}
+.foot-in{padding:20px 0 30px;font-size:12.5px;color:var(--ink3);display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between}
+footer b{color:var(--ink2);font-weight:600}
+
+@media (max-width:900px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi.hero{grid-column:1/-1}
+  .two{grid-template-columns:1fr}
+  .catrow{grid-template-columns:130px 1fr;row-gap:6px}
+  .catnums{grid-column:1/-1;justify-content:flex-start}
+  .catnums b{min-width:0;text-align:left}
+}
+@media (max-width:720px){
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tbody tr{padding:12px 14px;border-bottom:1px solid var(--line);position:relative}
+  tbody tr:last-child{border-bottom:0}
+  tbody td{border:0;padding:2px 0;display:flex;gap:10px;justify-content:space-between;align-items:baseline}
+  tbody td::before{content:attr(data-l);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);flex:0 0 auto}
+  td.def{max-width:none;text-align:right}
+  td.hide-m{display:none}
+  td.opt.void{display:none}
+  .count{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <div>
+      <p class="eyebrow">Obras 720 &amp; 731 &middot; Manutenção</p>
+      <h1>Disponibilidade da Frota</h1>
+      <p class="sub">Situação de cada equipamento da frota — plantas, geradores, linha amarela, caminhões e frota leve — mais o cronograma de limpeza do material rodante.</p>
+    </div>
+    <div class="stamp">
+      <div class="k">Última atualização</div>
+      <div class="v">26/08/2026 <span>19:06</span></div>
+      <div class="z">horário de Brasília &middot; reunião diária de manutenção</div>
+    </div>
+  </div>
+</header>
+
+<nav class="jump" aria-label="Seções">
+  <div class="jump-in">
+    <a href="#panorama">Panorama</a>
+    <a href="#categorias">Por categoria</a>
+    <a href="#parados">Equipamentos parados</a>
+    <a href="#frota">Frota completa</a>
+    <a href="#rodante">Material rodante</a>
+    <a href="#soprador">Soprador</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="panorama">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Panorama</h2></div>
+    <div class="kpis">
+      <div class="kpi hero"><div class="lab">Disponibilidade</div><div class="val" id="k-pct">—</div><div class="foot">base: disponíveis + indisponíveis</div></div>
+      <div class="kpi"><div class="lab">Frota total</div><div class="val" id="k-tot">—</div><div class="foot">equipamentos cadastrados</div></div>
+      <div class="kpi ok"><div class="lab">Disponíveis</div><div class="val" id="k-disp">—</div><div class="foot">prontos para operar</div></div>
+      <div class="kpi bad"><div class="lab">Indisponíveis</div><div class="val" id="k-ind">—</div><div class="foot">parados por manutenção</div></div>
+    </div>
+    <p class="aside" id="k-aside">—</p>
+  </section>
+
+  <section id="categorias">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Disponibilidade por categoria</h2><span class="sec-note">emprestados e sucata ficam fora do cálculo</span></div>
+    <div class="cats" id="cats"></div>
+    <p class="legend">
+      <span><i class="sw" style="background:var(--ok)"></i> Disponível</span>
+      <span><i class="sw" style="background:var(--bad)"></i> Indisponível</span>
+      <span><i class="sw" style="background:var(--mute)"></i> Emprestada ou sucata — 2 equipamentos fora da base</span>
+    </p>
+  </section>
+
+  <section id="parados">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Equipamentos parados</h2><span class="sec-note" id="parados-note">—</span></div>
+    <div class="downs" id="downs"></div>
+  </section>
+
+  <section id="frota">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Frota completa</h2><span class="sec-note">58 equipamentos — filtre e busque por prefixo, modelo ou defeito</span></div>
+    <div class="filters">
+      <div class="chips" role="group" aria-label="Filtrar por status">
+        <button class="chip" data-st="todos" aria-pressed="true">Todos</button>
+        <button class="chip" data-st="Disponível" aria-pressed="false">Disponíveis</button>
+        <button class="chip" data-st="Indisponível" aria-pressed="false">Parados</button>
+        <button class="chip" data-st="outros" aria-pressed="false">Outros</button>
+      </div>
+      <select id="f-cat" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+      <select id="f-obra" aria-label="Obra"><option value="">720 e 731</option><option value="720">Obra 720</option><option value="731">Obra 731</option></select>
+      <select id="f-local" aria-label="Local"><option value="">Obra e sede</option><option value="OBRA">Na obra</option><option value="SEDE">Na sede</option></select>
+      <input type="search" id="f-q" placeholder="Buscar prefixo, modelo, defeito…" aria-label="Buscar">
+      <span class="count" id="f-count"></span>
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>Prefixo</th><th>Categoria</th><th>Modelo</th><th>Obra</th><th>Local</th><th>Status</th><th>Defeito / intervenção</th><th>Parado desde</th><th>Dias</th><th>Previsão</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+      <div class="empty" id="tb-empty" hidden>Nenhum equipamento com esses filtros.</div>
+    </div>
+  </section>
+
+  <section id="rodante">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Material rodante &amp; preventivas</h2><span class="sec-note">limpeza e inspeção de esteiras · preventiva com soprador nos geradores</span></div>
+    <div class="two">
+      <div class="panel">
+        <div class="phead">
+          <h3>Limpeza de esteiras</h3>
+          <p>Ciclo 3 &middot; iniciado em 20/08 &middot; 16 equipamentos no rodízio</p>
+        </div>
+        <div class="pstats">
+          <div class="pstat"><div class="k">Dia do ciclo</div><div class="v">5 <span style="font-size:15px;color:var(--ink3)">de 16</span></div></div>
+          <div class="pstat"><div class="k">Equipamento de hoje</div><div class="v" style="font-family:'IBM Plex Mono',monospace;font-size:17px">ESE-047</div></div>
+          <div class="pstat"><div class="k">Atrasados</div><div class="v" style="color:var(--bad)">3</div></div>
+        </div>
+        <ul class="plist" id="esteiras"></ul>
+      </div>
+      <div class="panel" id="soprador">
+        <div class="phead">
+          <h3>Preventiva com soprador</h3>
+          <p>Todos os 5 geradores, toda segunda e quinta</p>
+        </div>
+        <div class="pstats">
+          <div class="pstat"><div class="k">Hoje é dia?</div><div class="v">NÃO</div></div>
+          <div class="pstat"><div class="k">Próxima data</div><div class="v" style="font-size:20px">27/08 <span style="font-size:13px;color:var(--ink3)">qui</span></div></div>
+          <div class="pstat"><div class="k">Pendentes</div><div class="v" style="color:var(--bad)">2</div></div>
+        </div>
+        <ul class="plist" id="geradores"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>Fonte: <b>1 Controle Manutencao Disponibilidade Frota.xlsx</b> — abas Painel, Controle de Frota, Cronograma Limpeza e Preventiva Soprador.</span>
+    <span>Fotografia da planilha em <b>26/08/2026 às 19:06</b> (horário de Brasília). A página não se atualiza sozinha — o Vinícius republica quando a planilha muda.</span>
+  </div>
+</footer>
+
+<script>
+const FROTA=[
+ {n:1,cat:"PLANTAS",tipo:"Britador",mod:"Simplex",obra:"720",loc:"OBRA",pre:"CMB-001",st:"Disponível"},
+ {n:2,cat:"PLANTAS",tipo:"Britador cônico",mod:"Cônico Symons",obra:"720",loc:"OBRA",pre:"CMB-002",st:"Indisponível",def:"Reforma geral",dt:"20/07/2026",dias:37},
+ {n:3,cat:"PLANTAS",tipo:"Peneira magnética",mod:"Magnética",obra:"720",loc:"OBRA",pre:"CMP-006",st:"Disponível"},
+ {n:4,cat:"PLANTAS",tipo:"Usina de solos",mod:"Revsol Cinza",obra:"720",loc:"OBRA",pre:"USC-001",st:"Disponível",def:"Sem gerador disponível"},
+ {n:5,cat:"PLANTAS",tipo:"Grelha de peneiramento",mod:"Grelha de pedra",obra:"720",loc:"OBRA",pre:"GRE-001",st:"Sucata",def:"Sucata"},
+ {n:6,cat:"PLANTAS",tipo:"Grelha de peneiramento",mod:"Grelha de pedra",obra:"720",loc:"OBRA",pre:"GRE-002",st:"Disponível"},
+ {n:7,cat:"PLANTAS",tipo:"Grelha de peneiramento",mod:"Grelha de pedra",obra:"720",loc:"OBRA",pre:"GRE-003",st:"Disponível"},
+ {n:8,cat:"GERADORES",tipo:"Grupo gerador",mod:"CAT 500 kVA",obra:"720",loc:"OBRA",pre:"GGR-015",tag:"Simplex",st:"Disponível"},
+ {n:9,cat:"GERADORES",tipo:"Grupo gerador",mod:"MWM SDG360.6",obra:"720",loc:"OBRA",pre:"GGR-017",tag:"Reserva",st:"Disponível"},
+ {n:10,cat:"GERADORES",tipo:"Grupo gerador",mod:"MWM 550 kVA",obra:"720",loc:"OBRA",pre:"GGR-021",tag:"Nordberg",st:"Disponível"},
+ {n:11,cat:"GERADORES",tipo:"Grupo gerador",mod:"MWM 360 kVA",obra:"720",loc:"OBRA",pre:"GGR-022",tag:"Magnética",st:"Disponível"},
+ {n:12,cat:"GERADORES",tipo:"Grupo gerador",mod:"MWM MGD 315 kVA",obra:"720",loc:"SEDE",pre:"GGR-029",tag:"Sede",st:"Disponível"},
+ {n:13,cat:"COMPRESSORES",tipo:"Compressor",mod:"—",obra:"720",loc:"OBRA",pre:"CPG-007",st:"Disponível"},
+ {n:14,cat:"COMPRESSORES",tipo:"Compressor",mod:"—",obra:"720",loc:"OBRA",pre:"CPO-005",st:"Disponível"},
+ {n:15,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 950G II",obra:"731",loc:"OBRA",pre:"CSP-075",st:"Emprestada"},
+ {n:16,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 938 GII",obra:"731",loc:"SEDE",pre:"CSP-078",st:"Indisponível",def:'Quebra de pino do "H" (emprestada para 705)',dt:"10/08/2026",prev:"21/08/2026",dias:16},
+ {n:17,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 938K",obra:"720",loc:"SEDE",pre:"CSP-090",st:"Indisponível",def:"Vazamento hidráulico no motor hidrostático",dt:"21/08/2026",dias:5},
+ {n:18,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 924K",obra:"731",loc:"OBRA",pre:"CSP-093",st:"Disponível"},
+ {n:19,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 950H",obra:"720",loc:"OBRA",pre:"CSP-095",st:"Disponível",obs:"H baixando"},
+ {n:20,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 938K",obra:"731",loc:"OBRA",pre:"CSP-096",st:"Disponível",def:"Vazamento de óleo no motor"},
+ {n:21,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 938K",obra:"731",loc:"SEDE",pre:"CSP-097",st:"Indisponível",def:"Vazamento hidráulico em cilindros e orbitrol",dt:"24/08/2026",dias:2,obs:"Mola do encosto do banco"},
+ {n:22,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 924K",obra:"720",loc:"OBRA",pre:"CSP-098",st:"Disponível"},
+ {n:23,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 950L",obra:"731",loc:"OBRA",pre:"CSP-100",st:"Indisponível",def:"Válvula do pedal"},
+ {n:24,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 938K",obra:"720",loc:"SEDE",pre:"CSP-104",st:"Disponível"},
+ {n:25,cat:"CARREGADEIRAS",tipo:"Carregadeira",mod:"CAT 924K",obra:"720",loc:"OBRA",pre:"CSP-107",st:"Indisponível",def:"Sem descrição na planilha"},
+ {n:26,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"CAT 320C",obra:"731",loc:"OBRA",pre:"ESE-019",st:"Disponível"},
+ {n:27,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"CAT 320C",obra:"731",loc:"OBRA",pre:"ESE-023",st:"Disponível",obs:"Desmobilizar"},
+ {n:28,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"Hyundai R260LC",obra:"720",loc:"SEDE",pre:"ESE-036",st:"Indisponível",def:"Vazamento na junta do cabeçote / alternador não está gerando",dt:"16/06/2026",prev:"02/09/2026",dias:71},
+ {n:29,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"Hyundai R220LC-9S",obra:"731",loc:"OBRA",pre:"ESE-039",st:"Indisponível",def:"Sem descrição na planilha"},
+ {n:30,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"CAT 320LBR",obra:"720",loc:"OBRA",pre:"ESE-047",st:"Disponível"},
+ {n:31,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"CAT 320GX",obra:"720",loc:"OBRA",pre:"ESE-048",st:"Disponível",obs:"Pedir 21 telhas"},
+ {n:32,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"CAT 320LBR",obra:"720",loc:"OBRA",pre:"ESE-050",st:"Disponível"},
+ {n:33,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"CAT 320GC",obra:"731",loc:"OBRA",pre:"ESE-055",st:"Disponível",obs:"Folga na caçamba"},
+ {n:34,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"Hyundai R220LC",obra:"731",loc:"OBRA",pre:"ESE-058",st:"Disponível"},
+ {n:35,cat:"ESCAVADEIRAS",tipo:"Escavadeira",mod:"Hyundai R220LC",obra:"731",loc:"OBRA",pre:"ESE-059",st:"Disponível"},
+ {n:36,cat:"CAMINHÃO",tipo:"Cavalo trator",mod:"Volvo",obra:"720",loc:"SEDE",pre:"CAM-185",tag:"Cavalo",st:"Disponível"},
+ {n:37,cat:"CAMINHÃO",tipo:"Cavalo trator",mod:"Volvo",obra:"720",loc:"SEDE",pre:"CAM-312",tag:"Cavalo",st:"Disponível"},
+ {n:38,cat:"CAMINHÃO",tipo:"Caminhão munck",mod:"VW 24.260",obra:"720",loc:"OBRA",pre:"CAM-279",tag:"Munck",st:"Disponível"},
+ {n:39,cat:"CAMINHÃO",tipo:"Caminhão comboio",mod:"MB 1718/48",obra:"720",loc:"OBRA",pre:"CAM-269",tag:"Comboio",st:"Disponível"},
+ {n:40,cat:"MOTONIVELADORA",tipo:"Motoniveladora",mod:"CAT 12H II",obra:"731",loc:"SEDE",pre:"MON-021",st:"Indisponível",def:"Aumento do nível de óleo do motor",dt:"19/08/2026",dias:7},
+ {n:41,cat:"MOTONIVELADORA",tipo:"Motoniveladora",mod:"CAT 12H II",obra:"731",loc:"OBRA",pre:"MON-022",st:"Disponível"},
+ {n:42,cat:"RETROESCAVADEIRA",tipo:"Retroescavadeira",mod:"CAT 416E",obra:"731",loc:"OBRA",pre:"RTE-030",st:"Disponível"},
+ {n:43,cat:"RETROESCAVADEIRA",tipo:"Retroescavadeira",mod:"CAT 416F",obra:"731",loc:"OBRA",pre:"RTE-035",st:"Indisponível",def:"Montagem de Smart Safety",dt:"24/08/2026",dias:2,obs:"Trocar lâminas e unhas"},
+ {n:44,cat:"RETROESCAVADEIRA",tipo:"Retroescavadeira",mod:"CAT 416F2",obra:"731",loc:"OBRA",pre:"RTE-036",st:"Disponível"},
+ {n:45,cat:"TRATOR DE ESTEIRA",tipo:"Trator de esteira",mod:"CAT D6M",obra:"731",loc:"OBRA",pre:"TSE-036",st:"Indisponível",def:"Particulados entrando na cabine"},
+ {n:46,cat:"TRATOR DE ESTEIRA",tipo:"Trator de esteira",mod:"CAT D6M",obra:"731",loc:"SEDE",pre:"TSE-037",st:"Indisponível",def:"Deslocado para a sede para análise",dt:"20/07/2026",prev:"01/09/2026",dias:37},
+ {n:47,cat:"TRATOR DE ESTEIRA",tipo:"Trator de esteira",mod:"CAT D6T",obra:"731",loc:"SEDE",pre:"TSE-045",st:"Disponível"},
+ {n:48,cat:"TRATOR DE ESTEIRA",tipo:"Trator de esteira",mod:"CAT D5",obra:"731",loc:"OBRA",pre:"TSE-046",st:"Disponível"},
+ {n:49,cat:"TRATOR DE ESTEIRA",tipo:"Trator de esteira",mod:"CAT D4",obra:"731",loc:"OBRA",pre:"TSE-052",st:"Disponível"},
+ {n:50,cat:"MINI CARREGADEIRA",tipo:"Mini carregadeira",mod:"CAT 226B3",obra:"731",loc:"OBRA",pre:"MCP-013",st:"Disponível"},
+ {n:51,cat:"MINI ESCAVADEIRA",tipo:"Mini escavadeira",mod:"CAT 303.5",obra:"731",loc:"OBRA",pre:"MEE-007",st:"Disponível"},
+ {n:52,cat:"FROTA LEVE",tipo:"Hatch (Marcos Dias)",mod:"Renault Kwid",obra:"720",loc:"SEDE",pre:"ADM-426",tag:"TOH-9G75",st:"Indisponível",def:"Proteção do cárter",dt:"13/08/2026",prev:"03/09/2026",dias:13},
+ {n:53,cat:"FROTA LEVE",tipo:"Hatch (Luana)",mod:"Renault Kwid",obra:"720",loc:"SEDE",pre:"ADM-427",tag:"TOH-9G76",st:"Indisponível",def:"Falha",dt:"20/08/2026",dias:6},
+ {n:54,cat:"FROTA LEVE",tipo:"Hatch (supervisores 731)",mod:"Renault Kwid",obra:"731",loc:"SEDE",pre:"ADM-428",tag:"TOH-9G77",st:"Indisponível",def:"Lanternagem",dt:"23/07/2026",prev:"Sem previsão",dias:34},
+ {n:55,cat:"FROTA LEVE",tipo:"Hatch",mod:"Renault Kwid",obra:"731",loc:"SEDE",pre:"ADM-431",tag:"TOH-9G71",st:"Indisponível",def:"Luzes de advertência no painel",prev:"Sem previsão"},
+ {n:56,cat:"FROTA LEVE",tipo:"Picape (Vinícius)",mod:"Strada Freedom",obra:"720",loc:"OBRA",pre:"ADM-433",tag:"RQU1G27",st:"Disponível"},
+ {n:57,cat:"FROTA LEVE",tipo:"Onix (Luana)",mod:"Onix 1.0",obra:"720",loc:"OBRA",pre:"LOC ONIX",tag:"TXM2F45",st:"Disponível"},
+ {n:58,cat:"FROTA LEVE",tipo:"Onix (Julio)",mod:"Onix 1.0",obra:"720",loc:"OBRA",pre:"LOC ONIX",tag:"TXS1B61",st:"Disponível"}
+];
+
+const ESTEIRAS=[
+ {i:1,pre:"ESE-019",mod:"CAT 320C",prog:"20/08",ult:"12/08",dias:14,st:"Atrasado",loc:"OBRA"},
+ {i:2,pre:"ESE-023",mod:"CAT 320C",prog:"21/08",ult:"12/08",dias:14,st:"Atrasado",loc:"OBRA"},
+ {i:3,pre:"ESE-036",mod:"Hyundai R260LC",prog:"24/08",ult:"—",dias:50,st:"Na sede",loc:"SEDE"},
+ {i:4,pre:"ESE-039",mod:"Hyundai R220LC-9S",prog:"25/08",ult:"04/08",dias:22,st:"Atrasado",loc:"OBRA"},
+ {i:5,pre:"ESE-047",mod:"CAT 320LBR",prog:"26/08",ult:"07/08",dias:19,st:"Hoje",loc:"OBRA"},
+ {i:6,pre:"ESE-048",mod:"CAT 320GX",prog:"27/08",ult:"10/08",dias:16,st:"Aguardando",loc:"OBRA"},
+ {i:7,pre:"ESE-050",mod:"CAT 320LBR",prog:"28/08",ult:"04/08",dias:22,st:"Aguardando",loc:"OBRA"},
+ {i:8,pre:"ESE-055",mod:"CAT 320GC",prog:"31/08",ult:"28/07",dias:29,st:"Aguardando",loc:"OBRA"},
+ {i:9,pre:"ESE-058",mod:"Hyundai R220LC",prog:"01/09",ult:"10/08",dias:16,st:"Aguardando",loc:"OBRA"},
+ {i:10,pre:"ESE-059",mod:"Hyundai R220LC",prog:"02/09",ult:"17/08",dias:9,st:"Aguardando",loc:"OBRA"},
+ {i:11,pre:"MEE-007",mod:"CAT 303.5",prog:"03/09",ult:"06/08",dias:20,st:"Aguardando",loc:"OBRA"},
+ {i:12,pre:"TSE-036",mod:"CAT D6M",prog:"04/09",ult:"13/08",dias:13,st:"Aguardando",loc:"OBRA"},
+ {i:13,pre:"TSE-037",mod:"CAT D6M",prog:"08/09",ult:"20/07",dias:37,st:"Na sede",loc:"SEDE"},
+ {i:14,pre:"TSE-045",mod:"CAT D6T",prog:"09/09",ult:"—",dias:50,st:"Na sede",loc:"SEDE"},
+ {i:15,pre:"TSE-046",mod:"CAT D5",prog:"10/09",ult:"07/07",dias:50,st:"Aguardando",loc:"OBRA"},
+ {i:16,pre:"TSE-052",mod:"CAT D4",prog:"11/09",ult:"03/08",dias:23,st:"Aguardando",loc:"OBRA"}
+];
+
+const GERADORES=[
+ {pre:"GGR-015",mod:"CAT 500 kVA",tag:"Simplex",prog:"24/08",ult:"26/08",dias:0,st:"Em dia"},
+ {pre:"GGR-017",mod:"MWM SDG360.6",tag:"Reserva obra",prog:"24/08",ult:"—",dias:51,st:"Atrasado"},
+ {pre:"GGR-021",mod:"MWM 550 kVA",tag:"Nordberg",prog:"24/08",ult:"26/08",dias:0,st:"Em dia"},
+ {pre:"GGR-022",mod:"MWM 360 kVA",tag:"Magnética",prog:"24/08",ult:"26/08",dias:0,st:"Em dia"},
+ {pre:"GGR-029",mod:"MWM MGD 315 kVA",tag:"Reserva sede",prog:"24/08",ult:"—",dias:51,st:"Atrasado"}
+];
+
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pillClass=st=>st==="Disponível"?"p-ok":st==="Indisponível"?"p-bad":"p-mute";
+const pill=st=>`<span class="pill ${pillClass(st)}">${esc(st)}</span>`;
+
+/* ---- panorama ---- */
+const disp=FROTA.filter(e=>e.st==="Disponível").length;
+const ind=FROTA.filter(e=>e.st==="Indisponível").length;
+const emp=FROTA.filter(e=>e.st==="Emprestada").length;
+const suc=FROTA.filter(e=>e.st==="Sucata").length;
+const base=disp+ind;
+document.getElementById("k-pct").textContent=(disp/base*100).toFixed(1).replace(".",",")+"%";
+document.getElementById("k-tot").textContent=FROTA.length;
+document.getElementById("k-disp").textContent=disp;
+document.getElementById("k-ind").textContent=ind;
+document.getElementById("k-aside").innerHTML=
+ `${emp} emprestado e ${suc} sucateado ficam fora da base de cálculo (${base} equipamentos). `+
+ `A frota leve puxa o índice para baixo: 4 dos 7 veículos estão parados.`;
+
+/* ---- categorias ---- */
+const ordem=["PLANTAS","GERADORES","COMPRESSORES","CARREGADEIRAS","ESCAVADEIRAS","CAMINHÃO","MOTONIVELADORA","RETROESCAVADEIRA","TRATOR DE ESTEIRA","MINI CARREGADEIRA","MINI ESCAVADEIRA","FROTA LEVE"];
+const agg=c=>{const l=FROTA.filter(e=>e.cat===c);const d=l.filter(e=>e.st==="Disponível").length;const i=l.filter(e=>e.st==="Indisponível").length;return{tot:l.length,d,i,b:d+i};};
+const catRow=(nome,a,cls)=>{
+  const pct=a.b?a.d/a.b*100:0, w=a.b?100:0;
+  const dw=a.b?a.d/a.b*100:0, iw=a.b?a.i/a.b*100:0;
+  const seg=`${a.d?`<i class="d${a.i?"":" full"}" style="width:${dw}%"></i>`:""}${a.i?`<i class="i${a.d?"":" only"}" style="width:${iw}%"></i>`:""}`;
+  return `<div class="catrow ${cls||""}" title="${esc(nome)}: ${a.d} de ${a.b} disponíveis">
+    <div class="catname">${esc(nome)}</div>
+    <div class="bar" role="img" aria-label="${esc(nome)}: ${a.d} disponíveis, ${a.i} indisponíveis">${seg}</div>
+    <div class="catnums"><span class="num">${a.d}/${a.b}</span><b>${pct.toFixed(0)}%</b></div>
+  </div>`;
+};
+let catsHtml=ordem.map(c=>catRow(c,agg(c))).join("");
+catsHtml+=catRow("Total geral",{tot:FROTA.length,d:disp,i:ind,b:base},"total");
+document.getElementById("cats").innerHTML=catsHtml;
+
+/* ---- parados ---- */
+const parados=FROTA.filter(e=>e.st==="Indisponível").sort((a,b)=>(b.dias??-1)-(a.dias??-1));
+document.getElementById("parados-note").textContent=`${parados.length} equipamentos indisponíveis, do mais antigo para o mais recente`;
+document.getElementById("downs").innerHTML=parados.map(e=>{
+  const longo=(e.dias??0)>=30;
+  return `<article class="dcard${longo?" long":""}">
+    <div class="dtop">
+      <div><div class="dpre">${esc(e.pre)}${e.tag?` <span class="pl-mod">${esc(e.tag)}</span>`:""}</div>
+      <div class="dmodel">${esc(e.mod)} &middot; ${esc(e.cat.toLowerCase())}</div></div>
+      ${e.dias!=null?`<div class="ddays">${e.dias}<small>dias parado</small></div>`:""}
+    </div>
+    <div class="ddef">${esc(e.def||"Sem descrição na planilha")}</div>
+    ${e.obs?`<div class="dmodel">Obs.: ${esc(e.obs)}</div>`:""}
+    <div class="dmeta">
+      <span>Obra <b>${esc(e.obra)}</b></span>
+      <span>Local <b>${esc(e.loc)}</b></span>
+      <span>Parado desde <b>${esc(e.dt||"—")}</b></span>
+      <span>Previsão <b>${esc(e.prev||"—")}</b></span>
+    </div>
+  </article>`;
+}).join("");
+
+/* ---- tabela + filtros ---- */
+const fCat=document.getElementById("f-cat");
+ordem.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;fCat.appendChild(o);});
+const state={st:"todos",cat:"",obra:"",loc:"",q:""};
+const tb=document.getElementById("tb"), tbEmpty=document.getElementById("tb-empty");
+
+function render(){
+  const q=state.q.trim().toLowerCase();
+  const list=FROTA.filter(e=>{
+    if(state.st==="Disponível"&&e.st!=="Disponível")return false;
+    if(state.st==="Indisponível"&&e.st!=="Indisponível")return false;
+    if(state.st==="outros"&&(e.st==="Disponível"||e.st==="Indisponível"))return false;
+    if(state.cat&&e.cat!==state.cat)return false;
+    if(state.obra&&e.obra!==state.obra)return false;
+    if(state.loc&&e.loc!==state.loc)return false;
+    if(q){const hay=[e.pre,e.tag,e.mod,e.tipo,e.cat,e.def,e.obs].filter(Boolean).join(" ").toLowerCase();if(!hay.includes(q))return false;}
+    return true;
+  });
+  tb.innerHTML=list.map(e=>`<tr>
+    <td class="pre" data-l="Prefixo">${esc(e.pre)}${e.tag?`<br><span class="pl-mod">${esc(e.tag)}</span>`:""}</td>
+    <td class="catlabel hide-m" data-l="Categoria">${esc(e.cat)}</td>
+    <td data-l="Modelo">${esc(e.mod)}</td>
+    <td class="dim num" data-l="Obra">${esc(e.obra)}</td>
+    <td class="dim" data-l="Local">${esc(e.loc)}</td>
+    <td data-l="Status">${pill(e.st)}</td>
+    <td class="def opt${e.def||e.obs?"":" void"}" data-l="Defeito">${e.def?esc(e.def):(e.obs?"":"—")}${e.obs?`${e.def?"<br>":""}<span class="pl-mod">Obs.: ${esc(e.obs)}</span>`:""}</td>
+    <td class="dim num opt${e.dt?"":" void"}" data-l="Parado desde">${esc(e.dt||"—")}</td>
+    <td class="num opt${e.dias!=null?"":" void"}" data-l="Dias">${e.dias!=null?e.dias:"—"}</td>
+    <td class="dim num opt${e.prev?"":" void"}" data-l="Previsão">${esc(e.prev||"—")}</td>
+  </tr>`).join("");
+  tbEmpty.hidden=list.length>0;
+  document.getElementById("f-count").textContent=`${list.length} de ${FROTA.length} equipamentos`;
+}
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  state.st=b.dataset.st;render();
+}));
+fCat.addEventListener("change",e=>{state.cat=e.target.value;render();});
+document.getElementById("f-obra").addEventListener("change",e=>{state.obra=e.target.value;render();});
+document.getElementById("f-local").addEventListener("change",e=>{state.loc=e.target.value;render();});
+document.getElementById("f-q").addEventListener("input",e=>{state.q=e.target.value;render();});
+render();
+
+/* ---- cronogramas ---- */
+const schPill=st=>{
+  const c=st==="Atrasado"?"p-bad":st==="Hoje"?"p-ok":st==="Em dia"?"p-ok":st==="Na sede"?"p-mute":"p-warn";
+  return `<span class="pill ${c}">${esc(st)}</span>`;
+};
+document.getElementById("esteiras").innerHTML=ESTEIRAS.map(e=>`
+ <li${e.st==="Hoje"?' class="today"':""}>
+   <div class="pl-main"><span class="pl-pre">${esc(e.pre)}</span><span class="pl-mod">${esc(e.mod)}</span></div>
+   <div>${schPill(e.st)}</div>
+   <div class="pl-sub">Programado ${esc(e.prog)} &middot; última limpeza ${esc(e.ult)} &middot; ${e.dias} dias sem limpeza &middot; ${esc(e.loc)}</div>
+ </li>`).join("");
+document.getElementById("geradores").innerHTML=GERADORES.map(g=>`
+ <li>
+   <div class="pl-main"><span class="pl-pre">${esc(g.pre)}</span><span class="pl-mod">${esc(g.mod)} &middot; ${esc(g.tag)}</span></div>
+   <div>${schPill(g.st)}</div>
+   <div class="pl-sub">Programado ${esc(g.prog)} &middot; última limpeza ${esc(g.ult)} &middot; ${g.dias} dias sem limpeza</div>
+ </li>`).join("");
+</script>
+
+</body>
+</html>
