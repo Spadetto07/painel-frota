@@ -394,20 +394,36 @@ let FROTA=[], LIMPEZA=[], SOPRADOR=[], META={};
 const filtros = {st:"todos", cat:"", obra:"", loc:"", q:""};
 
 /* ---------- leitura ---------- */
+const espera = ms => new Promise(r=>setTimeout(r,ms));
+
+/* o Google devolve 500 de vez em quando; tenta de novo antes de desistir */
+async function tentar(fn, vezes=3){
+  let ultimo;
+  for(let i=0;i<vezes;i++){
+    try{ return await fn(); }
+    catch(e){ ultimo=e; if(i<vezes-1) await espera(1200*(i+1)); }
+  }
+  throw ultimo;
+}
+
 async function pegarCarimbo(){
-  const r = await fetch(CARIMBO + "?_=" + Date.now());
-  if(!r.ok) throw new Error("carimbo " + r.status);
-  const j = await r.json();
-  if(!j || !j.ok) throw new Error("carimbo indisponível");
-  return j;
+  return tentar(async()=>{
+    const r = await fetch(CARIMBO + "?_=" + Date.now());
+    if(!r.ok) throw new Error("carimbo " + r.status);
+    const j = await r.json();
+    if(!j || !j.ok) throw new Error("carimbo indisponível");
+    return j;
+  });
 }
 
 async function pegar(gid, nome){
-  const r = await fetch(csvUrl(gid), {cache:"no-store"});
-  if(!r.ok) throw new Error(`${nome}: o Google respondeu ${r.status}`);
-  const t = await r.text();
-  if(/<html/i.test(t.slice(0,200))) throw new Error(`${nome}: a aba não está publicada`);
-  return parseCSV(t);
+  return tentar(async()=>{
+    const r = await fetch(csvUrl(gid), {cache:"no-store"});
+    if(!r.ok) throw new Error(`${nome}: o Google respondeu ${r.status}`);
+    const t = await r.text();
+    if(/<html/i.test(t.slice(0,200))) throw new Error(`${nome}: a aba não está publicada`);
+    return parseCSV(t);
+  });
 }
 
 function lerFrota(rows){
