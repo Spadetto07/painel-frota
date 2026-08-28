@@ -226,7 +226,7 @@ footer b{color:var(--ink2);font-weight:600}
       <div class="k"><i class="dot load" id="s-dot"></i><span id="s-state">Lendo a planilha…</span></div>
       <div class="v" id="s-date">—</div>
       <div class="z" id="s-time">&nbsp;</div>
-      <button class="reload" id="s-reload" disabled>Atualizar agora</button>
+      <button class="reload" id="s-reload" disabled>Buscar de novo</button>
     </div>
   </div>
 </header>
@@ -321,7 +321,7 @@ footer b{color:var(--ink2);font-weight:600}
 <footer>
   <div class="wrap foot-in">
     <span>Fonte: planilha <b>Controle de Manutenção e Disponibilidade da Frota</b> — abas Controle de Frota, Cronograma Limpeza e Preventiva Soprador.</span>
-    <span>A página lê a planilha a cada carregamento. O Google leva alguns minutos para propagar uma edição recém-salva.</span>
+    <span>O carimbo no topo é a hora em que a planilha foi salva pela última vez — igual para todo mundo, não a hora em que você abriu a página. O Google leva alguns minutos para propagar uma edição recém-salva.</span>
   </div>
 </footer>
 
@@ -329,6 +329,8 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vSIT95VHq99pAB0FChM5KkJrFfuJ0wQrkxM1vIY1Pg0PiQJmEKOwLNr-IbBLAePsA";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452 };
+/* devolve a data e a hora da ultima modificacao do arquivo no Drive */
+const CARIMBO = "https://script.google.com/macros/s/AKfycbzo3OqQEdXa6OkPaHg7JxX2H6uMAidQv18DjE2JivAoxE_gytAj3UKNwNUarZILFHPp/exec";
 const csvUrl = gid => `https://docs.google.com/spreadsheets/d/e/${PUB}/pub?gid=${gid}&single=true&output=csv&_=${Date.now()}`;
 
 /* ---------- utilitários ---------- */
@@ -392,6 +394,14 @@ let FROTA=[], LIMPEZA=[], SOPRADOR=[], META={};
 const filtros = {st:"todos", cat:"", obra:"", loc:"", q:""};
 
 /* ---------- leitura ---------- */
+async function pegarCarimbo(){
+  const r = await fetch(CARIMBO + "?_=" + Date.now());
+  if(!r.ok) throw new Error("carimbo " + r.status);
+  const j = await r.json();
+  if(!j || !j.ok) throw new Error("carimbo indisponível");
+  return j;
+}
+
 async function pegar(gid, nome){
   const r = await fetch(csvUrl(gid), {cache:"no-store"});
   if(!r.ok) throw new Error(`${nome}: o Google respondeu ${r.status}`);
@@ -620,16 +630,19 @@ function agendas(){
 }
 
 /* ---------- carimbo e avisos ---------- */
-function carimbo(estado, dataPlanilha){
+function carimbo(estado){
   const dot=$("s-dot");
   dot.className = "dot " + (estado==="ok"?"live":estado==="erro"?"err":"load");
-  $("s-state").textContent = estado==="ok" ? "Dados da planilha" : estado==="erro" ? "Falha ao ler" : "Lendo a planilha…";
-  $("s-date").textContent = dataPlanilha || "—";
-  if(estado==="ok"){
-    const agora = new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short",timeZone:"America/Sao_Paulo"}).format(new Date());
-    $("s-time").textContent = `página carregada em ${agora}`;
-  } else if(estado==="erro"){
-    $("s-time").textContent = "mostrando o que deu para ler";
+  $("s-state").textContent = estado==="ok" ? "Última alteração" : estado==="erro" ? "Falha ao ler" : "Lendo a planilha…";
+  if(META.carimboData){
+    $("s-date").textContent = `${META.carimboData} ${META.carimboHora}`;
+    $("s-time").textContent = "horário de Brasília";
+  } else if(META.atualizado){
+    $("s-date").textContent = META.atualizado;
+    $("s-time").textContent = "data informada na planilha";
+  } else {
+    $("s-date").textContent = "—";
+    $("s-time").innerHTML = "&nbsp;";
   }
 }
 function aviso(html, erro){
@@ -641,11 +654,13 @@ async function carregar(){
   const btn=$("s-reload");
   btn.disabled=true; carimbo("carregando");
   try{
-    const [rf,rl,rs] = await Promise.all([
+    const [rf,rl,rs,cb] = await Promise.all([
       pegar(ABAS.frota,"Controle de Frota"),
       pegar(ABAS.limpeza,"Cronograma Limpeza").catch(()=>null),
-      pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null)
+      pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null),
+      pegarCarimbo().catch(()=>null)
     ]);
+    if(cb){ META.carimboData = cb.data; META.carimboHora = cb.hora; }
     FROTA = lerFrota(rf);
     LIMPEZA = rl ? lerAgenda(rl,"LOCAL") : [];
     SOPRADOR = rs ? lerAgenda(rs,"SITUA") : [];
@@ -663,9 +678,9 @@ async function carregar(){
     desenhar();
     const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador"].filter(Boolean);
     aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
-    carimbo("ok", META.atualizado);
+    carimbo("ok");
   }catch(e){
-    carimbo("erro", META.atualizado);
+    carimbo("erro");
     aviso(`<b>Não consegui ler a planilha.</b> ${esc(e.message)}.<br>
       Os números abaixo podem estar vazios ou desatualizados — não use para decidir.
       Se o problema continuar, confira se a planilha ainda está publicada em
