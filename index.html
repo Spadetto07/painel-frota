@@ -406,6 +406,8 @@ const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}
 
 /* ---------- estado ---------- */
 let FROTA=[], LIMPEZA=[], SOPRADOR=[], META={};
+/* categorias que o usuário deixou abertas — sobrevivem à atualização automática */
+const abertas = new Set();
 const filtros = {st:"todos", cat:"", obra:"", loc:"", q:""};
 
 /* ---------- leitura ---------- */
@@ -571,12 +573,13 @@ function desenhar(){
       `<b>${a.i}</b> ${a.i===1?"parado":"parados"}`,
       fora ? `<b>${fora}</b> fora da base` : ""
     ].filter(Boolean).join(" &middot; ");
+    const aberto = abertas.has(cat);
     return `<div class="catgroup">
-      <div class="catrow" role="button" tabindex="0" aria-expanded="false" aria-controls="det-${idx}">
+      <div class="catrow" role="button" tabindex="0" aria-expanded="${aberto}" aria-controls="det-${idx}" data-cat="${esc(cat)}">
         <div class="catname">${CHEV}${esc(cat)}</div>
         ${barra(cat,a)}
       </div>
-      <div class="catdet" id="det-${idx}" hidden>
+      <div class="catdet" id="det-${idx}"${aberto?"":" hidden"}>
         <div class="cabecalho">${resumo}</div>
         <div class="rolagem"><table>${CABECALHO_TABELA}<tbody>${lista.map(linhaTabela).join("")}</tbody></table></div>
       </div>
@@ -633,10 +636,12 @@ function desenhar(){
 function ligarCategorias(){
   document.querySelectorAll('#cats .catrow[role="button"]').forEach(linha=>{
     const painel = document.getElementById(linha.getAttribute("aria-controls"));
+    const cat = linha.dataset.cat;
     const alternar = () => {
       const abrindo = linha.getAttribute("aria-expanded") !== "true";
       linha.setAttribute("aria-expanded", String(abrindo));
       painel.hidden = !abrindo;
+      if(abrindo) abertas.add(cat); else abertas.delete(cat);
     };
     linha.addEventListener("click", alternar);
     linha.addEventListener("keydown", ev=>{
