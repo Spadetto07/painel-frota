@@ -526,12 +526,52 @@ function lerMovimentacoes(rows){
     const [data,hora] = bruto.split(/\s+/);
     out.push({
       data: data||"", hora: (hora && hora!=="00:00") ? hora : "",
+      ts: instante(data,hora),
       pre, cat:cell(r,c.cat), mod:cell(r,c.mod), mud:cell(r,c.mud),
       de:cell(r,c.de), para:cell(r,c.para), motivo:cell(r,c.motivo),
       obra:cell(r,c.obra), loc:cell(r,c.loc)
     });
   }
-  return out;   /* a planilha já grava a mais recente no topo */
+  return agrupar(out);   /* a planilha já grava a mais recente no topo */
+}
+
+/** "29/08/2026" + "17:12" -> Date */
+function instante(data, hora){
+  const d = String(data||"").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!d) return null;
+  const [hh,mm] = String(hora||"00:00").split(":").map(Number);
+  const x = new Date(+d[3], +d[2]-1, +d[1], hh||0, mm||0);
+  return isNaN(x.getTime()) ? null : x.getTime();
+}
+
+const rotuloMov = (de,para) => {
+  const d=String(de).toLowerCase(), p=String(para).toLowerCase();
+  if(d.startsWith("indispon") && p.startsWith("dispon")) return "Voltou a operar";
+  if(d.startsWith("dispon") && p.startsWith("indispon")) return "Ficou parado";
+  return "Mudou de status";
+};
+
+/**
+ * Edições seguidas no mesmo equipamento são uma coisa só.
+ * Mudar o status e depois escrever o motivo gera duas linhas na planilha;
+ * aqui elas viram uma movimentação, do estado inicial ao final.
+ */
+function agrupar(movs){
+  const JANELA = 30*60*1000;
+  const saida = [];
+  movs.forEach(m=>{
+    const ant = saida[saida.length-1];
+    const junta = ant && ant.pre===m.pre && ant.ts!=null && m.ts!=null &&
+                  Math.abs(ant.ts - m.ts) <= JANELA;
+    if(!junta){ saida.push(Object.assign({}, m)); return; }
+    /* a lista vem da mais recente para a mais antiga: 'ant' é o fim, 'm' é o começo */
+    ant.de = m.de;
+    ant.motivo = ant.motivo || m.motivo;
+    ant.fundido = true;
+    ant.mud = (ant.de === ant.para) ? "Motivo atualizado" : rotuloMov(ant.de, ant.para);
+  });
+  /* parou e voltou dentro da janela: no fim das contas não saiu do lugar */
+  return saida.filter(m => !(m.fundido && m.de === m.para));
 }
 
 function lerAgenda(rows, extraCol){
