@@ -118,6 +118,8 @@ h2{font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
 .catdet .rolagem{overflow-x:auto;padding:0 18px}
 .catdet table{background:var(--surf);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .catdet thead th{position:static;background:var(--surf3)}
+/* dentro de uma categoria aberta a coluna Categoria seria a mesma em toda linha */
+.catdet thead th:nth-child(2), .catdet td.catlabel{display:none}
 .bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:var(--surf2)}
 .bar i{display:block;height:100%;font-style:normal}
 .bar i.d{background:var(--ok);border-radius:4px 0 0 4px}
