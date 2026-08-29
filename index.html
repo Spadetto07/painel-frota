@@ -201,6 +201,30 @@ td.def{color:var(--ink2);max-width:34ch}
 
 .skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
 
+/* ---------- movimentações ---------- */
+.mov{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mov li{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--mute);border-radius:var(--r);padding:12px 15px;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:118px 1fr auto;gap:4px 16px;align-items:baseline}
+.mov li.voltou{border-left-color:var(--ok)}
+.mov li.parou{border-left-color:var(--bad)}
+.mov li.motivo{border-left-color:var(--warn)}
+.mov .quando{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mov .quando b{display:block;color:var(--ink2);font-weight:600;font-size:13px}
+.mov .oque{min-width:0}
+.mov .oque .eq{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.mov .oque .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:14.5px}
+.mov .oque .mod{font-size:12px;color:var(--ink3)}
+.mov .oque .por{font-size:13.5px;color:var(--ink);margin-top:3px;line-height:1.4}
+.mov .onde{font-size:11.5px;color:var(--ink3);white-space:nowrap;text-align:right}
+.maisbtn{margin:14px auto 0;display:block;font:inherit;font-size:13px;font-weight:600;color:var(--accent);background:var(--surf);
+  border:1px solid var(--line);border-radius:8px;padding:9px 18px;cursor:pointer;box-shadow:var(--shadow)}
+.maisbtn:hover{background:var(--surf2)}
+.maisbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){
+  .mov li{grid-template-columns:1fr;gap:6px}
+  .mov .onde{text-align:left}
+}
+
 footer{margin-top:38px;border-top:1px solid var(--line);background:var(--surf)}
 .foot-in{padding:20px 0 30px;font-size:12.5px;color:var(--ink3);display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between}
 footer b{color:var(--ink2);font-weight:600}
@@ -253,6 +277,7 @@ footer b{color:var(--ink2);font-weight:600}
     <a href="#parados">Equipamentos parados</a>
     <a href="#frota">Frota completa</a>
     <a href="#rodante">Material rodante</a>
+    <a href="#movimentacoes">Movimentações</a>
   </div>
 </nav>
 
@@ -331,6 +356,13 @@ footer b{color:var(--ink2);font-weight:600}
       </div>
     </div>
   </section>
+
+  <section id="movimentacoes">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Últimas movimentações</h2><span class="sec-note" id="mov-note">—</span></div>
+    <ol class="mov" id="mov"></ol>
+    <button class="maisbtn" id="mov-mais" hidden>Ver movimentações anteriores</button>
+  </section>
 </main>
 
 <footer>
@@ -342,8 +374,9 @@ footer b{color:var(--ink2);font-weight:600}
 
 <script>
 "use strict";
-const PUB = "2PACX-1vSIT95VHq99pAB0FChM5KkJrFfuJ0wQrkxM1vIY1Pg0PiQJmEKOwLNr-IbBLAePsA";
-const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452 };
+const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
+const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
+const POR_PAGINA = 20;
 /* devolve a data e a hora da ultima modificacao do arquivo no Drive */
 const CARIMBO = "https://script.google.com/macros/s/AKfycbzo3OqQEdXa6OkPaHg7JxX2H6uMAidQv18DjE2JivAoxE_gytAj3UKNwNUarZILFHPp/exec";
 const csvUrl = gid => `https://docs.google.com/spreadsheets/d/e/${PUB}/pub?gid=${gid}&single=true&output=csv&_=${Date.now()}`;
@@ -405,7 +438,8 @@ function fmtDate(v){
 const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{23F0}-\u{23FF}]/gu,"").trim();
 
 /* ---------- estado ---------- */
-let FROTA=[], LIMPEZA=[], SOPRADOR=[], META={};
+let FROTA=[], LIMPEZA=[], SOPRADOR=[], MOVS=[], META={};
+let movVisiveis = POR_PAGINA;
 /* categorias que o usuário deixou abertas — sobrevivem à atualização automática */
 const abertas = new Set();
 const filtros = {st:"todos", cat:"", obra:"", loc:"", q:""};
@@ -472,6 +506,32 @@ function lerFrota(rows){
   META.atualizado = fmtDate((kv(rows,"Atualizado em")||"").replace(/^:\s*/,"")) ||
                     fmtDate((rows[1]||[]).join(" ").match(/Atualizado em:\s*([^|]+)/)?.[1]||"");
   return out;
+}
+
+function lerMovimentacoes(rows){
+  const h = headerRow(rows,"PREFIXO","MUDAN","MOTIVO");
+  if(h<0) return [];
+  const H = rows[h];
+  const c = {
+    quando:colIndex(H,"DATA"), pre:colIndex(H,"PREFIXO"), cat:colIndex(H,"CATEGORIA"),
+    mod:colIndex(H,"MODELO"), mud:colIndex(H,"MUDAN"), de:colIndex(H,"DE"),
+    para:colIndex(H,"PARA"), motivo:colIndex(H,"MOTIVO"), obra:colIndex(H,"OBRA"), loc:colIndex(H,"LOCAL")
+  };
+  const out=[];
+  for(let i=h+1;i<rows.length;i++){
+    const r=rows[i];
+    const pre=cell(r,c.pre);
+    if(!pre) continue;
+    const bruto=cell(r,c.quando);
+    const [data,hora] = bruto.split(/\s+/);
+    out.push({
+      data: data||"", hora: (hora && hora!=="00:00") ? hora : "",
+      pre, cat:cell(r,c.cat), mod:cell(r,c.mod), mud:cell(r,c.mud),
+      de:cell(r,c.de), para:cell(r,c.para), motivo:cell(r,c.motivo),
+      obra:cell(r,c.obra), loc:cell(r,c.loc)
+    });
+  }
+  return out;   /* a planilha já grava a mais recente no topo */
 }
 
 function lerAgenda(rows, extraCol){
@@ -710,6 +770,46 @@ function agendas(){
     </li>`).join("") || `<li><div class="pl-sub">Sem geradores no controle.</div></li>`;
 }
 
+/* ---------- movimentações ---------- */
+function classeMov(mud){
+  const m = String(mud).toLowerCase();
+  if(m.includes("voltou")) return "voltou";
+  if(m.includes("parado") || m.includes("parou")) return "parou";
+  if(m.includes("motivo")) return "motivo";
+  return "";
+}
+function pillMov(mud){
+  const c = classeMov(mud);
+  const cls = c==="voltou" ? "p-ok" : c==="parou" ? "p-bad" : c==="motivo" ? "p-warn" : "p-mute";
+  return `<span class="pill ${cls}">${esc(mud||"Mudou")}</span>`;
+}
+
+function movimentacoes(){
+  const lista = MOVS.slice(0, movVisiveis);
+  $("mov-note").textContent = MOVS.length
+    ? `${MOVS.length} registrada${MOVS.length===1?"":"s"} — mostrando ${lista.length}`
+    : "nenhuma movimentação registrada ainda";
+
+  $("mov").innerHTML = lista.map(m=>`
+    <li class="${classeMov(m.mud)}">
+      <div class="quando"><b>${esc(m.data||"—")}</b>${m.hora?esc(m.hora):"&nbsp;"}</div>
+      <div class="oque">
+        <div class="eq">
+          <span class="pre">${esc(m.pre)}</span>
+          <span class="mod">${esc(m.mod)}${m.cat?" · "+esc(m.cat.toLowerCase()):""}</span>
+          ${pillMov(m.mud)}
+        </div>
+        <div class="por">${esc(m.motivo||"Sem motivo informado")}</div>
+      </div>
+      <div class="onde">${esc(m.obra||"—")} · ${esc(m.loc||"—")}</div>
+    </li>`).join("")
+    || `<li><div class="oque"><div class="por">O histórico começa a partir de agora: assim que um equipamento mudar de status na planilha, a movimentação aparece aqui.</div></div></li>`;
+
+  const btn = $("mov-mais");
+  btn.hidden = MOVS.length <= movVisiveis;
+  btn.textContent = `Ver mais ${Math.min(POR_PAGINA, MOVS.length - movVisiveis)} movimentações`;
+}
+
 /* ---------- carimbo e avisos ---------- */
 function carimbo(estado){
   const dot=$("s-dot");
@@ -735,13 +835,15 @@ async function carregar(){
   const btn=$("s-reload");
   btn.disabled=true; carimbo("carregando");
   try{
-    const [rf,rl,rs,cb] = await Promise.all([
+    const [rf,rl,rs,rm,cb] = await Promise.all([
       pegar(ABAS.frota,"Controle de Frota"),
       pegar(ABAS.limpeza,"Cronograma Limpeza").catch(()=>null),
       pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null),
+      pegar(ABAS.movimentacoes,"Movimentações").catch(()=>null),
       pegarCarimbo().catch(()=>null)
     ]);
     if(cb){ META.carimboData = cb.data; META.carimboHora = cb.hora; }
+    MOVS = rm ? lerMovimentacoes(rm) : [];
     FROTA = lerFrota(rf);
     LIMPEZA = rl ? lerAgenda(rl,"LOCAL") : [];
     SOPRADOR = rs ? lerAgenda(rs,"SITUA") : [];
@@ -757,7 +859,8 @@ async function carregar(){
       META.proxSoprador = fmtDate(kv(rs,"Próxima data prevista"));
     }
     desenhar();
-    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador"].filter(Boolean);
+    movimentacoes();
+    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações"].filter(Boolean);
     aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
     carimbo("ok");
   }catch(e){
@@ -780,6 +883,7 @@ $("f-obra").addEventListener("change",e=>{filtros.obra=e.target.value;tabela();}
 $("f-local").addEventListener("change",e=>{filtros.loc=e.target.value;tabela();});
 $("f-q").addEventListener("input",e=>{filtros.q=e.target.value;tabela();});
 $("s-reload").addEventListener("click",carregar);
+$("mov-mais").addEventListener("click",()=>{ movVisiveis += POR_PAGINA; movimentacoes(); });
 
 carregar();
 setInterval(carregar, 5*60*1000);
