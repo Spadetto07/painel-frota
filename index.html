@@ -101,10 +101,23 @@ h2{font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
 .aside{font-size:12.5px;color:var(--ink3);margin-top:10px}
 
 .cats{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:6px 18px 14px;box-shadow:var(--shadow)}
-.catrow{display:grid;grid-template-columns:170px 1fr 116px;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
-.catrow:last-child{border-bottom:0}
-.catrow.total{border-top:2px solid var(--line);border-bottom:0;margin-top:4px;padding-top:12px;font-weight:600}
-.catname{font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.catgroup{border-bottom:1px solid var(--line-soft)}
+.catgroup:last-of-type{border-bottom:0}
+.catrow{display:grid;grid-template-columns:170px 1fr 116px;align-items:center;gap:14px;padding:9px 18px;margin:0 -18px;border-radius:6px}
+.catrow[role="button"]{cursor:pointer}
+.catrow[role="button"]:hover{background:var(--surf2)}
+.catrow[role="button"]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.catrow.total{border-top:2px solid var(--line);margin-top:4px;padding-top:12px;font-weight:600;cursor:default}
+.catname{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.chev{flex:0 0 auto;color:var(--ink3);transition:transform .15s ease}
+.catrow[aria-expanded="true"] .chev{transform:rotate(90deg);color:var(--accent)}
+.catrow[aria-expanded="true"] .catname{color:var(--ink)}
+.catdet{padding:2px 0 16px;margin:0 -18px;background:var(--surf2);border-radius:6px}
+.catdet .cabecalho{display:flex;flex-wrap:wrap;gap:4px 16px;padding:11px 18px 9px;font-size:12px;color:var(--ink3)}
+.catdet .cabecalho b{color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+.catdet .rolagem{overflow-x:auto;padding:0 18px}
+.catdet table{background:var(--surf);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.catdet thead th{position:static;background:var(--surf3)}
 .bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:var(--surf2)}
 .bar i{display:block;height:100%;font-style:normal}
 .bar i.d{background:var(--ok);border-radius:4px 0 0 4px}
@@ -258,7 +271,7 @@ footer b{color:var(--ink2);font-weight:600}
 
   <section id="categorias">
     <div class="rule"></div>
-    <div class="sec-head"><h2>Disponibilidade por categoria</h2><span class="sec-note">emprestados e sucata ficam fora do cálculo</span></div>
+    <div class="sec-head"><h2>Disponibilidade por categoria</h2><span class="sec-note">clique numa categoria para abrir a lista &middot; emprestados e sucata ficam fora do cálculo</span></div>
     <div class="cats" id="cats"><div class="skel">Carregando…</div></div>
     <p class="legend">
       <span><i class="sw" style="background:var(--ok)"></i> Disponível</span>
@@ -489,6 +502,25 @@ const pillClass = st => {
 };
 const pill = st => `<span class="pill ${pillClass(st)}">${esc(st)}</span>`;
 
+/* uma linha de equipamento — usada na tabela geral e nas categorias expandidas */
+const linhaTabela = e => `<tr>
+  <td class="pre" data-l="Prefixo">${esc(e.pre)}</td>
+  <td class="catlabel hide-m" data-l="Categoria">${esc(e.cat)}</td>
+  <td data-l="Modelo">${esc(e.mod||"—")}</td>
+  <td class="dim num" data-l="Obra">${esc(e.obra||"—")}</td>
+  <td class="dim" data-l="Local">${esc(e.loc||"—")}</td>
+  <td data-l="Status">${pill(e.st)}</td>
+  <td class="def opt${e.def||e.obs?"":" void"}" data-l="Defeito">${e.def?esc(e.def):(e.obs?"":"—")}${e.obs?`${e.def?"<br>":""}<span class="pl-mod">Obs.: ${esc(e.obs)}</span>`:""}</td>
+  <td class="dim num opt${e.dt?"":" void"}" data-l="Parado desde">${esc(e.dt||"—")}</td>
+  <td class="num opt${e.dias!=null?"":" void"}" data-l="Dias">${e.dias!=null?e.dias:"—"}</td>
+  <td class="dim num opt${e.prev?"":" void"}" data-l="Previsão">${esc(e.prev||"—")}</td>
+</tr>`;
+
+const CABECALHO_TABELA = `<thead><tr>
+  <th>Prefixo</th><th>Categoria</th><th>Modelo</th><th>Obra</th><th>Local</th><th>Status</th>
+  <th>Defeito / intervenção</th><th>Parado desde</th><th>Dias</th><th>Previsão</th>
+</tr></thead>`;
+
 const agendaPill = st => {
   const s = String(st).toLowerCase();
   let c = "p-warn";
@@ -519,24 +551,45 @@ function desenhar(){
 
   /* categorias na ordem em que aparecem na planilha */
   const ordem=[]; FROTA.forEach(e=>{ if(!ordem.includes(e.cat)) ordem.push(e.cat); });
-  const linha = (nome,a,cls) => {
-    const pct = a.b ? a.d/a.b*100 : 0;
+  const CHEV = `<svg class="chev" viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2.5 1 L7 5 L2.5 9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  const barra = (nome,a) => {
     const dw = a.b ? a.d/a.b*100 : 0, iw = a.b ? a.i/a.b*100 : 0;
     const seg = `${a.d?`<i class="d${a.i?"":" full"}" style="width:${dw}%"></i>`:""}${a.i?`<i class="i${a.d?"":" only"}" style="width:${iw}%"></i>`:""}`;
-    return `<div class="catrow ${cls||""}" title="${esc(nome)}: ${a.d} de ${a.b} disponíveis">
-      <div class="catname">${esc(nome)}</div>
-      <div class="bar" role="img" aria-label="${esc(nome)}: ${a.d} disponíveis, ${a.i} indisponíveis">${seg}</div>
-      <div class="catnums"><span class="num">${a.d}/${a.b}</span><b>${a.b?pct.toFixed(0)+"%":"—"}</b></div>
+    const pct = a.b ? (a.d/a.b*100).toFixed(0)+"%" : "—";
+    return `<div class="bar" role="img" aria-label="${esc(nome)}: ${a.d} disponíveis, ${a.i} indisponíveis">${seg}</div>
+      <div class="catnums"><span class="num">${a.d}/${a.b}</span><b>${pct}</b></div>`;
+  };
+
+  const grupo = (cat, lista, a, idx) => {
+    const fora = lista.length - a.b;
+    const resumo = [
+      `<b>${lista.length}</b> ${lista.length===1?"equipamento":"equipamentos"}`,
+      `<b>${a.d}</b> ${a.d===1?"disponível":"disponíveis"}`,
+      `<b>${a.i}</b> ${a.i===1?"parado":"parados"}`,
+      fora ? `<b>${fora}</b> fora da base` : ""
+    ].filter(Boolean).join(" &middot; ");
+    return `<div class="catgroup">
+      <div class="catrow" role="button" tabindex="0" aria-expanded="false" aria-controls="det-${idx}">
+        <div class="catname">${CHEV}${esc(cat)}</div>
+        ${barra(cat,a)}
+      </div>
+      <div class="catdet" id="det-${idx}" hidden>
+        <div class="cabecalho">${resumo}</div>
+        <div class="rolagem"><table>${CABECALHO_TABELA}<tbody>${lista.map(linhaTabela).join("")}</tbody></table></div>
+      </div>
     </div>`;
   };
-  let html = ordem.map(cat=>{
+
+  let html = ordem.map((cat,idx)=>{
     const l = FROTA.filter(e=>e.cat===cat);
     const d = l.filter(e=>pillClass(e.st)==="p-ok").length;
     const i = l.filter(e=>pillClass(e.st)==="p-bad").length;
-    return linha(cat,{d,i,b:d+i});
+    return grupo(cat,l,{d,i,b:d+i},idx);
   }).join("");
-  html += linha("Total geral",{d:disp,i:ind,b:base},"total");
+  html += `<div class="catrow total"><div class="catname">Total geral</div>${barra("Total geral",{d:disp,i:ind,b:base})}</div>`;
   $("cats").innerHTML = html;
+  ligarCategorias();
 
   /* parados */
   const parados = FROTA.filter(e=>pillClass(e.st)==="p-bad").sort((a,b)=>(b.dias??-1)-(a.dias??-1));
@@ -574,6 +627,22 @@ function desenhar(){
   agendas();
 }
 
+/* abre e fecha a lista de equipamentos de cada categoria */
+function ligarCategorias(){
+  document.querySelectorAll('#cats .catrow[role="button"]').forEach(linha=>{
+    const painel = document.getElementById(linha.getAttribute("aria-controls"));
+    const alternar = () => {
+      const abrindo = linha.getAttribute("aria-expanded") !== "true";
+      linha.setAttribute("aria-expanded", String(abrindo));
+      painel.hidden = !abrindo;
+    };
+    linha.addEventListener("click", alternar);
+    linha.addEventListener("keydown", ev=>{
+      if(ev.key==="Enter" || ev.key===" " || ev.key==="Spacebar"){ ev.preventDefault(); alternar(); }
+    });
+  });
+}
+
 function tabela(){
   const q = filtros.q.trim().toLowerCase();
   const lista = FROTA.filter(e=>{
@@ -590,18 +659,7 @@ function tabela(){
     }
     return true;
   });
-  $("tb").innerHTML = lista.map(e=>`<tr>
-    <td class="pre" data-l="Prefixo">${esc(e.pre)}</td>
-    <td class="catlabel hide-m" data-l="Categoria">${esc(e.cat)}</td>
-    <td data-l="Modelo">${esc(e.mod||"—")}</td>
-    <td class="dim num" data-l="Obra">${esc(e.obra||"—")}</td>
-    <td class="dim" data-l="Local">${esc(e.loc||"—")}</td>
-    <td data-l="Status">${pill(e.st)}</td>
-    <td class="def opt${e.def||e.obs?"":" void"}" data-l="Defeito">${e.def?esc(e.def):(e.obs?"":"—")}${e.obs?`${e.def?"<br>":""}<span class="pl-mod">Obs.: ${esc(e.obs)}</span>`:""}</td>
-    <td class="dim num opt${e.dt?"":" void"}" data-l="Parado desde">${esc(e.dt||"—")}</td>
-    <td class="num opt${e.dias!=null?"":" void"}" data-l="Dias">${e.dias!=null?e.dias:"—"}</td>
-    <td class="dim num opt${e.prev?"":" void"}" data-l="Previsão">${esc(e.prev||"—")}</td>
-  </tr>`).join("");
+  $("tb").innerHTML = lista.map(linhaTabela).join("");
   $("tb-empty").textContent = "Nenhum equipamento com esses filtros.";
   $("tb-empty").hidden = lista.length>0;
   $("f-count").textContent = `${lista.length} de ${FROTA.length} equipamentos`;
