@@ -20,6 +20,7 @@
   --accent:#1E5C7E; --accent-soft:#E3EDF3;
   --ok:#3E9B6B; --bad:#A3231A; --warn:#C98A00; --warn-ink:#8A5D00; --mute:#5B6570;
   --ok-bg:#E7F3EC; --bad-bg:#FAE9E7; --warn-bg:#FBF1DD; --mute-bg:#EAEEF1;
+  --ok-solid:#2F7A53; --bad-solid:#A3231A; --on-solid:#FFFFFF;
   --shadow:0 1px 2px rgba(20,31,41,.06), 0 8px 24px -18px rgba(20,31,41,.35);
   --r:10px;
 }
@@ -31,6 +32,7 @@
     --accent:#74B4D4; --accent-soft:#1C2F3B;
     --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
     --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
+    --ok-solid:#57BE86; --bad-solid:#E4664D; --on-solid:#0E1519;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
   }
 }
@@ -41,6 +43,7 @@
   --accent:#74B4D4; --accent-soft:#1C2F3B;
   --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
   --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
+    --ok-solid:#57BE86; --bad-solid:#E4664D; --on-solid:#0E1519;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
 }
 
@@ -205,9 +208,13 @@ td.def{color:var(--ink2);max-width:34ch}
 .mov{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mov li{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--mute);border-radius:var(--r);padding:12px 15px;box-shadow:var(--shadow);
   display:grid;grid-template-columns:118px 1fr auto;gap:4px 16px;align-items:baseline}
-.mov li.voltou{border-left-color:var(--ok)}
-.mov li.parou{border-left-color:var(--bad)}
+.mov li.voltou{border-left-width:7px;border-left-color:var(--ok-solid)}
+.mov li.parou{border-left-width:7px;border-left-color:var(--bad-solid)}
 .mov li.motivo{border-left-color:var(--warn)}
+.mov .pill.forte{font-size:12px;padding:3.5px 12px;border-color:transparent;color:var(--on-solid);letter-spacing:.01em}
+.mov .pill.forte::before{display:none}
+.mov .pill.forte.p-ok{background:var(--ok-solid)}
+.mov .pill.forte.p-bad{background:var(--bad-solid)}
 .mov .quando{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
 .mov .quando b{display:block;color:var(--ink2);font-weight:600;font-size:13px}
 .mov .oque{min-width:0}
@@ -249,7 +256,29 @@ footer b{color:var(--ink2);font-weight:600}
   td.opt.void{display:none}
   .count{margin-left:0;width:100%}
 }
+/* ---------- vídeos nas laterais ---------- */
+.rail{display:none}
+.railbtn{display:none}
+@media (min-width:1560px){
+  body.vid .rail{
+    position:fixed;top:58px;bottom:20px;z-index:20;pointer-events:none;
+    width:min(340px, calc((100vw - 1180px)/2 - 40px));
+    display:flex;flex-direction:column;justify-content:center;padding:14px 0;
+  }
+  body.vid .rail.esq{left:20px}
+  body.vid .rail.dir{right:20px}
+  .rail video{width:100%;max-height:calc(100vh - 96px);object-fit:cover;display:block;
+    border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);background:var(--surf2)}
+  body.temvid .railbtn{display:block;position:fixed;left:20px;bottom:18px;z-index:41;
+    font:inherit;font-size:12px;font-weight:600;color:var(--ink2);
+    background:var(--surf);border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;cursor:pointer;box-shadow:var(--shadow);opacity:.72}
+  .railbtn:hover{opacity:1;background:var(--surf2)}
+  .railbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){.rail{display:none!important}}
 </style>
 </head>
 <body>
@@ -377,6 +406,11 @@ footer b{color:var(--ink2);font-weight:600}
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
 const POR_PAGINA = 20;
+
+/* Vídeos curtos que rodam nas laterais, em loop infinito.
+   Os arquivos ficam na pasta "videos" do repositório; basta listar os nomes aqui.
+   Lista vazia = nenhuma faixa lateral aparece. */
+const VIDEOS = [];
 /* devolve a data e a hora da ultima modificacao do arquivo no Drive */
 const CARIMBO = "https://script.google.com/macros/s/AKfycbzo3OqQEdXa6OkPaHg7JxX2H6uMAidQv18DjE2JivAoxE_gytAj3UKNwNUarZILFHPp/exec";
 const csvUrl = gid => `https://docs.google.com/spreadsheets/d/e/${PUB}/pub?gid=${gid}&single=true&output=csv&_=${Date.now()}`;
@@ -527,7 +561,8 @@ function lerMovimentacoes(rows){
     out.push({
       data: data||"", hora: (hora && hora!=="00:00") ? hora : "",
       ts: instante(data,hora),
-      pre, cat:cell(r,c.cat), mod:cell(r,c.mod), mud:cell(r,c.mud),
+      pre, cat:cell(r,c.cat), mod:cell(r,c.mod),
+      tipo: tipoMov(cell(r,c.mud), cell(r,c.de), cell(r,c.para)),
       de:cell(r,c.de), para:cell(r,c.para), motivo:cell(r,c.motivo),
       obra:cell(r,c.obra), loc:cell(r,c.loc)
     });
@@ -544,12 +579,25 @@ function instante(data, hora){
   return isNaN(x.getTime()) ? null : x.getTime();
 }
 
-const rotuloMov = (de,para) => {
-  const d=String(de).toLowerCase(), p=String(para).toLowerCase();
-  if(d.startsWith("indispon") && p.startsWith("dispon")) return "Voltou a operar";
-  if(d.startsWith("dispon") && p.startsWith("indispon")) return "Ficou parado";
-  return "Mudou de status";
+/* Os quatro textos da seção de movimentações moram aqui.
+   Mudar a frase aqui muda a página inteira, inclusive o histórico já gravado. */
+const TEXTO_MOV = {
+  disp:   "Equipamento ficou disponível para operação",
+  ind:    "Equipamento ficou indisponível para operação",
+  motivo: "Motivo atualizado",
+  outro:  "Mudou de status"
 };
+
+/** Descobre o tipo pelo DE -> PARA; se não der, cai no que a planilha escreveu. */
+function tipoMov(mud, de, para){
+  const d=String(de||"").toLowerCase(), p=String(para||"").toLowerCase(), m=String(mud||"").toLowerCase();
+  if(d.startsWith("indispon") && p.startsWith("dispon")) return "disp";
+  if(d.startsWith("dispon") && p.startsWith("indispon")) return "ind";
+  if(m.includes("voltou") || m.includes("ficou dispon")) return "disp";
+  if(m.includes("parado") || m.includes("parou") || m.includes("ficou indispon")) return "ind";
+  if(m.includes("motivo")) return "motivo";
+  return "outro";
+}
 
 /**
  * Edições seguidas no mesmo equipamento são uma coisa só.
@@ -568,7 +616,11 @@ function agrupar(movs){
     ant.de = m.de;
     ant.motivo = ant.motivo || m.motivo;
     ant.fundido = true;
-    ant.mud = (ant.de === ant.para) ? "Motivo atualizado" : rotuloMov(ant.de, ant.para);
+    if(ant.de === ant.para){ ant.tipo = "motivo"; }
+    else {
+      const t = tipoMov("", ant.de, ant.para);
+      if(t !== "outro") ant.tipo = t;   /* pontas ilegíveis: fica o tipo que já tinha */
+    }
   });
   /* parou e voltou dentro da janela: no fim das contas não saiu do lugar */
   return saida.filter(m => !(m.fundido && m.de === m.para));
@@ -811,18 +863,11 @@ function agendas(){
 }
 
 /* ---------- movimentações ---------- */
-function classeMov(mud){
-  const m = String(mud).toLowerCase();
-  if(m.includes("voltou")) return "voltou";
-  if(m.includes("parado") || m.includes("parou")) return "parou";
-  if(m.includes("motivo")) return "motivo";
-  return "";
-}
-function pillMov(mud){
-  const c = classeMov(mud);
-  const cls = c==="voltou" ? "p-ok" : c==="parou" ? "p-bad" : c==="motivo" ? "p-warn" : "p-mute";
-  return `<span class="pill ${cls}">${esc(mud||"Mudou")}</span>`;
-}
+const CLASSE_MOV = { disp:"voltou", ind:"parou", motivo:"motivo", outro:"" };
+const PILL_MOV   = { disp:"p-ok forte", ind:"p-bad forte", motivo:"p-warn", outro:"p-mute" };
+const classeMov = tipo => CLASSE_MOV[tipo] || "";
+const pillMov = tipo =>
+  `<span class="pill ${PILL_MOV[tipo]||"p-mute"}">${esc(TEXTO_MOV[tipo]||TEXTO_MOV.outro)}</span>`;
 
 function movimentacoes(){
   const lista = MOVS.slice(0, movVisiveis);
@@ -831,13 +876,13 @@ function movimentacoes(){
     : "nenhuma movimentação registrada ainda";
 
   $("mov").innerHTML = lista.map(m=>`
-    <li class="${classeMov(m.mud)}">
+    <li class="${classeMov(m.tipo)}">
       <div class="quando"><b>${esc(m.data||"—")}</b>${m.hora?esc(m.hora):"&nbsp;"}</div>
       <div class="oque">
         <div class="eq">
           <span class="pre">${esc(m.pre)}</span>
           <span class="mod">${esc(m.mod)}${m.cat?" · "+esc(m.cat.toLowerCase()):""}</span>
-          ${pillMov(m.mud)}
+          ${pillMov(m.tipo)}
         </div>
         <div class="por">${esc(m.motivo||"Sem motivo informado")}</div>
       </div>
@@ -924,6 +969,53 @@ $("f-local").addEventListener("change",e=>{filtros.loc=e.target.value;tabela();}
 $("f-q").addEventListener("input",e=>{filtros.q=e.target.value;tabela();});
 $("s-reload").addEventListener("click",carregar);
 $("mov-mais").addEventListener("click",()=>{ movVisiveis += POR_PAGINA; movimentacoes(); });
+
+/* ---------- vídeos nas laterais ---------- */
+function laterais(){
+  if(!VIDEOS.length) return;
+  const semMovimento = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let ligado = !semMovimento;
+  try{ const g = localStorage.getItem("frota-videos"); if(g) ligado = g === "on"; }catch(e){}
+  const cabe = matchMedia("(min-width:1560px)");
+  const tocar = v => { if(ligado && cabe.matches && !document.hidden) v.play().catch(()=>{}); else v.pause(); };
+
+  const tocadores = ["esq","dir"].map((lado,n)=>{
+    const trilho = document.createElement("div");
+    trilho.className = "rail " + lado;
+    trilho.setAttribute("aria-hidden","true");
+    const v = document.createElement("video");
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.preload = "auto";
+    v.setAttribute("muted",""); v.setAttribute("playsinline","");
+    if(VIDEOS.length === 1) v.loop = true;
+    let i = n % VIDEOS.length, falhas = 0;
+    const trocar = () => { v.src = VIDEOS[i]; v.load(); tocar(v); };
+    v.addEventListener("ended", ()=>{ i=(i+1)%VIDEOS.length; falhas=0; trocar(); });
+    v.addEventListener("error", ()=>{ if(++falhas > VIDEOS.length) return; i=(i+1)%VIDEOS.length; trocar(); });
+    trilho.appendChild(v);
+    document.body.appendChild(trilho);
+    trocar();
+    return v;
+  });
+
+  const botao = document.createElement("button");
+  botao.className = "railbtn"; botao.type = "button";
+  document.body.appendChild(botao);
+
+  const aplicar = () => {
+    document.body.classList.toggle("vid", ligado);
+    botao.textContent = ligado ? "Pausar vídeos" : "Mostrar vídeos";
+    botao.setAttribute("aria-pressed", String(ligado));
+    tocadores.forEach(tocar);
+    try{ localStorage.setItem("frota-videos", ligado ? "on" : "off"); }catch(e){}
+  };
+  botao.addEventListener("click", ()=>{ ligado = !ligado; aplicar(); });
+  /* nada de gastar dados rodando escondido: tela estreita ou aba em segundo plano param */
+  cabe.addEventListener("change", ()=>tocadores.forEach(tocar));
+  document.addEventListener("visibilitychange", ()=>tocadores.forEach(tocar));
+  document.body.classList.add("temvid");
+  aplicar();
+}
+laterais();
 
 carregar();
 setInterval(carregar, 5*60*1000);
