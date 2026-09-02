@@ -540,11 +540,14 @@ function lerFrota(rows){
   const out=[];
   for(let i=h+1;i<rows.length;i++){
     const r=rows[i];
-    if(!isNum(cell(r,c.item))) continue;
-    const pre=cell(r,c.pre); if(!pre) continue;
+    /* Vale a linha que tem prefixo E categoria. As faixas laranja de categoria não têm
+       nem um nem outro, e o equipamento entra mesmo se o número do ITEM estiver vazio. */
+    const pre=cell(r,c.pre); if(!pre || /^prefixo$/i.test(pre)) continue;
+    if(!cell(r,c.cat)) continue;
     const d=cell(r,c.dias);
     out.push({
-      n:Number(cell(r,c.item)), cat:cell(r,c.cat)||"SEM CATEGORIA", tipo:cell(r,c.tipo),
+      n: isNum(cell(r,c.item)) ? Number(cell(r,c.item)) : null,
+      cat:cell(r,c.cat)||"SEM CATEGORIA", tipo:cell(r,c.tipo),
       mod:cell(r,c.mod), obra:cell(r,c.obra), loc:cell(r,c.loc), pre,
       st:cell(r,c.st)||"Sem status", def:cell(r,c.def),
       dt:fmtDate(cell(r,c.dt)), prev:fmtDate(cell(r,c.prev)),
