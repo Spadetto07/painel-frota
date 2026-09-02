@@ -481,6 +481,21 @@ const filtros = {st:"todos", cat:"", obra:"", loc:"", q:""};
 /* ---------- leitura ---------- */
 const espera = ms => new Promise(r=>setTimeout(r,ms));
 
+/* Nenhuma espera é infinita: sem resposta em LIMITE ms a tentativa falha,
+   senão a página fica presa em "Lendo a planilha..." para sempre. */
+const LIMITE = 10000;
+async function buscar(url, opts){
+  const ac = new AbortController();
+  const corta = setTimeout(()=>ac.abort(), LIMITE);
+  try{
+    return await fetch(url, Object.assign({signal:ac.signal}, opts||{}));
+  }catch(e){
+    throw (e && e.name === "AbortError") ? new Error("sem resposta do Google") : e;
+  }finally{
+    clearTimeout(corta);
+  }
+}
+
 /* o Google devolve 500 de vez em quando; tenta de novo antes de desistir */
 async function tentar(fn, vezes=3){
   let ultimo;
@@ -493,7 +508,7 @@ async function tentar(fn, vezes=3){
 
 async function pegarCarimbo(){
   return tentar(async()=>{
-    const r = await fetch(CARIMBO + "?_=" + Date.now());
+    const r = await buscar(CARIMBO + "?_=" + Date.now());
     if(!r.ok) throw new Error("carimbo " + r.status);
     const j = await r.json();
     if(!j || !j.ok) throw new Error("carimbo indisponível");
@@ -503,7 +518,7 @@ async function pegarCarimbo(){
 
 async function pegar(gid, nome){
   return tentar(async()=>{
-    const r = await fetch(csvUrl(gid), {cache:"no-store"});
+    const r = await buscar(csvUrl(gid), {cache:"no-store"});
     if(!r.ok) throw new Error(`${nome}: o Google respondeu ${r.status}`);
     const t = await r.text();
     if(/<html/i.test(t.slice(0,200))) throw new Error(`${nome}: a aba não está publicada`);
@@ -950,10 +965,16 @@ async function carregar(){
     carimbo("ok");
   }catch(e){
     carimbo("erro");
+    const semResposta = /sem resposta|Failed to fetch|NetworkError/i.test(e.message);
     aviso(`<b>Não consegui ler a planilha.</b> ${esc(e.message)}.<br>
-      Os números abaixo podem estar vazios ou desatualizados — não use para decidir.
-      Se o problema continuar, confira se a planilha ainda está publicada em
-      <code>Arquivo → Compartilhar → Publicar na Web</code>.`, true);
+      Os números abaixo podem estar vazios ou desatualizados — não use para decidir.<br>
+      ${semResposta
+        ? `O Google não respondeu. Isso quase sempre é a rede barrando o endereço
+           <code>googleusercontent.com</code>, que é de onde a planilha vem.
+           Teste abrir esta página no celular usando o 4G, fora do wi-fi da obra:
+           se funcionar no 4G, o bloqueio é da rede.`
+        : `Se o problema continuar, confira se a planilha ainda está publicada em
+           <code>Arquivo → Compartilhar → Publicar na Web</code>.`}`, true);
   }finally{
     btn.disabled=false;
   }
