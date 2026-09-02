@@ -540,6 +540,9 @@ function lerFrota(rows){
   const out=[];
   for(let i=h+1;i<rows.length;i++){
     const r=rows[i];
+    /* Depois da frota a mesma aba tem a tabela de peças, que começa com outro
+       cabeçalho ITEM. Ali a leitura para. */
+    if(/^item$/i.test(cell(r,c.item))) break;
     /* Vale a linha que tem prefixo E categoria. As faixas laranja de categoria não têm
        nem um nem outro, e o equipamento entra mesmo se o número do ITEM estiver vazio. */
     const pre=cell(r,c.pre); if(!pre || /^prefixo$/i.test(pre)) continue;
