@@ -21,6 +21,9 @@
   --ok:#3E9B6B; --bad:#A3231A; --warn:#C98A00; --warn-ink:#8A5D00; --mute:#5B6570;
   --ok-bg:#E7F3EC; --bad-bg:#FAE9E7; --warn-bg:#FBF1DD; --mute-bg:#EAEEF1;
   --ok-solid:#2F7A53; --bad-solid:#A3231A; --on-solid:#FFFFFF;
+  /* escala de dias sem limpeza: um tom só, do mais claro ao mais escuro */
+  --d1:#E3EDF3; --d1t:#14303D; --d2:#BCD6E4; --d2t:#14303D; --d3:#8CBAD1; --d3t:#0E2530;
+  --d4:#3A7B9B; --d4t:#FFFFFF; --d5:#12455F; --d5t:#FFFFFF;
   --shadow:0 1px 2px rgba(20,31,41,.06), 0 8px 24px -18px rgba(20,31,41,.35);
   --r:10px;
 }
@@ -33,6 +36,8 @@
     --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
     --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
     --ok-solid:#57BE86; --bad-solid:#E4664D; --on-solid:#0E1519;
+    --d1:#1B2C36; --d1t:#95A6B2; --d2:#22485A; --d2t:#CFE0EA; --d3:#2F6B84; --d3t:#EAF3F8;
+    --d4:#4E97BA; --d4t:#0E1519; --d5:#8CCDEA; --d5t:#0E1519;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
   }
 }
@@ -44,6 +49,8 @@
   --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
   --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
     --ok-solid:#57BE86; --bad-solid:#E4664D; --on-solid:#0E1519;
+    --d1:#1B2C36; --d1t:#95A6B2; --d2:#22485A; --d2t:#CFE0EA; --d3:#2F6B84; --d3t:#EAF3F8;
+    --d4:#4E97BA; --d4t:#0E1519; --d5:#8CCDEA; --d5t:#0E1519;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
 }
 
@@ -201,6 +208,31 @@ td.def{color:var(--ink2);max-width:34ch}
 .pl-pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13.5px}
 .pl-mod{font-size:12px;color:var(--ink3)}
 .pl-sub{grid-column:1/-1;font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.pl-tags{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.plist li{border-left:4px solid transparent}
+.plist li.f1{border-left-color:var(--d1)}
+.plist li.f2{border-left-color:var(--d2)}
+.plist li.f3{border-left-color:var(--d3)}
+.plist li.f4{border-left-color:var(--d4)}
+.plist li.f5{border-left-color:var(--d5)}
+.dias{display:inline-flex;align-items:baseline;gap:4px;padding:2.5px 8px;border-radius:6px;
+  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:11.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dias small{font-size:10px;font-weight:500;opacity:.85}
+.d0{background:var(--surf3);color:var(--ink3)}
+.d1{background:var(--d1);color:var(--d1t)}
+.d2{background:var(--d2);color:var(--d2t)}
+.d3{background:var(--d3);color:var(--d3t)}
+.d4{background:var(--d4);color:var(--d4t)}
+.d5{background:var(--d5);color:var(--d5t)}
+.pbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:8px 16px;border-bottom:1px solid var(--line-soft)}
+.escala{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink3);flex-wrap:wrap}
+.escala .passos{display:flex;gap:2px}
+.escala i{width:20px;height:9px;border-radius:2px;display:block}
+.ordbtn{font:inherit;font-size:11.5px;font-weight:600;color:var(--accent);background:var(--surf2);
+  border:1px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer;white-space:nowrap}
+.ordbtn:hover{background:var(--surf3)}
+.ordbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 .skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
 
@@ -376,11 +408,13 @@ footer b{color:var(--ink2);font-weight:600}
       <div class="panel">
         <div class="phead"><h3>Limpeza de esteiras</h3><p id="c-sub">—</p></div>
         <div class="pstats" id="c-stats"></div>
+        <div class="pbar"><div class="escala" id="c-escala"></div><button class="ordbtn" id="c-ord" type="button">Mais dias primeiro</button></div>
         <ul class="plist" id="esteiras"></ul>
       </div>
       <div class="panel">
         <div class="phead"><h3>Preventiva com soprador</h3><p id="g-sub">—</p></div>
         <div class="pstats" id="g-stats"></div>
+        <div class="pbar"><div class="escala" id="g-escala"></div><button class="ordbtn" id="g-ord" type="button">Mais dias primeiro</button></div>
         <ul class="plist" id="geradores"></ul>
       </div>
     </div>
@@ -702,11 +736,55 @@ const agendaPill = st => {
   const s = String(st).toLowerCase();
   let c = "p-warn";
   if(s.includes("atrasad")) c="p-bad";
-  else if(s.includes("em dia") || s.includes("feito") || s.includes("concl")) c="p-ok";
+  else if(s.includes("execut") || s.includes("antecip") || s.includes("em dia") ||
+          s.includes("feito") || s.includes("concl")) c="p-ok";
   else if(s.includes("hoje") || s.includes("limpar")) c="p-info";
-  else if(s.includes("sede") || s.includes("reserva")) c="p-mute";
+  else if(s.includes("sede") || s.includes("reserva") || s.includes("aguard") ||
+          s.includes("previst") || s.includes("program")) c="p-mute";
   return `<span class="pill ${c}">${esc(st||"—")}</span>`;
 };
+
+/* ---------- dias sem limpeza: escala de um tom só ----------
+   As faixas são medidas em voltas do rodízio, não em números fixos:
+   se o ciclo mudar de tamanho, a escala acompanha. */
+const CORTES = [.5, 1, 1.5, 2.5];
+const ordemAgenda = { esteiras:"ciclo", geradores:"ciclo" };
+
+function faixaDias(dias, ciclo){
+  if(dias == null || isNaN(dias)) return 0;
+  const c = ciclo > 2 ? ciclo : 16;
+  for(let i=0;i<CORTES.length;i++) if(dias <= c*CORTES[i]) return i+1;
+  return 5;
+}
+
+const chipDias = (dias, ciclo) => {
+  const f = faixaDias(dias, ciclo);
+  return f === 0
+    ? `<span class="dias d0">— <small>dias</small></span>`
+    : `<span class="dias d${f}" title="${dias} ${dias===1?"dia":"dias"} sem limpeza">${dias} <small>${dias===1?"dia":"dias"}</small></span>`;
+};
+
+function legendaEscala(ciclo){
+  const c = ciclo > 2 ? ciclo : 16;
+  const lim = CORTES.map(x=>Math.round(c*x));
+  const faixa = i => i < 4 ? `até ${lim[i]} dias` : `mais de ${lim[3]} dias`;
+  const passos = [0,1,2,3,4].map(i=>`<i class="d${i+1}" title="${faixa(i)}"></i>`).join("");
+  return `<span>dias sem limpeza</span><span class="passos">${passos}</span>` +
+         `<span>menos &rarr; mais &middot; último passo: +${lim[3]} dias</span>`;
+}
+
+/** Monta a lista de um painel de agenda, na ordem do rodízio ou pelos dias. */
+function listaAgenda(itens, ciclo, chave, ehHoje, vazio){
+  const ord = ordemAgenda[chave] === "dias"
+    ? itens.slice().sort((a,b) => (b.dias==null?-1:b.dias) - (a.dias==null?-1:a.dias))
+    : itens;
+  return ord.map(e=>`
+    <li class="f${faixaDias(e.dias,ciclo)}${ehHoje.test(e.st)?" today":""}">
+      <div class="pl-main"><span class="pl-pre">${esc(e.pre)}</span><span class="pl-mod">${esc(e.mod)}</span></div>
+      <div class="pl-tags">${agendaPill(e.st)}${chipDias(e.dias,ciclo)}</div>
+      <div class="pl-sub">Programado ${esc(e.prog||"—")} &middot; última limpeza ${esc(e.ult||"—")}${e.extra?` &middot; ${esc(e.extra)}`:""}</div>
+    </li>`).join("") || `<li><div class="pl-sub">${vazio}</div></li>`;
+}
 
 function desenhar(){
   const disp = FROTA.filter(e=>pillClass(e.st)==="p-ok").length;
@@ -861,12 +939,10 @@ function agendas(){
     (META.diaCiclo ? statBox("Dia do ciclo", META.diaCiclo) : "") +
     (META.equipDia ? statBox("Equipamento de hoje", META.equipDia, null, "mono") : "") +
     statBox("Atrasados", atrasados, atrasados? "var(--bad)" : "var(--ok)");
-  $("esteiras").innerHTML = LIMPEZA.map(e=>`
-    <li${/hoje/i.test(e.st)?' class="today"':""}>
-      <div class="pl-main"><span class="pl-pre">${esc(e.pre)}</span><span class="pl-mod">${esc(e.mod)}</span></div>
-      <div>${agendaPill(e.st)}</div>
-      <div class="pl-sub">Programado ${esc(e.prog||"—")} &middot; última limpeza ${esc(e.ult||"—")} &middot; ${e.dias!=null?e.dias:"—"} dias sem limpeza${e.extra?` &middot; ${esc(e.extra)}`:""}</div>
-    </li>`).join("") || `<li><div class="pl-sub">Sem itens no cronograma.</div></li>`;
+  const cicloEsteiras = LIMPEZA.length;
+  $("c-escala").innerHTML = legendaEscala(cicloEsteiras);
+  $("c-ord").textContent = ordemAgenda.esteiras === "dias" ? "Ordem do rodízio" : "Mais dias primeiro";
+  $("esteiras").innerHTML = listaAgenda(LIMPEZA, cicloEsteiras, "esteiras", /hoje/i, "Sem itens no cronograma.");
 
   /* soprador */
   $("g-sub").textContent = META.progSoprador || "Preventiva dos geradores";
@@ -875,12 +951,10 @@ function agendas(){
     (META.hojeSoprador ? statBox("Hoje é dia?", META.hojeSoprador) : "") +
     (META.proxSoprador ? statBox("Próxima data", META.proxSoprador, null, "sm") : "") +
     statBox("Pendentes", pend, pend? "var(--bad)" : "var(--ok)");
-  $("geradores").innerHTML = SOPRADOR.map(g=>`
-    <li${/limpar hoje/i.test(g.st)?' class="today"':""}>
-      <div class="pl-main"><span class="pl-pre">${esc(g.pre)}</span><span class="pl-mod">${esc(g.mod)}</span></div>
-      <div>${agendaPill(g.st)}</div>
-      <div class="pl-sub">Programado ${esc(g.prog||"—")} &middot; última limpeza ${esc(g.ult||"—")} &middot; ${g.dias!=null?g.dias:"—"} dias sem limpeza${g.extra?` &middot; ${esc(g.extra)}`:""}</div>
-    </li>`).join("") || `<li><div class="pl-sub">Sem geradores no controle.</div></li>`;
+  const cicloSoprador = SOPRADOR.length;
+  $("g-escala").innerHTML = legendaEscala(cicloSoprador);
+  $("g-ord").textContent = ordemAgenda.geradores === "dias" ? "Ordem do rodízio" : "Mais dias primeiro";
+  $("geradores").innerHTML = listaAgenda(SOPRADOR, cicloSoprador, "geradores", /limpar hoje/i, "Sem geradores no controle.");
 }
 
 /* ---------- movimentações ---------- */
@@ -996,6 +1070,8 @@ $("f-local").addEventListener("change",e=>{filtros.loc=e.target.value;tabela();}
 $("f-q").addEventListener("input",e=>{filtros.q=e.target.value;tabela();});
 $("s-reload").addEventListener("click",carregar);
 $("mov-mais").addEventListener("click",()=>{ movVisiveis += POR_PAGINA; movimentacoes(); });
+$("c-ord").addEventListener("click",()=>{ ordemAgenda.esteiras   = ordemAgenda.esteiras==="dias"   ? "ciclo" : "dias"; agendas(); });
+$("g-ord").addEventListener("click",()=>{ ordemAgenda.geradores  = ordemAgenda.geradores==="dias"  ? "ciclo" : "dias"; agendas(); });
 
 /* ---------- vídeos nas laterais ---------- */
 function laterais(){
