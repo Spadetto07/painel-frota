@@ -237,6 +237,73 @@ td.def{color:var(--ink2);max-width:34ch}
 .skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
 
 
+/* ---------- modo TV ---------- */
+body.tv-on > header, body.tv-on > nav, body.tv-on > main, body.tv-on > footer{display:none}
+body.tv-on{overflow:hidden}
+.tv{position:fixed;inset:0;z-index:90;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;
+  font-size:clamp(14px,1.15vw,22px)}
+.tv[hidden]{display:none}
+.tv-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+  padding:2.2vh 2.4vw 1.6vh;border-bottom:1px solid var(--line);background:var(--surf)}
+.tv-top .eyebrow{font-size:.62em;margin-bottom:.3em}
+.tv-top h1{font-size:2.6em;line-height:1;text-transform:uppercase}
+.tv-rel{text-align:right;flex:0 0 auto}
+.tv-rel .hora{font-family:"IBM Plex Mono",monospace;font-size:2.2em;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.tv-rel .car{font-size:.72em;color:var(--ink3);margin-top:.3em}
+.tv-corpo{flex:1;padding:2.4vh 2.4vw;overflow:hidden;display:flex;flex-direction:column}
+.tv-rod{display:flex;align-items:center;gap:16px;padding:1.1vh 2.4vw 1.4vh;border-top:1px solid var(--line);background:var(--surf)}
+.tv-prog{flex:1;height:4px;background:var(--surf3);border-radius:2px;overflow:hidden}
+.tv-prog i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px}
+.tv-pontos{display:flex;gap:6px}
+.tv-pontos i{width:8px;height:8px;border-radius:50%;background:var(--surf3)}
+.tv-pontos i.on{background:var(--accent)}
+.tv-sair{font:inherit;font-size:.72em;font-weight:600;color:var(--ink3);background:transparent;border:1px solid var(--line);
+  border-radius:999px;padding:.35em .9em;cursor:pointer}
+.tv-sair:hover{color:var(--ink);background:var(--surf2)}
+
+.tv-hero{display:grid;grid-template-columns:1.05fr 1.45fr;gap:2vw;flex:1;align-items:stretch}
+.tv-esq{display:flex;flex-direction:column;gap:2vh}
+.tv-esq .tv-big{flex:1}
+.tv-big{background:linear-gradient(160deg,var(--accent-soft),var(--surf) 72%);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));
+  border-radius:14px;padding:2.4vh 2vw;display:flex;flex-direction:column;justify-content:center}
+.tv-big .k{font-size:.8em;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.tv-big .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:9.5em;line-height:.86;color:var(--accent);font-variant-numeric:tabular-nums}
+.tv-tres{display:grid;grid-template-columns:repeat(3,1fr);gap:1vw;margin-top:2vh}
+.tv-tres > div{background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:1.4vh 1vw}
+.tv-tres .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.9em;line-height:1;font-variant-numeric:tabular-nums}
+.tv-tres .k{font-size:.66em;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.tv-tres .ok .n{color:var(--ok)} .tv-tres .bad .n{color:var(--bad)}
+.tv-cx{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:1.8vh 1.4vw;display:flex;flex-direction:column}
+.tv-cx h2{font-size:1.05em;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);margin-bottom:1vh}
+.tv-cx .graf{flex:1;display:flex;align-items:center}
+.tv-cx .graf svg{width:100%;height:auto}
+
+.tv-grade{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2vw 1.2vw;flex:1;align-content:start}
+.tv-card{background:var(--surf);border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:12px;padding:1.5vh 1.2vw}
+.tv-card .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.tv-card .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5em}
+.tv-card .d{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.1em;line-height:1;color:var(--bad)}
+.tv-card .d small{display:block;font-size:.3em;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.tv-card .mod{font-size:.76em;color:var(--ink3)}
+.tv-card .def{font-size:.86em;margin-top:.6vh;line-height:1.35}
+.tv-barras{display:flex;flex-direction:column;gap:1.1vh;flex:1;justify-content:center}
+.tv-barras .l{display:grid;grid-template-columns:11em 1fr 5.5em;gap:1vw;align-items:center;font-size:1em}
+.tv-barras .nome{font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-size:.86em}
+.tv-barras .bar{height:1.5em;border-radius:5px;background:var(--surf3);overflow:hidden;display:flex}
+.tv-barras .bar i{display:block;height:100%}
+.tv-barras .pc{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.7em;text-align:right;font-variant-numeric:tabular-nums}
+.tv-lista{display:flex;flex-direction:column;gap:.9vh;flex:1}
+.tv-lista li{display:grid;grid-template-columns:10em 1fr auto;gap:1vw;align-items:center;background:var(--surf);
+  border:1px solid var(--line);border-left:5px solid var(--mute);border-radius:10px;padding:1.1vh 1vw;list-style:none}
+.tv-lista li.voltou{border-left-color:var(--ok-solid)}
+.tv-lista li.parou{border-left-color:var(--bad-solid)}
+.tv-lista li.motivo{border-left-color:var(--warn)}
+.tv-lista .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.15em}
+.tv-lista .q{font-family:"IBM Plex Mono",monospace;font-size:.76em;color:var(--ink3)}
+.tv-lista .txt{font-size:.9em}
+.tv-vazio{margin:auto;color:var(--ink3);font-size:1.2em}
+@media (max-width:900px){ .tv-hero{grid-template-columns:1fr} .tv-grade{grid-template-columns:1fr 1fr} }
+
 /* ---------- faixa de alertas ---------- */
 .alertas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
 .alertas .tit{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-right:2px}
@@ -419,6 +486,7 @@ footer b{color:var(--ink2);font-weight:600}
       <div class="v" id="s-date">—</div>
       <div class="z" id="s-time">&nbsp;</div>
       <button class="reload" id="s-reload" disabled>Buscar de novo</button>
+      <button class="reload" id="s-tv" title="Tela cheia para pendurar numa TV">Modo TV</button>
     </div>
   </div>
 </header>
@@ -558,6 +626,25 @@ footer b{color:var(--ink2);font-weight:600}
   </section>
 </main>
 
+<div class="tv" id="tv" hidden>
+  <div class="tv-top">
+    <div>
+      <p class="eyebrow">Obras 720 &amp; 731 &middot; Manutenção</p>
+      <h1 id="tv-tit">Panorama</h1>
+    </div>
+    <div class="tv-rel">
+      <div class="hora" id="tv-hora">--:--</div>
+      <div class="car" id="tv-car">&nbsp;</div>
+    </div>
+  </div>
+  <div class="tv-corpo" id="tv-corpo"></div>
+  <div class="tv-rod">
+    <div class="tv-pontos" id="tv-pontos"></div>
+    <div class="tv-prog"><i id="tv-barra"></i></div>
+    <button class="tv-sair" id="tv-sair" type="button">Sair do modo TV</button>
+  </div>
+</div>
+
 <div class="ficha" id="ficha" hidden>
   <div class="ficha-fundo" id="ficha-fundo"></div>
   <aside class="ficha-cx" role="dialog" aria-modal="true" aria-labelledby="ficha-tit">
@@ -585,7 +672,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
-const VERSAO = "1.2";
+const VERSAO = "1.3";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1522,6 +1609,152 @@ async function copiar(texto, botao, ok){
   setTimeout(() => botao.textContent = antes, 2200);
 }
 
+
+/* ---------- modo TV ---------- */
+const TV_SEGUNDOS = 15;
+let tvLigado = false, tvTela = 0, tvTimer = null, tvRelogio = null, tvT0 = 0;
+
+/** Um gráfico pequeno, só a linha, para caber no cartão da TV. */
+function miniGrafico(serie, W, H){
+  if(serie.length < 2) return `<p class="tv-vazio">Sem histórico ainda</p>`;
+  const L = 40, R = 8, T = 8, B = 20;
+  const iw = W-L-R, ih = H-T-B;
+  const vals = serie.map(p=>p.pct).filter(v=>v!=null);
+  let min = Math.max(0, Math.floor((Math.min.apply(null,vals)-4)/5)*5);
+  let max = Math.min(100, Math.ceil((Math.max.apply(null,vals)+4)/5)*5);
+  if(max-min < 10) max = Math.min(100, min+10);
+  const px = i => L + iw*(i/(serie.length-1));
+  const py = v => T + ih - ih*((v-min)/(max-min));
+  const g = [];
+  for(let k=0;k<=3;k++){
+    const v = min + (max-min)*k/3, yy = py(v).toFixed(1);
+    g.push(`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text x="${L-6}" y="${yy}" text-anchor="end" dominant-baseline="middle">${Math.round(v)}%</text>`);
+  }
+  const d = "M" + serie.map((p,i)=>`${px(i).toFixed(1)},${py(p.pct==null?min:p.pct).toFixed(1)}`).join(" L");
+  return `<svg viewBox="0 0 ${W} ${H}">
+    <g class="gy">${g.join("")}</g>
+    <g class="gx"><text x="${L}" y="${H-4}" text-anchor="start">${ptDia(serie[0].dia)}</text>
+      <text x="${W-R}" y="${H-4}" text-anchor="end">${ptDia(serie[serie.length-1].dia)}</text></g>
+    <path class="garea" d="${d} L${px(serie.length-1).toFixed(1)},${(T+ih).toFixed(1)} L${L},${(T+ih).toFixed(1)} Z"/>
+    <path class="glinha" d="${d}"/>
+  </svg>`;
+}
+
+const TELAS = [
+  { nome:"Panorama", monta(){
+      const disp = FROTA.filter(e=>pillClass(e.st)==="p-ok").length;
+      const ind  = FROTA.filter(e=>pillClass(e.st)==="p-bad").length;
+      const base = disp + ind;
+      const pct  = base ? (disp/base*100).toFixed(1).replace(".",",")+"%" : "—";
+      return `<div class="tv-hero">
+        <div class="tv-esq">
+          <div class="tv-big"><div class="k">Disponibilidade</div><div class="n">${pct}</div></div>
+          <div class="tv-tres" style="margin-top:0">
+            <div><div class="k">Frota</div><div class="n">${FROTA.length}</div></div>
+            <div class="ok"><div class="k">Disponíveis</div><div class="n">${disp}</div></div>
+            <div class="bad"><div class="k">Parados</div><div class="n">${ind}</div></div>
+          </div>
+        </div>
+        <div class="tv-cx"><h2>Últimos 30 dias</h2>
+          <div class="graf">${miniGrafico(serieHistorico(30), 900, 620)}</div></div>
+      </div>`;
+    }},
+  { nome:"Equipamentos parados", monta(){
+      const parados = FROTA.filter(e=>pillClass(e.st)==="p-bad").sort((a,b)=>(b.dias??-1)-(a.dias??-1)).slice(0,9);
+      if(!parados.length) return `<p class="tv-vazio">Nenhum equipamento parado. Frota 100% disponível.</p>`;
+      return `<div class="tv-grade">` + parados.map(e=>`
+        <div class="tv-card">
+          <div class="top">
+            <div><div class="pre">${esc(e.pre)}</div><div class="mod">${esc(e.mod)} &middot; ${esc(String(e.cat).toLowerCase())}</div></div>
+            ${e.dias!=null?`<div class="d">${e.dias}<small>dias</small></div>`:""}
+          </div>
+          <div class="def">${esc(e.def||"Sem descrição na planilha")}</div>
+        </div>`).join("") + `</div>`;
+    }},
+  { nome:"Disponibilidade por categoria", monta(){
+      const cats = {};
+      FROTA.forEach(e=>{ const c = e.cat || "SEM CATEGORIA"; (cats[c] = cats[c] || []).push(e); });
+      const linhas = Object.keys(cats).sort().map(nome=>{
+        const l = cats[nome];
+        const d = l.filter(e=>pillClass(e.st)==="p-ok").length;
+        const i = l.filter(e=>pillClass(e.st)==="p-bad").length;
+        const base = d + i, pc = base ? Math.round(d/base*100) : null;
+        return `<div class="l">
+          <span class="nome">${esc(nome)}</span>
+          <span class="bar">${base?`<i style="width:${d/base*100}%;background:var(--ok)"></i><i style="width:${i/base*100}%;background:var(--bad)"></i>`:""}</span>
+          <span class="pc">${pc==null?"—":pc+"%"}</span></div>`;
+      });
+      return `<div class="tv-barras">${linhas.join("")}</div>`;
+    }},
+  { nome:"Limpeza de esteiras", monta(){
+      const atr = LIMPEZA.filter(e=>/atrasad/i.test(e.st))
+        .sort((a,b)=>(b.dias??-1)-(a.dias??-1)).slice(0,9);
+      if(!LIMPEZA.length) return `<p class="tv-vazio">Cronograma de limpeza não carregado.</p>`;
+      if(!atr.length) return `<p class="tv-vazio">Nenhum equipamento atrasado no rodízio de limpeza.</p>`;
+      return `<div class="tv-grade">` + atr.map(e=>`
+        <div class="tv-card" style="border-left-color:var(--warn)">
+          <div class="top">
+            <div><div class="pre">${esc(e.pre)}</div><div class="mod">${esc(e.mod)}</div></div>
+            ${e.dias!=null?`<div class="d" style="color:var(--warn-ink)">${e.dias}<small>dias sem limpar</small></div>`:""}
+          </div>
+          <div class="def">Programado ${esc(e.prog||"—")} &middot; última ${esc(e.ult||"—")}</div>
+        </div>`).join("") + `</div>`;
+    }},
+  { nome:"Últimas movimentações", monta(){
+      const l = MOVS.slice(0,6);
+      if(!l.length) return `<p class="tv-vazio">Nenhuma movimentação registrada ainda.</p>`;
+      return `<ul class="tv-lista">` + l.map(m=>`
+        <li class="${classeMov(m.tipo)}">
+          <span><span class="pre">${esc(m.pre)}</span><br><span class="q">${esc(m.data)} ${esc(m.hora||"")}</span></span>
+          <span class="txt">${esc(TEXTO_MOV[m.tipo]||"")}<br><span class="q">${esc(m.motivo||"Sem motivo informado")}</span></span>
+          <span class="q">${esc(m.obra||"")} &middot; ${esc(m.loc||"")}</span>
+        </li>`).join("") + `</ul>`;
+    }}
+];
+
+function pintaTV(){
+  const t = TELAS[tvTela];
+  $("tv-tit").textContent = t.nome;
+  $("tv-corpo").innerHTML = t.monta();
+  $("tv-pontos").innerHTML = TELAS.map((_,i)=>`<i class="${i===tvTela?"on":""}"></i>`).join("");
+  $("tv-car").textContent = META.carimboData ? `planilha salva em ${META.carimboData} ${META.carimboHora||""}` : "";
+  tvT0 = Date.now();
+}
+
+function passoTV(){
+  tvTela = (tvTela + 1) % TELAS.length;
+  pintaTV();
+}
+
+function tickTV(){
+  const agora = new Date();
+  $("tv-hora").textContent = `${String(agora.getHours()).padStart(2,"0")}:${String(agora.getMinutes()).padStart(2,"0")}`;
+  const p = Math.min(1, (Date.now() - tvT0) / (TV_SEGUNDOS*1000));
+  $("tv-barra").style.width = (p*100).toFixed(1) + "%";
+}
+
+function ligaTV(){
+  if(tvLigado) return;
+  tvLigado = true; tvTela = 0;
+  document.body.classList.add("tv-on");
+  $("tv").hidden = false;
+  pintaTV();
+  tvTimer   = setInterval(passoTV, TV_SEGUNDOS*1000);
+  tvRelogio = setInterval(tickTV, 250);
+  tickTV();
+  const el = document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+}
+
+function desligaTV(){
+  if(!tvLigado) return;
+  tvLigado = false;
+  clearInterval(tvTimer); clearInterval(tvRelogio);
+  $("tv").hidden = true;
+  document.body.classList.remove("tv-on");
+  if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+}
+
 /* ---------- carimbo e avisos ---------- */
 function carimbo(estado){
   const dot=$("s-dot");
@@ -1572,6 +1805,7 @@ async function carregar(){
     }
     desenhar();
     alertas();
+    if(tvLigado) pintaTV();
     evolucao();
     movimentacoes();
     const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações"].filter(Boolean);
@@ -1610,6 +1844,14 @@ document.addEventListener("click", ev => {
   if(eq){ abrirFicha(eq.dataset.eq); return; }
   const al = ev.target.closest("[data-alerta]");
   if(al) irPara(al.dataset.alerta);
+});
+$("s-tv").addEventListener("click", ligaTV);
+$("tv-sair").addEventListener("click", desligaTV);
+$("tv-corpo").addEventListener("click", passoTV);
+document.addEventListener("keydown", ev => {
+  if(!tvLigado) return;
+  if(ev.key === "Escape") desligaTV();
+  if(ev.key === "ArrowRight" || ev.key === " ") { ev.preventDefault(); passoTV(); }
 });
 $("ficha-x").addEventListener("click", fecharFicha);
 $("ficha-fundo").addEventListener("click", fecharFicha);
@@ -1675,6 +1917,7 @@ function laterais(){
 laterais();
 
 const veioComFiltro = lerParametros();
+const querTV = new URLSearchParams(location.search).get("tv") === "1";
 carregar().then(() => {
   if(veioComFiltro){
     sincronizaControles();
@@ -1682,8 +1925,14 @@ carregar().then(() => {
     const alvo = document.getElementById("frota");
     if(alvo) alvo.scrollIntoView({block:"start"});
   }
+  if(querTV) ligaTV();
 });
-setInterval(carregar, 5*60*1000);
+/* de 5 em 5 minutos no uso normal; de 2 em 2 quando está numa TV */
+let ultimaCarga = Date.now();
+setInterval(() => {
+  const intervalo = tvLigado ? 2*60*1000 : 5*60*1000;
+  if(Date.now() - ultimaCarga >= intervalo){ ultimaCarga = Date.now(); carregar(); }
+}, 30*1000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) carregar(); });
 </script>
 </body>
