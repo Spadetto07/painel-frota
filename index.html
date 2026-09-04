@@ -236,6 +236,43 @@ td.def{color:var(--ink2);max-width:34ch}
 
 .skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
 
+
+/* ---------- evolução: gráfico e indicadores ---------- */
+.card-graf{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px 10px;margin-top:20px}
+.graf-head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.graf-head h3{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.graf-head p{margin:3px 0 0;font-size:12px;color:var(--ink3)}
+.periodos{display:flex;gap:6px}
+.graf-wrap{position:relative;margin-top:6px}
+.graf-wrap svg{display:block;width:100%}
+.gx line,.gy line{stroke:var(--line-soft)}
+.gx text,.gy text{fill:var(--ink3);font-size:11px;font-family:"IBM Plex Sans",sans-serif}
+.glinha{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.garea{fill:var(--accent);opacity:.12}
+.gmeta{stroke:var(--ink3);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+.gcursor{stroke:var(--accent);stroke-width:1}
+.gponto{fill:var(--accent);stroke:var(--surf);stroke-width:2}
+.dica{position:absolute;pointer-events:none;z-index:5;background:var(--surf2);border:1px solid var(--line);
+  border-radius:8px;padding:7px 10px;box-shadow:var(--shadow);font-size:12px;line-height:1.4;white-space:nowrap}
+.dica b{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--ink)}
+.dica span{color:var(--ink3)}
+.grafvazio{padding:34px 0;text-align:center;color:var(--ink3);font-size:13px}
+
+.inds{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:12px;margin-top:12px;align-items:start}
+.ind{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;box-shadow:var(--shadow)}
+.ind .lab{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.ind .lab span{letter-spacing:0;text-transform:none;font-weight:500}
+.ind .val{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:44px;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums}
+.ind .val small{font-size:17px;font-weight:600;color:var(--ink3);margin-left:6px}
+.ind .foot{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.45}
+.rein{list-style:none;margin:9px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
+.rein li{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;font-size:12.5px}
+.rein .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px}
+.rein .barra{height:8px;border-radius:4px;background:var(--accent);min-width:6px}
+.rein .qt{font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600;font-size:12px}
+.rein .vazio{grid-column:1/-1;color:var(--ink3)}
+@media (max-width:900px){ .inds{grid-template-columns:1fr} }
+
 /* ---------- movimentações ---------- */
 .mov{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mov li{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--mute);border-radius:var(--r);padding:12px 15px;box-shadow:var(--shadow);
@@ -335,6 +372,7 @@ footer b{color:var(--ink2);font-weight:600}
   <div class="jump-in">
     <a href="#panorama">Panorama</a>
     <a href="#categorias">Por categoria</a>
+    <a href="#evolucao">Evolução</a>
     <a href="#parados">Equipamentos parados</a>
     <a href="#frota">Frota completa</a>
     <a href="#rodante">Material rodante</a>
@@ -366,6 +404,41 @@ footer b{color:var(--ink2);font-weight:600}
       <span><i class="sw" style="background:var(--bad)"></i> Indisponível</span>
       <span><i class="sw" style="background:var(--mute)"></i> Fora da base (emprestada, sucata)</span>
     </p>
+  </section>
+
+  <section id="evolucao">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Evolução e indicadores</h2><span class="sec-note" id="ev-note">—</span></div>
+    <div class="card-graf">
+      <div class="graf-head">
+        <div>
+          <h3>Disponibilidade da frota</h3>
+          <p id="graf-sub">—</p>
+        </div>
+        <div class="periodos" role="group" aria-label="Período do gráfico">
+          <button class="chip" data-dias="30" aria-pressed="true">30 dias</button>
+          <button class="chip" data-dias="60" aria-pressed="false">60 dias</button>
+          <button class="chip" data-dias="90" aria-pressed="false">90 dias</button>
+        </div>
+      </div>
+      <div class="graf-wrap" id="graf-wrap"><div id="graf-svg"></div><div class="dica" id="graf-dica" hidden></div></div>
+    </div>
+    <div class="inds">
+      <div class="ind">
+        <div class="lab">Tempo médio de parada</div>
+        <div class="val" id="i-mttr">—</div>
+        <div class="foot" id="i-mttr-sub">—</div>
+      </div>
+      <div class="ind">
+        <div class="lab">Parados além da previsão</div>
+        <div class="val" id="i-atraso">—</div>
+        <div class="foot" id="i-atraso-sub">—</div>
+      </div>
+      <div class="ind wide">
+        <div class="lab">Quem mais parou <span id="i-rein-per"></span></div>
+        <ol class="rein" id="i-rein"></ol>
+      </div>
+    </div>
   </section>
 
   <section id="parados">
@@ -431,6 +504,7 @@ footer b{color:var(--ink2);font-weight:600}
 <footer>
   <div class="wrap foot-in">
     <span>Fonte: planilha <b>Controle de Manutenção e Disponibilidade da Frota</b> — abas Controle de Frota, Cronograma Limpeza e Preventiva Soprador.</span>
+    <span>Painel <b id="f-versao">—</b></span>
     <span>O carimbo no topo é a hora em que a planilha foi salva pela última vez — igual para todo mundo, não a hora em que você abriu a página. O Google leva alguns minutos para propagar uma edição recém-salva.</span>
   </div>
 </footer>
@@ -439,6 +513,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
+const VERSAO = "1.1";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -507,6 +582,9 @@ const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}
 
 /* ---------- estado ---------- */
 let FROTA=[], LIMPEZA=[], SOPRADOR=[], MOVS=[], META={};
+/* o log cru, sem agrupar — é dele que sai a linha do tempo */
+let MOVS_BRUTO=[];
+let periodoHist = 30;
 let movVisiveis = POR_PAGINA;
 /* categorias que o usuário deixou abertas — sobrevivem à atualização automática */
 const abertas = new Set();
@@ -622,6 +700,7 @@ function lerMovimentacoes(rows){
       obra:cell(r,c.obra), loc:cell(r,c.loc)
     });
   }
+  MOVS_BRUTO = out.slice();
   return agrupar(out);   /* a planilha já grava a mais recente no topo */
 }
 
@@ -957,6 +1036,207 @@ function agendas(){
   $("geradores").innerHTML = listaAgenda(SOPRADOR, cicloSoprador, "geradores", /limpar hoje/i, "Sem geradores no controle.");
 }
 
+
+/* ---------- evolução: linha do tempo e indicadores ---------- */
+const DIA = 86400000;
+const meiaNoite = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+const ptDia = d => `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
+const classeEstado = st => { const c = pillClass(st); return c==="p-ok" ? "ok" : c==="p-bad" ? "ind" : "fora"; };
+
+/**
+ * Reconstrói a disponibilidade dia a dia andando de trás para frente:
+ * parte do estado de hoje e desfaz cada movimentação registrada.
+ * Só vai até o dia da movimentação mais antiga — antes disso não há o que reconstruir.
+ */
+function serieHistorico(dias){
+  if(!FROTA.length) return [];
+  const eventos = MOVS_BRUTO
+    .filter(m => m.ts != null && (m.tipo === "disp" || m.tipo === "ind"))
+    .slice().sort((a,b) => b.ts - a.ts);
+  if(!eventos.length) return [];
+  const inicio = meiaNoite(eventos[eventos.length-1].ts).getTime();
+
+  const estado = {};
+  FROTA.forEach(e => estado[e.pre] = classeEstado(e.st));
+
+  const hoje = meiaNoite(new Date()).getTime();
+  const serie = [];
+  let i = 0;
+  for(let d = 0; d < dias; d++){
+    const t = hoje - d*DIA;
+    if(t < inicio) break;
+    let ok = 0, ind = 0;
+    for(const k in estado){ if(estado[k] === "ok") ok++; else if(estado[k] === "ind") ind++; }
+    serie.push({ dia:new Date(t), ok, ind, pct: (ok+ind) ? ok/(ok+ind)*100 : null });
+    while(i < eventos.length && eventos[i].ts >= t){
+      const m = eventos[i];
+      if(m.pre in estado) estado[m.pre] = classeEstado(m.de);
+      i++;
+    }
+  }
+  return serie.reverse();
+}
+
+let SERIE = [];
+function desenhaGrafico(){
+  const box = $("graf-svg"), dica = $("graf-dica");
+  if(!box) return;
+  dica.hidden = true;
+  SERIE = serieHistorico(periodoHist);
+
+  if(SERIE.length < 2){
+    $("graf-sub").textContent = "o histórico se forma sozinho conforme as movimentações vão sendo registradas";
+    box.innerHTML = `<div class="grafvazio">Ainda não há dias suficientes registrados para desenhar a linha.</div>`;
+    return;
+  }
+  $("graf-sub").textContent =
+    `${ptDia(SERIE[0].dia)} a ${ptDia(SERIE[SERIE.length-1].dia)} · ${SERIE.length} dias · reconstruído do registro de movimentações`;
+
+  const L = 42, R = 12, T = 12, B = 24, H = 230;
+  const W = Math.max(320, box.clientWidth || 880);
+  const iw = W - L - R, ih = H - T - B;
+
+  const vals = SERIE.map(p => p.pct).filter(v => v != null);
+  let min = Math.floor((Math.min.apply(null, vals) - 4) / 5) * 5;
+  let max = Math.ceil((Math.max.apply(null, vals) + 4) / 5) * 5;
+  min = Math.max(0, min); max = Math.min(100, max);
+  if(max - min < 10) max = Math.min(100, min + 10);
+  if(max === min) min = Math.max(0, max - 10);
+
+  const px = i => L + iw * (i / (SERIE.length - 1));
+  const py = v => T + ih - ih * ((v - min) / (max - min));
+
+  const linhas = [], rotulos = [];
+  for(let g = 0; g <= 4; g++){
+    const v = min + (max - min) * g / 4, yy = py(v).toFixed(1);
+    linhas.push(`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/>`);
+    rotulos.push(`<text x="${L-8}" y="${yy}" text-anchor="end" dominant-baseline="middle">${Math.round(v)}%</text>`);
+  }
+
+  const passo = Math.max(1, Math.round((SERIE.length - 1) / 5));
+  const marcas = [];
+  for(let i = 0; i < SERIE.length; i += passo) marcas.push(i);
+  const ultimo = SERIE.length - 1;
+  /* o último dia sempre aparece; se ficar colado no anterior, esse sai */
+  if(marcas[marcas.length-1] !== ultimo){
+    if(ultimo - marcas[marcas.length-1] < passo*0.6) marcas.pop();
+    marcas.push(ultimo);
+  }
+  const datas = marcas.map(i => {
+    const anc = i === 0 ? "start" : i === ultimo ? "end" : "middle";
+    return `<text x="${px(i).toFixed(1)}" y="${H-6}" text-anchor="${anc}">${ptDia(SERIE[i].dia)}</text>`;
+  });
+
+  const pts = SERIE.map((p,i) => `${px(i).toFixed(1)},${py(p.pct == null ? min : p.pct).toFixed(1)}`);
+  const linha = "M" + pts.join(" L");
+  const area  = `${linha} L${px(SERIE.length-1).toFixed(1)},${(T+ih).toFixed(1)} L${L},${(T+ih).toFixed(1)} Z`;
+  const med = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const ym = py(med).toFixed(1);
+
+  box.innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img"
+        aria-label="Disponibilidade da frota nos últimos ${SERIE.length} dias, média ${med.toFixed(1)}%">
+      <g class="gy">${linhas.join("")}${rotulos.join("")}</g>
+      <g class="gx">${datas.join("")}</g>
+      <path class="garea" d="${area}"/>
+      <line class="gmeta" x1="${L}" y1="${ym}" x2="${W-R}" y2="${ym}"><title>média do período: ${med.toFixed(1).replace(".",",")}%</title></line>
+      <path class="glinha" d="${linha}"/>
+      <g id="graf-cursor" style="display:none">
+        <line class="gcursor" y1="${T}" y2="${T+ih}"/>
+        <circle class="gponto" r="4.5"/>
+      </g>
+      <rect id="graf-alvo" x="${L}" y="${T}" width="${iw}" height="${ih}" fill="transparent" style="cursor:crosshair"/>
+    </svg>`;
+
+  const svg = box.querySelector("svg");
+  const alvo = box.querySelector("#graf-alvo");
+  const cursor = box.querySelector("#graf-cursor");
+
+  const mostrar = ev => {
+    const r = svg.getBoundingClientRect();
+    const k = (r.width || W) / W;
+    const mx = (ev.clientX - r.left) / k;
+    let i = Math.round((mx - L) / iw * (SERIE.length - 1));
+    i = Math.max(0, Math.min(SERIE.length - 1, i));
+    const pt = SERIE[i], vy = py(pt.pct == null ? min : pt.pct);
+    cursor.style.display = "";
+    cursor.querySelector("line").setAttribute("x1", px(i));
+    cursor.querySelector("line").setAttribute("x2", px(i));
+    cursor.querySelector("circle").setAttribute("cx", px(i));
+    cursor.querySelector("circle").setAttribute("cy", vy);
+    dica.hidden = false;
+    dica.innerHTML = `<b>${pt.pct==null ? "—" : pt.pct.toFixed(1).replace(".",",")+"%"}</b><br>
+      <span>${ptDia(pt.dia)} &middot; ${pt.ok} disponíveis &middot; ${pt.ind} parados</span>`;
+    const larg = dica.offsetWidth || 160;
+    let esq = px(i) * k + 12;
+    if(esq + larg > r.width) esq = px(i) * k - larg - 12;
+    dica.style.left = Math.max(0, esq) + "px";
+    dica.style.top  = Math.max(0, vy * k - 48) + "px";
+  };
+  alvo.addEventListener("mousemove", mostrar);
+  alvo.addEventListener("mouseleave", () => { cursor.style.display = "none"; dica.hidden = true; });
+}
+
+function indicadores(){
+  /* tempo médio de parada: casa cada "ficou parado" com o "voltou a operar" seguinte */
+  const porPre = {};
+  MOVS_BRUTO.filter(m => m.ts != null && (m.tipo === "disp" || m.tipo === "ind"))
+    .slice().sort((a,b) => a.ts - b.ts)
+    .forEach(m => { (porPre[m.pre] = porPre[m.pre] || []).push(m); });
+
+  const duracoes = [];
+  Object.keys(porPre).forEach(k => {
+    let aberto = null;
+    porPre[k].forEach(m => {
+      if(m.tipo === "ind") aberto = m.ts;
+      else if(aberto != null){ duracoes.push((m.ts - aberto) / DIA); aberto = null; }
+    });
+  });
+  const media = duracoes.length ? duracoes.reduce((a,b) => a+b, 0) / duracoes.length : null;
+  $("i-mttr").innerHTML = media == null ? "—" : `${media.toFixed(1).replace(".",",")}<small>dias</small>`;
+  $("i-mttr-sub").textContent = duracoes.length
+    ? `média de ${duracoes.length} parada${duracoes.length===1?"":"s"} que já terminaram`
+    : "nenhuma parada concluída no registro ainda";
+
+  /* parados que já passaram da data prevista de retorno */
+  const hoje = meiaNoite(new Date()).getTime();
+  const parados = FROTA.filter(e => pillClass(e.st) === "p-bad");
+  const venc = parados.filter(e => { const t = instante(e.prev, "00:00"); return t != null && t < hoje; });
+  const sem  = parados.filter(e => instante(e.prev, "00:00") == null).length;
+  $("i-atraso").innerHTML = `${venc.length}<small>de ${parados.length}</small>`;
+  $("i-atraso-sub").textContent = parados.length
+    ? (venc.length ? `${venc.map(e=>e.pre).slice(0,4).join(", ")}${venc.length>4?"…":""} · ${sem} sem previsão`
+                   : `nenhum passou da previsão · ${sem} sem previsão`)
+    : "nenhum equipamento parado";
+
+  /* quem mais parou nos últimos 90 dias */
+  const corte = Date.now() - 90*DIA;
+  const cont = {};
+  MOVS_BRUTO.filter(m => m.tipo === "ind" && m.ts != null && m.ts >= corte)
+            .forEach(m => cont[m.pre] = (cont[m.pre] || 0) + 1);
+  const top = Object.keys(cont).map(k => [k, cont[k]]).sort((a,b) => b[1] - a[1]).slice(0,5);
+  $("i-rein-per").textContent = "· últimos 90 dias";
+  const maior = top.length ? top[0][1] : 1;
+  $("i-rein").innerHTML = top.length
+    ? top.map(function(par){
+        const pre = par[0], n = par[1];
+        const eq = FROTA.filter(e => e.pre === pre)[0];
+        return `<li><span class="pre">${esc(pre)}</span>
+          <span class="barra" style="width:${Math.round(n/maior*100)}%" title="${n} parada${n===1?"":"s"}"></span>
+          <span class="qt">${n}&times;</span>
+          ${eq ? `<span class="pl-mod" style="grid-column:1/-1;font-size:11px">${esc(eq.mod)} · ${esc(String(eq.cat).toLowerCase())}</span>` : ""}</li>`;
+      }).join("")
+    : `<li><span class="vazio">Nenhuma parada registrada no período.</span></li>`;
+}
+
+function evolucao(){
+  $("ev-note").textContent = MOVS_BRUTO.length
+    ? `calculado a partir de ${MOVS_BRUTO.length} registros de movimentação`
+    : "aguardando os primeiros registros";
+  desenhaGrafico();
+  indicadores();
+}
+
 /* ---------- movimentações ---------- */
 const CLASSE_MOV = { disp:"voltou", ind:"parou", motivo:"motivo", outro:"" };
 const PILL_MOV   = { disp:"p-ok forte", ind:"p-bad forte", motivo:"p-warn", outro:"p-mute" };
@@ -1039,6 +1319,7 @@ async function carregar(){
       META.proxSoprador = fmtDate(kv(rs,"Próxima data prevista"));
     }
     desenhar();
+    evolucao();
     movimentacoes();
     const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações"].filter(Boolean);
     aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
@@ -1060,8 +1341,8 @@ async function carregar(){
   }
 }
 
-document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
-  document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+document.querySelectorAll("#frota .chip").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#frota .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   filtros.st=b.dataset.st; tabela();
 }));
 $("f-cat").addEventListener("change",e=>{filtros.cat=e.target.value;tabela();});
@@ -1069,6 +1350,14 @@ $("f-obra").addEventListener("change",e=>{filtros.obra=e.target.value;tabela();}
 $("f-local").addEventListener("change",e=>{filtros.loc=e.target.value;tabela();});
 $("f-q").addEventListener("input",e=>{filtros.q=e.target.value;tabela();});
 $("s-reload").addEventListener("click",carregar);
+document.querySelectorAll(".periodos .chip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".periodos .chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  periodoHist = Number(b.dataset.dias) || 30;
+  desenhaGrafico();
+}));
+let redesenho;
+window.addEventListener("resize", () => { clearTimeout(redesenho); redesenho = setTimeout(desenhaGrafico, 200); });
+$("f-versao").textContent = "v" + VERSAO;
 $("mov-mais").addEventListener("click",()=>{ movVisiveis += POR_PAGINA; movimentacoes(); });
 $("c-ord").addEventListener("click",()=>{ ordemAgenda.esteiras   = ordemAgenda.esteiras==="dias"   ? "ciclo" : "dias"; agendas(); });
 $("g-ord").addEventListener("click",()=>{ ordemAgenda.geradores  = ordemAgenda.geradores==="dias"  ? "ciclo" : "dias"; agendas(); });
