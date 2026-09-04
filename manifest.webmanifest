@@ -1,0 +1,17 @@
+{
+  "name": "Disponibilidade da Frota — Obras 720 & 731",
+  "short_name": "Frota 720/731",
+  "description": "Status de disponibilidade da frota, lido ao vivo da planilha de manutenção.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10161B",
+  "theme_color": "#1E5C7E",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icone-mask.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

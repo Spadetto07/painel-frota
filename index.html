@@ -8,6 +8,11 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#1E5C7E">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%9A%9C</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icone-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Frota 720/731">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://docs.google.com">
@@ -236,6 +241,16 @@ td.def{color:var(--ink2);max-width:34ch}
 
 .skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
 
+
+/* ---------- logo e avisos de conexão ---------- */
+.marca{display:flex;align-items:center;gap:14px}
+.logo{max-height:56px;max-width:190px;width:auto;height:auto;flex:0 0 auto}
+.logo[hidden]{display:none}
+.offline{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:70;
+  background:var(--warn-bg);color:var(--warn-ink);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);
+  border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:600;box-shadow:var(--shadow)}
+.offline[hidden]{display:none}
+@media (max-width:560px){ .logo{max-height:40px;max-width:130px} }
 
 /* ---------- barra de ações ---------- */
 .acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
@@ -517,9 +532,14 @@ footer b{color:var(--ink2);font-weight:600}
 
 <header class="mast">
   <div class="wrap mast-in">
-    <div>
-      <p class="eyebrow">Obras 720 &amp; 731 &middot; Manutenção</p>
-      <h1>Disponibilidade da Frota</h1>
+    <div class="marca-bloco">
+      <div class="marca">
+        <img class="logo" id="logo" alt="" hidden>
+        <div>
+          <p class="eyebrow">Obras 720 &amp; 731 &middot; Manutenção</p>
+          <h1>Disponibilidade da Frota</h1>
+        </div>
+      </div>
       <p class="sub">Lido direto da planilha de controle de manutenção. Sempre que a planilha for salva, esta página mostra os números novos.</p>
     </div>
     <div class="stamp">
@@ -672,6 +692,8 @@ footer b{color:var(--ink2);font-weight:600}
   </section>
 </main>
 
+<div class="offline" id="offline" hidden>Sem internet — mostrando os últimos dados que chegaram.</div>
+
 <div class="tv" id="tv" hidden>
   <div class="tv-top">
     <div>
@@ -718,7 +740,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
-const VERSAO = "1.4";
+const VERSAO = "1.5";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1892,6 +1914,51 @@ const hojeArquivo = () => {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 };
 
+
+/* ---------- instalar no celular, logo e aviso de falta de sinal ---------- */
+function ligarLogo(){
+  const img = $("logo");
+  if(!img) return;
+  img.addEventListener("load", () => { img.hidden = false; });
+  img.addEventListener("error", () => { img.remove(); });
+  img.src = "logo.png";           /* basta subir logo.png no repositório */
+}
+
+function ligarOffline(){
+  const aviso = $("offline");
+  const ver = () => { aviso.hidden = navigator.onLine !== false; };
+  window.addEventListener("online",  ver);
+  window.addEventListener("offline", ver);
+  ver();
+}
+
+let convite = null;
+function ligarInstalar(){
+  window.addEventListener("beforeinstallprompt", ev => {
+    ev.preventDefault();
+    convite = ev;
+    const b = document.createElement("button");
+    b.className = "copiar destaque"; b.type = "button"; b.id = "a-instalar";
+    b.textContent = "Instalar no celular";
+    b.addEventListener("click", async () => {
+      if(!convite) return;
+      convite.prompt();
+      await convite.userChoice;
+      convite = null; b.remove();
+    });
+    const barra = document.querySelector(".acoes");
+    if(barra) barra.appendChild(b);
+  });
+}
+
+function ligarServiceWorker(){
+  if(!("serviceWorker" in navigator)) return;
+  if(location.protocol !== "https:" && location.hostname !== "localhost") return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+
 /* ---------- carimbo e avisos ---------- */
 function carimbo(estado){
   const dot=$("s-dot");
@@ -2005,6 +2072,10 @@ document.querySelectorAll(".periodos .chip").forEach(b => b.addEventListener("cl
 let redesenho;
 window.addEventListener("resize", () => { clearTimeout(redesenho); redesenho = setTimeout(desenhaGrafico, 200); });
 $("f-versao").textContent = "v" + VERSAO;
+ligarLogo();
+ligarOffline();
+ligarInstalar();
+ligarServiceWorker();
 $("mov-mais").addEventListener("click",()=>{ movVisiveis += POR_PAGINA; movimentacoes(); });
 $("c-ord").addEventListener("click",()=>{ ordemAgenda.esteiras   = ordemAgenda.esteiras==="dias"   ? "ciclo" : "dias"; agendas(); });
 $("g-ord").addEventListener("click",()=>{ ordemAgenda.geradores  = ordemAgenda.geradores==="dias"  ? "ciclo" : "dias"; agendas(); });
