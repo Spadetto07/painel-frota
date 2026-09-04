@@ -567,9 +567,6 @@ footer b{color:var(--ink2);font-weight:600}
   <div id="alert"></div>
   <div class="alertas" id="alertas" hidden></div>
   <div class="acoes">
-    <button class="copiar" id="a-resumo" type="button">Copiar resumo do dia</button>
-    <button class="copiar" id="a-csv" type="button">Baixar frota em CSV</button>
-    <button class="copiar" id="a-print" type="button">Imprimir</button>
     <button class="copiar destaque" id="s-tv" type="button" title="Tela cheia para pendurar numa TV">Modo TV</button>
   </div>
 
@@ -740,7 +737,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
-const VERSAO = "1.6";
+const VERSAO = "1.7";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -2051,9 +2048,13 @@ document.addEventListener("click", ev => {
   const al = ev.target.closest("[data-alerta]");
   if(al) irPara(al.dataset.alerta);
 });
-$("a-resumo").addEventListener("click", ev => copiar(resumoDoDia(), ev.currentTarget, "Resumo copiado!"));
-$("a-csv").addEventListener("click", () => baixar(`frota-${hojeArquivo()}.csv`, csvDaFrota(), "text/csv"));
-$("a-print").addEventListener("click", () => { if(tvLigado) desligaTV(); window.print(); });
+/* Os botões de resumo, CSV e impressão saíram da tela a pedido.
+   As funções continuam aqui: para trazer de volta, é só recriar os botões. */
+if($("a-resumo")) $("a-resumo").addEventListener("click", ev => copiar(resumoDoDia(), ev.currentTarget, "Resumo copiado!"));
+if($("a-csv"))    $("a-csv").addEventListener("click", () => baixar(`frota-${hojeArquivo()}.csv`, csvDaFrota(), "text/csv"));
+if($("a-print"))  $("a-print").addEventListener("click", () => { if(tvLigado) desligaTV(); window.print(); });
+/* Ctrl+P continua saindo na folha A4 limpa, com ou sem botão */
+window.addEventListener("beforeprint", () => { if(tvLigado) desligaTV(); });
 $("s-tv").addEventListener("click", ligaTV);
 $("tv-sair").addEventListener("click", desligaTV);
 $("tv-corpo").addEventListener("click", passoTV);
