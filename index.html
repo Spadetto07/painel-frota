@@ -237,6 +237,47 @@ td.def{color:var(--ink2);max-width:34ch}
 .skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
 
 
+/* ---------- barra de ações ---------- */
+.acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.copiar.destaque{color:var(--accent);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
+
+/* ---------- impressão ---------- */
+@media print{
+  @page{size:A4;margin:12mm}
+  :root{--bg:#fff;--surf:#fff;--surf2:#fff;--surf3:#f2f2f2;--line:#bbb;--line-soft:#ddd;
+        --ink:#000;--ink2:#333;--ink3:#555;--shadow:none}
+  body{background:#fff;color:#000;font-size:10.5pt}
+  nav.jump, .acoes, .filters, .reload, .maisbtn, .ordbtn, .copiar, .periodos,
+  .tv, .ficha, .rail, .railbtn, #alert{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .mast{border-bottom:2px solid #000}
+  section{padding:10px 0 4px;break-inside:auto}
+  .kpi, .dcard, .panel, .card-graf, .ind, .cats{break-inside:avoid;box-shadow:none;border:1px solid #bbb}
+  .mov li, .plist li, .rein li{break-inside:avoid}
+  table{font-size:9pt}
+  thead th{position:static;background:#eee!important;color:#000!important}
+  .pill{border:1px solid #999!important;background:#fff!important;color:#000!important}
+  .pill.forte{background:#fff!important;color:#000!important}
+  .dias{background:#f2f2f2!important;color:#000!important;border:1px solid #ccc}
+  #movimentacoes{break-before:page}
+  footer{border-top:1px solid #999}
+  /* a folha é estreita e as regras de celular entrariam no lugar errado */
+  .kpis{grid-template-columns:repeat(4,1fr)!important}
+  .kpi.hero{grid-column:auto!important}
+  .kpi .val{font-size:34px}
+  .kpi.hero .val{font-size:40px}
+  .two{grid-template-columns:1fr 1fr!important}
+  .inds{grid-template-columns:1fr 1fr 1.3fr!important}
+  .catrow{grid-template-columns:150px 1fr 104px!important;row-gap:0!important}
+  .catnums{grid-column:auto!important;justify-content:flex-end!important}
+  .catnums b{min-width:0!important;text-align:right!important}
+  .downs{grid-template-columns:1fr 1fr!important}
+  .catdet{display:none!important}
+  /* as barras carregam a informação: precisam sair na impressão */
+  .bar, .bar *, .sw, .rein .barra, .garea, .glinha{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
 /* ---------- modo TV ---------- */
 body.tv-on > header, body.tv-on > nav, body.tv-on > main, body.tv-on > footer{display:none}
 body.tv-on{overflow:hidden}
@@ -486,7 +527,6 @@ footer b{color:var(--ink2);font-weight:600}
       <div class="v" id="s-date">—</div>
       <div class="z" id="s-time">&nbsp;</div>
       <button class="reload" id="s-reload" disabled>Buscar de novo</button>
-      <button class="reload" id="s-tv" title="Tela cheia para pendurar numa TV">Modo TV</button>
     </div>
   </div>
 </header>
@@ -506,6 +546,12 @@ footer b{color:var(--ink2);font-weight:600}
 <main class="wrap">
   <div id="alert"></div>
   <div class="alertas" id="alertas" hidden></div>
+  <div class="acoes">
+    <button class="copiar" id="a-resumo" type="button">Copiar resumo do dia</button>
+    <button class="copiar" id="a-csv" type="button">Baixar frota em CSV</button>
+    <button class="copiar" id="a-print" type="button">Imprimir</button>
+    <button class="copiar destaque" id="s-tv" type="button" title="Tela cheia para pendurar numa TV">Modo TV</button>
+  </div>
 
   <section id="panorama">
     <div class="rule"></div>
@@ -672,7 +718,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
-const VERSAO = "1.3";
+const VERSAO = "1.4";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1755,6 +1801,97 @@ function desligaTV(){
   if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
 }
 
+
+/* ---------- resumo, exportação e impressão ---------- */
+function resumoDoDia(){
+  const disp = FROTA.filter(e => pillClass(e.st) === "p-ok").length;
+  const ind  = FROTA.filter(e => pillClass(e.st) === "p-bad").length;
+  const base = disp + ind;
+  const pct  = base ? (disp/base*100).toFixed(1).replace(".",",") + "%" : "—";
+  const parados = FROTA.filter(e => pillClass(e.st) === "p-bad")
+                       .sort((a,b) => (b.dias ?? -1) - (a.dias ?? -1));
+  const atrLimp = LIMPEZA.filter(e => /atrasad/i.test(e.st));
+
+  const L = [];
+  L.push(`*DISPONIBILIDADE DA FROTA*`);
+  L.push(`Obras 720 & 731 — manutenção`);
+  L.push(META.carimboData ? `Dados de ${META.carimboData}${META.carimboHora ? " às " + META.carimboHora : ""}` : null);
+  L.push("");
+  L.push(`*${pct}* de disponibilidade`);
+  L.push(`Frota ${FROTA.length} · Disponíveis ${disp} · Parados ${ind}`);
+  L.push("");
+  L.push(`*PARADOS (${parados.length})*`);
+  if(parados.length){
+    parados.slice(0,20).forEach(e => {
+      const partes = [`${e.pre} (${e.mod})`];
+      if(e.dias != null) partes.push(`${e.dias} ${e.dias === 1 ? "dia" : "dias"}`);
+      if(e.def) partes.push(e.def);
+      if(e.prev) partes.push(`prev. ${e.prev}`);
+      L.push("• " + partes.join(" — "));
+    });
+    if(parados.length > 20) L.push(`… e mais ${parados.length - 20}`);
+  } else L.push("Nenhum. Frota 100% disponível.");
+
+  if(LIMPEZA.length){
+    L.push("");
+    L.push(`*LIMPEZA DE ESTEIRAS*`);
+    L.push(META.equipDia ? `Hoje: ${stripEmoji(META.equipDia)}` : null);
+    L.push(atrLimp.length ? `${atrLimp.length} atrasado(s): ${atrLimp.map(e=>e.pre).join(", ")}` : "Nenhum atrasado.");
+  }
+  L.push("");
+  L.push(location.origin + location.pathname);
+  return L.filter(x => x !== null).join("\n");
+}
+
+function baixar(nome, texto, tipo){
+  const blob = new Blob(["﻿" + texto], {type: tipo + ";charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/** CSV com ; e vírgula decimal — é o que o Excel em português espera. */
+function csvDaFrota(){
+  const campo = v => {
+    const t = String(v == null ? "" : v);
+    return /[;"\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  };
+  const q = filtros.q.trim().toLowerCase();
+  const hj = meiaNoite(new Date()).getTime();
+  const lista = FROTA.filter(e => {
+    const cls = pillClass(e.st);
+    if(filtros.st === "Disponível"   && cls !== "p-ok")   return false;
+    if(filtros.st === "Indisponível" && cls !== "p-bad")  return false;
+    if(filtros.st === "outros"       && cls !== "p-mute") return false;
+    if(filtros.cat  && e.cat  !== filtros.cat)  return false;
+    if(filtros.obra && e.obra !== filtros.obra) return false;
+    if(filtros.loc  && e.loc  !== filtros.loc)  return false;
+    if(filtros.especial){
+      const t = instante(e.prev,"00:00");
+      if(filtros.especial === "longos"   && (e.dias ?? 0) < PARADO_LONGO) return false;
+      if(filtros.especial === "vencidos" && !(t != null && t < hj))       return false;
+      if(filtros.especial === "semprev"  && t != null)                    return false;
+    }
+    if(q){
+      const hay = [e.pre,e.mod,e.tipo,e.cat,e.def,e.obs].filter(Boolean).join(" ").toLowerCase();
+      if(hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  const cab = ["ITEM","PREFIXO","CATEGORIA","TIPO","MODELO","OBRA","LOCAL","STATUS",
+               "DEFEITO / INTERVENCAO","PARADO DESDE","DIAS PARADO","PREVISAO","OBSERVACOES"];
+  const linhas = lista.map(e => [e.n ?? "", e.pre, e.cat, e.tipo, e.mod, e.obra, e.loc, e.st,
+                                 e.def, e.dt, e.dias ?? "", e.prev, e.obs].map(campo).join(";"));
+  return [cab.join(";")].concat(linhas).join("\r\n");
+}
+
+const hojeArquivo = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+
 /* ---------- carimbo e avisos ---------- */
 function carimbo(estado){
   const dot=$("s-dot");
@@ -1845,6 +1982,9 @@ document.addEventListener("click", ev => {
   const al = ev.target.closest("[data-alerta]");
   if(al) irPara(al.dataset.alerta);
 });
+$("a-resumo").addEventListener("click", ev => copiar(resumoDoDia(), ev.currentTarget, "Resumo copiado!"));
+$("a-csv").addEventListener("click", () => baixar(`frota-${hojeArquivo()}.csv`, csvDaFrota(), "text/csv"));
+$("a-print").addEventListener("click", () => { if(tvLigado) desligaTV(); window.print(); });
 $("s-tv").addEventListener("click", ligaTV);
 $("tv-sair").addEventListener("click", desligaTV);
 $("tv-corpo").addEventListener("click", passoTV);
