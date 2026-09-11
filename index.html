@@ -115,6 +115,45 @@ h2{font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
 .kpi.ok .val{color:var(--ok)} .kpi.bad .val{color:var(--bad)}
 .aside{font-size:12.5px;color:var(--ink3);margin-top:10px}
 
+/* ---- compromisso da frota ---- */
+.veredito{display:flex;align-items:center;gap:22px;margin-top:22px;padding:22px 26px;border-radius:var(--r);border:1px solid var(--line);background:var(--surf);box-shadow:var(--shadow);flex-wrap:wrap}
+.veredito.ok{background:var(--ok-solid);border-color:var(--ok-solid)}
+.veredito.bad{background:var(--bad-solid);border-color:var(--bad-solid)}
+.veredito.ok .vd-tit,.veredito.bad .vd-tit,.veredito.ok .vd-num,.veredito.bad .vd-num{color:var(--on-solid)}
+.veredito.ok .vd-sub,.veredito.bad .vd-sub{color:var(--on-solid);opacity:.88}
+.vd-num{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:76px;line-height:.85;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.vd-txt{flex:1 1 260px;min-width:0}
+.vd-tit{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:34px;line-height:1.05;letter-spacing:.01em;color:var(--ink)}
+.vd-sub{font-size:13.5px;margin-top:6px;color:var(--ink2);line-height:1.5}
+.cp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.cp-chips .chip{font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--ink2);cursor:pointer}
+.cp-chips .chip:hover{background:var(--surf2);color:var(--ink)}
+.cp-chips .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.cp-chips .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cp-grade{margin-top:14px;background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.cp-linha{display:grid;grid-template-columns:1fr auto auto 118px;gap:14px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line-soft)}
+.cp-linha:last-child{border-bottom:0}
+.cp-linha.falta{background:var(--bad-bg)}
+.cp-nome{font-weight:600;font-size:14px;min-width:0}
+.cp-frente{font-size:12px;color:var(--ink3);font-weight:400;margin-top:2px}
+.cp-n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1;font-variant-numeric:tabular-nums;text-align:center;min-width:58px}
+.cp-n small{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+.cp-sit{font-size:12.5px;font-weight:600;text-align:right;white-space:nowrap}
+.cp-sit.falta{color:var(--bad)}
+.cp-sit.limite{color:var(--warn-ink)}
+.cp-sit.sobra{color:var(--ink3)}
+.cp-vazio{padding:18px;font-size:13.5px;color:var(--ink3)}
+.cp-cab{display:grid;grid-template-columns:1fr auto auto 118px;gap:14px;padding:9px 18px;background:var(--surf2);border-bottom:1px solid var(--line);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.cp-cab span:nth-child(2),.cp-cab span:nth-child(3){text-align:center;min-width:58px}
+.cp-cab span:last-child{text-align:right}
+@media(max-width:640px){
+  .vd-num{font-size:56px}
+  .vd-tit{font-size:26px}
+  .cp-linha,.cp-cab{grid-template-columns:1fr auto auto;gap:10px;padding-left:14px;padding-right:14px}
+  .cp-linha .cp-sit{grid-column:1/-1;text-align:left;margin-top:2px}
+  .cp-cab span:last-child{display:none}
+}
+
 .cats{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:6px 18px 14px;box-shadow:var(--shadow)}
 .catgroup{border-bottom:1px solid var(--line-soft)}
 .catgroup:last-of-type{border-bottom:0}
@@ -317,6 +356,24 @@ body.tv-on{overflow:hidden}
   border-radius:999px;padding:.35em .9em;cursor:pointer}
 .tv-sair:hover{color:var(--ink);background:var(--surf2)}
 
+.tv-vd{display:flex;flex-direction:column;justify-content:center}
+.tv-vd.ok{background:var(--ok-solid);border-color:var(--ok-solid)}
+.tv-vd.bad{background:var(--bad-solid);border-color:var(--bad-solid)}
+.tv-vd.ok .k,.tv-vd.bad .k,.tv-vd.ok .n,.tv-vd.bad .n{color:var(--on-solid)}
+.tv-vd .p{font-size:1.05em;font-weight:600;margin-top:.6em;color:var(--on-solid);opacity:.9}
+.tv-vd .q{font-size:.82em;margin-top:.35em;color:var(--on-solid);opacity:.75}
+.tv-cps{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:1vh 1vw;align-content:start}
+.tv-cp{background:var(--surf2);border:1px solid var(--line);border-left:5px solid var(--ok-solid);border-radius:10px;padding:1.1vh 1vw;
+  display:flex;align-items:baseline;gap:.7em;flex-wrap:wrap}
+.tv-cp.falta{border-left-color:var(--bad-solid);background:var(--bad-bg)}
+.tv-cp .nome{flex:1 1 auto;font-weight:600;font-size:.92em;min-width:0}
+.tv-cp .par{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.1em;line-height:1;font-variant-numeric:tabular-nums}
+.tv-cp .par span{font-size:.5em;color:var(--ink3);margin-left:.15em}
+.tv-cp.falta .par b{color:var(--bad)}
+.tv-cp .sit{flex:1 1 100%;font-size:.72em;font-weight:600;color:var(--ink3)}
+.tv-cp.limite{border-left-color:var(--warn)}
+.tv-cp.limite .sit{color:var(--warn-ink)}
+.tv-cp.falta .sit{color:var(--bad)}
 .tv-hero{display:grid;grid-template-columns:1.05fr 1.45fr;gap:2vw;flex:1;align-items:stretch}
 .tv-esq{display:flex;flex-direction:column;gap:2vh}
 .tv-esq .tv-big{flex:1}
@@ -554,6 +611,7 @@ footer b{color:var(--ink2);font-weight:600}
 <nav class="jump" aria-label="Seções">
   <div class="jump-in">
     <a href="#panorama">Panorama</a>
+    <a href="#compromisso">Compromisso</a>
     <a href="#categorias">Por categoria</a>
     <a href="#evolucao">Evolução</a>
     <a href="#parados">Equipamentos parados</a>
@@ -580,6 +638,23 @@ footer b{color:var(--ink2);font-weight:600}
       <div class="kpi bad"><div class="lab">Indisponíveis</div><div class="val" id="k-ind">—</div><div class="foot">parados por manutenção</div></div>
     </div>
     <p class="aside" id="k-aside">&nbsp;</p>
+  </section>
+
+  <section id="compromisso">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Estamos devendo equipamento?</h2><span class="sec-note">demanda contratada por frente &middot; conferida contra a frota disponível</span></div>
+
+    <div class="veredito" id="cp-vd"><div class="vd-txt"><div class="vd-tit">Carregando&hellip;</div></div></div>
+
+    <div class="cp-chips" id="cp-chips" role="group" aria-label="Momento do dia">
+      <button type="button" class="chip" data-mom="agora" aria-pressed="true">Agora</button>
+      <button type="button" class="chip" data-mom="util" aria-pressed="false">Pico do dia útil</button>
+      <button type="button" class="chip" data-mom="fds" aria-pressed="false">Fim de semana, de dia</button>
+      <button type="button" class="chip" data-mom="noite" aria-pressed="false">Turno da noite</button>
+    </div>
+
+    <div class="cp-grade" id="cp-grade"></div>
+    <p class="aside" id="cp-aside">&nbsp;</p>
   </section>
 
   <section id="categorias">
@@ -736,8 +811,8 @@ footer b{color:var(--ink2);font-weight:600}
 <script>
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
-const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108 };
-const VERSAO = "1.8";
+const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488 };
+const VERSAO = "1.9";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -806,6 +881,9 @@ const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}
 
 /* ---------- estado ---------- */
 let FROTA=[], LIMPEZA=[], SOPRADOR=[], MOVS=[], META={};
+/* demanda contratada (aba DEMANDA) e a lista de feriados que vem junto */
+let DEMANDA=[], FERIADOS=new Set();
+let momentoCP = "agora";
 /* o log cru, sem agrupar — é dele que sai a linha do tempo */
 let MOVS_BRUTO=[];
 let periodoHist = 30;
@@ -1005,6 +1083,213 @@ function lerAgenda(rows, extraCol){
     });
   }
   return out;
+}
+
+/* ---------- compromisso: demanda contratada x frota disponível ----------
+   A aba DEMANDA tem duas tabelas: as linhas de demanda e, depois de uma
+   linha escrita FERIADOS, a lista de datas em que o regime ADM não roda.
+   Tudo é editável na planilha — quantidade, horário, dias e situação. */
+
+/* "12/10/2026" -> "2026-10-12". A planilha publica em dia/mês/ano, mas se
+   um dia vier trocado o número maior que 12 desempata sozinho. */
+function chaveData(v){
+  const t = String(v==null?"":v).trim();
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+  m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(!m) return "";
+  let d = Number(m[1]), mes = Number(m[2]);
+  if(mes > 12 && d <= 12){ const x=d; d=mes; mes=x; }
+  if(d<1 || d>31 || mes<1 || mes>12) return "";
+  return `${m[3]}-${String(mes).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+}
+const chaveDe = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
+
+/* "CARREGADEIRAS" e "Carregadeira" viram a mesma coisa */
+function normCat(v){
+  return String(v==null?"":v).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim()
+    .replace(/s$/,"");
+}
+
+function lerDemanda(rows){
+  const h = headerRow(rows,"CATEGORIA","QUANTIDADE","REGIME");
+  if(h<0) return {linhas:[], feriados:new Set()};
+  const H = rows[h];
+  const c = {
+    obra:colIndex(H,"OBRA"), frente:colIndex(H,"FRENTE"), cat:colIndex(H,"CATEGORIA"),
+    pre:colIndex(H,"PREFIXO"), qtd:colIndex(H,"QUANTIDADE"), reg:colIndex(H,"REGIME"),
+    ini:colIndex(H,"HORA INICIO","HORA IN"), fim:colIndex(H,"HORA FIM"),
+    dias:colIndex(H,"DIAS"), sit:colIndex(H,"SITUA"), obs:colIndex(H,"OBSERVA")
+  };
+  const linhas = [], feriados = new Set();
+  let lendo = "demanda";
+  for(let i=h+1;i<rows.length;i++){
+    const r = rows[i];
+    const a0 = cell(r,0);
+    if(/^feriados?$/i.test(a0)){ lendo = "feriados"; continue; }
+    if(lendo === "feriados"){
+      if(/^data$/i.test(a0)) continue;
+      const k = chaveData(a0);
+      if(k) feriados.add(k);
+      continue;
+    }
+    const cat = cell(r,c.cat);
+    const qtd = Number(cell(r,c.qtd));
+    if(!cat || !qtd) continue;
+    const ini = cell(r,c.ini), fim = cell(r,c.fim);
+    linhas.push({
+      obra: cell(r,c.obra), frente: cell(r,c.frente), cat,
+      pre: cell(r,c.pre).toUpperCase(), qtd,
+      reg: cell(r,c.reg) || "—",
+      ini: isNum(ini) ? Number(ini) : 0,
+      fim: isNum(fim) ? Number(fim) : 24,
+      todoDia: !/seg|util|útil/i.test(cell(r,c.dias)),
+      ativo: !/suspens|inativ|parad/i.test(cell(r,c.sit)),
+      obs: cell(r,c.obs)
+    });
+  }
+  return {linhas, feriados};
+}
+
+const ehUtil = dt => dt.getDay()>=1 && dt.getDay()<=5 && !FERIADOS.has(chaveDe(dt));
+
+/* essa linha de demanda está valendo no instante dt? */
+function emRegime(l, dt){
+  if(!l.ativo) return false;
+  if(!l.todoDia && !ehUtil(dt)) return false;
+  if(l.ini === l.fim) return true;
+  const h = dt.getHours() + dt.getMinutes()/60;
+  if(l.ini <= 0 && l.fim >= 24) return true;
+  return l.ini < l.fim ? (h >= l.ini && h < l.fim) : (h >= l.ini || h < l.fim);
+}
+
+/* quantos equipamentos dessa categoria (ou desse prefixo) estão de pé.
+   A obra do cadastro é ignorada de propósito: a frota atende as duas. */
+function contaFrota(alvo){
+  if(alvo.pre){
+    const e = FROTA.find(x => x.pre.toUpperCase() === alvo.pre);
+    if(!e) return {tem:0, parados:0, total:0, achou:false};
+    const cl = pillClass(e.st);
+    return {tem: cl==="p-ok"?1:0, parados: cl==="p-bad"?1:0, total:1, achou:true};
+  }
+  const n = normCat(alvo.cat);
+  const l = FROTA.filter(x => normCat(x.cat) === n);
+  return {
+    tem: l.filter(x=>pillClass(x.st)==="p-ok").length,
+    parados: l.filter(x=>pillClass(x.st)==="p-bad").length,
+    total: l.length, achou: l.length>0
+  };
+}
+
+/* junta as linhas que estão em regime e confere contra a frota */
+function cobertura(dt){
+  const mapa = new Map();
+  DEMANDA.filter(l => emRegime(l, dt)).forEach(l=>{
+    const chave = l.pre ? "pre:"+l.pre : "cat:"+normCat(l.cat);
+    const cur = mapa.get(chave) || {pre:l.pre, cat:l.cat, precisa:0, frentes:{}};
+    cur.precisa += l.qtd;
+    const f = l.frente || ("obra "+l.obra);
+    cur.frentes[f] = (cur.frentes[f]||0) + l.qtd;
+    mapa.set(chave, cur);
+  });
+  const itens = [...mapa.values()].map(it=>{
+    const f = contaFrota(it);
+    return Object.assign({}, it, f, {falta: Math.max(0, it.precisa - f.tem), sobra: Math.max(0, f.tem - it.precisa)});
+  });
+  itens.sort((a,b)=> (b.falta-a.falta) || (b.precisa-a.precisa) || a.cat.localeCompare(b.cat,"pt"));
+  return {
+    itens,
+    precisa: itens.reduce((s,i)=>s+i.precisa,0),
+    falta:   itens.reduce((s,i)=>s+i.falta,0)
+  };
+}
+
+/* as quatro fotos que os botões mostram */
+const DIAS_PT = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+function momentoData(qual){
+  const agora = new Date();
+  if(qual === "agora") return {dt:agora, rot:`agora — ${DIAS_PT[agora.getDay()]}, ${String(agora.getHours()).padStart(2,"0")}h${String(agora.getMinutes()).padStart(2,"0")}`};
+  if(qual === "noite"){
+    const d = new Date(agora); d.setHours(23,0,0,0);
+    return {dt:d, rot:"turno da noite — todo dia, das 18h às 06h"};
+  }
+  if(qual === "fds"){
+    const d = new Date(agora); d.setHours(10,0,0,0);
+    for(let i=0;i<14 && ehUtil(d);i++) d.setDate(d.getDate()+1);
+    return {dt:d, rot:"fim de semana e feriado, de dia — das 06h às 18h"};
+  }
+  const d = new Date(agora); d.setHours(10,0,0,0);
+  for(let i=0;i<14 && !ehUtil(d);i++) d.setDate(d.getDate()+1);
+  return {dt:d, rot:"pico do dia útil — segunda a sexta, das 06h às 18h"};
+}
+
+function plural(n, um, muitos){ return n===1 ? um : muitos; }
+
+function compromisso(){
+  const vd = $("cp-vd"), grade = $("cp-grade"), aside = $("cp-aside");
+  if(!vd) return;
+  if(!DEMANDA.length){
+    vd.className = "veredito";
+    vd.innerHTML = `<div class="vd-txt"><div class="vd-tit">Sem demanda cadastrada</div>
+      <div class="vd-sub">Preencha a aba <b>DEMANDA</b> da planilha com o que cada frente precisa e esta parte se acende sozinha.</div></div>`;
+    grade.innerHTML = ""; aside.innerHTML = "&nbsp;";
+    return;
+  }
+  const {dt, rot} = momentoData(momentoCP);
+  const c = cobertura(dt);
+
+  if(!c.precisa){
+    vd.className = "veredito";
+    vd.innerHTML = `<div class="vd-txt"><div class="vd-tit">Nenhum equipamento em regime</div>
+      <div class="vd-sub">${esc(rot)} — nada na aba DEMANDA está valendo neste horário.</div></div>`;
+    grade.innerHTML = ""; aside.innerHTML = "&nbsp;";
+    return;
+  }
+
+  const atendidos = c.precisa - c.falta;
+  if(c.falta){
+    vd.className = "veredito bad";
+    const quais = c.itens.filter(i=>i.falta).map(i=>{
+      const nome = i.pre || (i.falta===1 ? i.cat.replace(/S$/i,"") : i.cat);
+      return `${i.falta} ${i.pre ? nome : nome.toLowerCase()}`;
+    }).join(", ");
+    vd.innerHTML = `<div class="vd-num">${c.falta}</div>
+      <div class="vd-txt">
+        <div class="vd-tit">${plural(c.falta,"máquina em falta","máquinas em falta")}</div>
+        <div class="vd-sub">${esc(rot)}. Faltando ${esc(quais)}. Precisamos de ${c.precisa} e temos ${atendidos} atendendo.</div>
+      </div>`;
+  } else {
+    vd.className = "veredito ok";
+    const reserva = c.itens.reduce((s,i)=>s+i.sobra,0);
+    vd.innerHTML = `<div class="vd-num">✓</div>
+      <div class="vd-txt">
+        <div class="vd-tit">Frota em dia</div>
+        <div class="vd-sub">${esc(rot)}. As ${c.precisa} ${plural(c.precisa,"máquina contratada está coberta","máquinas contratadas estão cobertas")}${reserva?`, com ${reserva} de folga`:", sem folga"}.</div>
+      </div>`;
+  }
+
+  grade.innerHTML = `<div class="cp-cab"><span>Equipamento</span><span>Precisa</span><span>Tem</span><span>Situação</span></div>` +
+    c.itens.map(i=>{
+      const nome = i.pre ? `${esc(i.pre)}` : esc(i.cat);
+      const sit = i.falta ? `<span class="cp-sit falta">falta ${i.falta}</span>`
+                : i.sobra ? `<span class="cp-sit sobra">${i.sobra} de reserva</span>`
+                : `<span class="cp-sit limite">no limite</span>`;
+      const extra = !i.achou ? "não encontrei esse equipamento na frota"
+                  : i.parados ? `${i.parados} ${plural(i.parados,"parado","parados")} na manutenção` : "";
+      return `<div class="cp-linha${i.falta?" falta":""}">
+        <div class="cp-nome">${nome}<div class="cp-frente">${Object.entries(i.frentes).map(([f,q])=>`${q} em ${f.toLowerCase()}`).concat(extra?[extra]:[]).map(esc).join(" &middot; ")}</div></div>
+        <div class="cp-n">${i.precisa}<small>precisa</small></div>
+        <div class="cp-n" style="color:${i.falta?"var(--bad-solid)":"var(--ok-solid)"}">${i.tem}<small>tem</small></div>
+        ${sit}
+      </div>`;
+    }).join("");
+
+  const nf = FERIADOS.size;
+  aside.innerHTML = `A conta usa o total da frota, sem separar por obra — os equipamentos atendem 720 e 731.
+    Emprestados e sucata ficam de fora. O regime ADM não roda em fim de semana nem
+    ${nf ? `nos ${nf} feriados cadastrados na aba DEMANDA` : "em feriado (nenhum feriado cadastrado ainda)"}.`;
 }
 
 /* ---------- desenho ---------- */
@@ -1708,6 +1993,30 @@ function miniGrafico(serie, W, H){
 }
 
 const TELAS = [
+  { nome:"Compromisso da frota", monta(){
+      if(!DEMANDA.length) return `<p class="tv-vazio">Nenhuma demanda cadastrada na aba DEMANDA.</p>`;
+      const {dt, rot} = momentoData("agora");
+      const c = cobertura(dt);
+      if(!c.precisa) return `<p class="tv-vazio">Nenhum equipamento em regime ${esc(rot)}.</p>`;
+      const cards = c.itens.map(i=>`
+        <div class="tv-cp${i.falta?" falta":(i.sobra?"":" limite")}">
+          <div class="nome">${esc(i.pre || i.cat)}</div>
+          <div class="par"><b>${i.tem}</b><span>/ ${i.precisa}</span></div>
+          <div class="sit">${i.falta?`falta ${i.falta}`:(i.sobra?`+${i.sobra} de reserva`:"no limite")}</div>
+        </div>`).join("");
+      return `<div class="tv-hero" style="grid-template-columns:1fr 1.5fr">
+        <div class="tv-big tv-vd ${c.falta?"bad":"ok"}">
+          <div class="k">Estamos devendo equipamento?</div>
+          <div class="n">${c.falta ? c.falta : "N&Atilde;O"}</div>
+          <div class="p">${c.falta
+            ? `${c.falta===1?"m&aacute;quina em falta":"m&aacute;quinas em falta"} &middot; ${c.precisa} contratadas, ${c.precisa-c.falta} atendendo`
+            : `as ${c.precisa} m&aacute;quinas contratadas est&atilde;o cobertas`}</div>
+          <div class="q">${esc(rot)}</div>
+        </div>
+        <div class="tv-cx"><h2>Por equipamento &mdash; tem / precisa</h2>
+          <div class="tv-cps">${cards}</div></div>
+      </div>`;
+    }},
   { nome:"Panorama", monta(){
       const disp = FROTA.filter(e=>pillClass(e.st)==="p-ok").length;
       const ind  = FROTA.filter(e=>pillClass(e.st)==="p-bad").length;
@@ -1983,11 +2292,12 @@ async function carregar(){
   const btn=$("s-reload");
   btn.disabled=true; carimbo("carregando");
   try{
-    const [rf,rl,rs,rm,cb] = await Promise.all([
+    const [rf,rl,rs,rm,rd,cb] = await Promise.all([
       pegar(ABAS.frota,"Controle de Frota"),
       pegar(ABAS.limpeza,"Cronograma Limpeza").catch(()=>null),
       pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null),
       pegar(ABAS.movimentacoes,"Movimentações").catch(()=>null),
+      pegar(ABAS.demanda,"Demanda").catch(()=>null),
       pegarCarimbo().catch(()=>null)
     ]);
     if(cb){ META.carimboData = cb.data; META.carimboHora = cb.hora; }
@@ -2006,12 +2316,14 @@ async function carregar(){
       META.hojeSoprador = kv(rs,"Hoje é dia de soprador");
       META.proxSoprador = fmtDate(kv(rs,"Próxima data prevista"));
     }
+    if(rd){ const d = lerDemanda(rd); DEMANDA = d.linhas; FERIADOS = d.feriados; }
     desenhar();
+    compromisso();
     alertas();
     if(tvLigado) pintaTV();
     evolucao();
     movimentacoes();
-    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações"].filter(Boolean);
+    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações", !rd && "Demanda"].filter(Boolean);
     aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
     carimbo("ok");
   }catch(e){
@@ -2030,6 +2342,12 @@ async function carregar(){
     btn.disabled=false;
   }
 }
+
+document.querySelectorAll("#cp-chips .chip").forEach(b=>b.addEventListener("click",()=>{
+  momentoCP = b.dataset.mom;
+  document.querySelectorAll("#cp-chips .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  compromisso();
+}));
 
 document.querySelectorAll("#frota .chip").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("#frota .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
