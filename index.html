@@ -812,7 +812,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488 };
-const VERSAO = "1.9";
+const VERSAO = "1.9.1";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1105,6 +1105,10 @@ function chaveData(v){
 }
 const chaveDe = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
 
+/* Na planilha o prefixo às vezes vem com a descrição junto — "CAM-279 (MUNCK)".
+   Para casar com a demanda tiramos o que está entre parênteses e os espaços. */
+const normPre = v => String(v==null?"":v).toUpperCase().replace(/\(.*?\)/g,"").replace(/\s+/g,"").trim();
+
 /* "CARREGADEIRAS" e "Carregadeira" viram a mesma coisa */
 function normCat(v){
   return String(v==null?"":v).toLowerCase()
@@ -1169,7 +1173,8 @@ function emRegime(l, dt){
    A obra do cadastro é ignorada de propósito: a frota atende as duas. */
 function contaFrota(alvo){
   if(alvo.pre){
-    const e = FROTA.find(x => x.pre.toUpperCase() === alvo.pre);
+    const alvoPre = normPre(alvo.pre);
+    const e = FROTA.find(x => normPre(x.pre) === alvoPre);
     if(!e) return {tem:0, parados:0, total:0, achou:false};
     const cl = pillClass(e.st);
     return {tem: cl==="p-ok"?1:0, parados: cl==="p-bad"?1:0, total:1, achou:true};
@@ -1187,7 +1192,7 @@ function contaFrota(alvo){
 function cobertura(dt){
   const mapa = new Map();
   DEMANDA.filter(l => emRegime(l, dt)).forEach(l=>{
-    const chave = l.pre ? "pre:"+l.pre : "cat:"+normCat(l.cat);
+    const chave = l.pre ? "pre:"+normPre(l.pre) : "cat:"+normCat(l.cat);
     const cur = mapa.get(chave) || {pre:l.pre, cat:l.cat, precisa:0, frentes:{}};
     cur.precisa += l.qtd;
     const f = l.frente || ("obra "+l.obra);
