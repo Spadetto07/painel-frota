@@ -291,6 +291,59 @@ td.def{color:var(--ink2);max-width:34ch}
 .offline[hidden]{display:none}
 @media (max-width:560px){ .logo{max-height:40px;max-width:130px} }
 
+/* ---------- calibração das balanças ---------- */
+/* Duas cores de néon: amarelo quando está chegando a data, vermelho quando já passou.
+   Os tons são fixos de propósito — néon não muda entre tema claro e escuro. */
+.cal-topo{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:18px}
+.cal-faixa{flex:1 1 320px;display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:var(--r);
+  border:1px solid var(--line);background:var(--surf);box-shadow:var(--shadow)}
+.cal-faixa.acesa{border-color:color-mix(in srgb,var(--neon) 55%,var(--line));
+  background:linear-gradient(100deg,color-mix(in srgb,var(--neon) 12%,var(--surf)),var(--surf) 60%)}
+.cal-faixa .txt{min-width:0}
+.cal-faixa .tit{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:21px;line-height:1.12;
+  text-transform:uppercase;letter-spacing:.02em;color:var(--ink)}
+.cal-faixa .sub{margin:4px 0 0;font-size:12.5px;color:var(--ink2)}
+
+/* o anel de néon girando */
+.neon{--neon:#FFE600;position:relative;flex:0 0 auto;display:grid;place-items:center;
+  width:64px;height:64px;border-radius:50%}
+.neon.vencida{--neon:#FF3B2F}
+.neon.breve{--neon:#FFE600}
+.neon::after{content:"";position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 0turn,transparent 0 55%,color-mix(in srgb,var(--neon) 60%,transparent) 78%,var(--neon) 92%,transparent 100%);
+  filter:blur(7px);opacity:.9;animation:neon-gira 2.4s linear infinite}
+.neon::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  border:2.5px solid var(--neon);
+  box-shadow:0 0 5px var(--neon),0 0 13px color-mix(in srgb,var(--neon) 75%,transparent),
+             inset 0 0 9px color-mix(in srgb,var(--neon) 45%,transparent);
+  animation:neon-pulsa 1.7s ease-in-out infinite}
+.neon .n{position:relative;z-index:2;font-family:"Barlow Condensed",sans-serif;font-weight:700;
+  font-size:26px;line-height:.9;color:var(--ink);font-variant-numeric:tabular-nums;text-align:center}
+.neon .u{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:8.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-top:2px}
+@keyframes neon-gira{to{transform:rotate(1turn)}}
+@keyframes neon-pulsa{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* quem não gosta de coisa piscando continua vendo o anel, só que parado */
+@media (prefers-reduced-motion: reduce){
+  .neon::after{animation:none;opacity:.6}
+  .neon::before{animation:none}
+}
+
+/* o mesmo anel, miúdo, dentro da tabela */
+.neon.mini{width:44px;height:44px}
+.neon.mini .n{font-size:18px}
+.neon.mini .u{font-size:7.5px;letter-spacing:.08em}
+.cal-dias{display:flex;align-items:center;gap:9px}
+.cal-dias .plano{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;
+  color:var(--ink2);font-variant-numeric:tabular-nums}
+.cal-sede{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:11px;font-weight:600;
+  letter-spacing:.03em;color:var(--warn-ink)}
+.cal-tab td{vertical-align:middle}
+.cal-cel{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+@media (max-width:720px){ .cal-cel{align-items:flex-end;text-align:right} }
+.cal-nada{padding:18px;text-align:center;color:var(--ink3);font-size:13px}
+
 /* ---------- barra de ações ---------- */
 .acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .copiar.destaque{color:var(--accent);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
@@ -313,6 +366,12 @@ td.def{color:var(--ink2);max-width:34ch}
   .pill{border:1px solid #999!important;background:#fff!important;color:#000!important}
   .pill.forte{background:#fff!important;color:#000!important}
   .dias{background:#f2f2f2!important;color:#000!important;border:1px solid #ccc}
+  /* néon não existe no papel: vira um círculo preto simples com o número dentro */
+  .neon::before{box-shadow:none!important;border-color:#000!important;animation:none!important}
+  .neon::after{display:none!important}
+  .neon .n, .neon .u{color:#000!important}
+  .cal-faixa{break-inside:avoid;box-shadow:none;border:1px solid #bbb;background:#fff!important}
+  .cal-sede{color:#000!important}
   #movimentacoes{break-before:page}
   footer{border-top:1px solid #999}
   /* a folha é estreita e as regras de celular entrariam no lugar errado */
@@ -617,6 +676,7 @@ footer b{color:var(--ink2);font-weight:600}
     <a href="#parados">Equipamentos parados</a>
     <a href="#frota">Frota completa</a>
     <a href="#rodante">Material rodante</a>
+    <a href="#calibracao">Calibração</a>
     <a href="#movimentacoes">Movimentações</a>
   </div>
 </nav>
@@ -756,6 +816,22 @@ footer b{color:var(--ink2);font-weight:600}
     </div>
   </section>
 
+  <section id="calibracao">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Calibração das balanças</h2><span class="sec-note" id="cal-note">—</span></div>
+    <div class="cal-topo" id="cal-topo"></div>
+    <div class="tablebox">
+      <table class="cal-tab">
+        <thead><tr>
+          <th>Prefixo</th><th>Obra</th><th>Vencimento</th><th>Dias a vencer</th>
+          <th>Situação da calibração</th><th>Situação do equipamento</th><th>Local</th>
+        </tr></thead>
+        <tbody id="cal-tb"></tbody>
+      </table>
+      <div class="empty" id="cal-empty">Carregando…</div>
+    </div>
+  </section>
+
   <section id="movimentacoes">
     <div class="rule"></div>
     <div class="sec-head"><h2>Últimas movimentações</h2><span class="sec-note" id="mov-note">—</span></div>
@@ -811,8 +887,8 @@ footer b{color:var(--ink2);font-weight:600}
 <script>
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
-const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488 };
-const VERSAO = "1.9.2";
+const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956 };
+const VERSAO = "2.1";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -870,12 +946,57 @@ function kv(rows, label){
   }
   return "";
 }
-/* datas do tipo 8/27/2026 -> 27/08/2026 ; 27/08/quinta-feira -> 27/08 */
-function fmtDate(v){
+/* ---------- datas ----------
+   Toda data que aparece na tela sai em DIA/MÊS/ANO, o padrão daqui.
+
+   O problema: a planilha publica os dois formatos DENTRO DA MESMA COLUNA,
+   porque cada célula carrega a formatação de quando foi digitada. Na coluna
+   PREVISÃO, por exemplo, convivem "28/09" (dia primeiro) e "9/14/2026" (mês
+   primeiro). Então não dá para ter uma regra única para o site inteiro.
+
+   A solução tem dois níveis:
+   1) por valor — número maior que 12 só pode ser dia, isso resolve sozinho a
+      maioria dos casos ("20/07" e "9/14" não têm dúvida);
+   2) por coluna — quando os dois números cabem nos dois papéis ("05/08"), vale
+      o jeito que aparece mais vezes nas datas sem dúvida daquela coluna, que
+      modoColuna descobre lendo a coluna inteira antes.
+   Empate total cai em dia primeiro, que é como se escreve no Brasil. */
+
+/* Lê a coluna toda e responde: aqui o dia vem primeiro? */
+function modoColuna(rows, inicio, idx){
+  if(idx == null || idx < 0) return true;
+  let dia = 0, mes = 0;
+  for(let i = inicio; i < rows.length; i++){
+    const m = cell(rows[i], idx).match(/^(\d{1,2})\/(\d{1,2})(\/|$)/);
+    if(!m) continue;
+    const a = Number(m[1]), b = Number(m[2]);
+    if(a > 12 && b <= 12) dia++;
+    else if(b > 12 && a <= 12) mes++;
+  }
+  return dia >= mes;
+}
+
+/* diaPrimeiro só decide o empate; os casos com número > 12 se resolvem sozinhos */
+function fmtDate(v, diaPrimeiro = true){
   if(!v) return "";
-  const us = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(us) return `${us[2].padStart(2,"0")}/${us[1].padStart(2,"0")}/${us[3]}`;
-  return v.replace(/\/(segunda|terça|quarta|quinta|sexta|sábado|domingo)-?f?e?i?r?a?/i,"").replace(/\/AAAA/i,"").trim();
+  const t = String(v).trim();
+  const iso = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/);
+  if(iso) return `${iso[3].padStart(2,"0")}/${iso[2].padStart(2,"0")}/${iso[1]}${(iso[4]||"").replace(/^[T\s]+/," ").trimEnd()}`;
+  /* o que vier depois da data (uma hora, por exemplo) segue junto */
+  const m = t.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?(.*)$/);
+  if(m){
+    const a = Number(m[1]), b = Number(m[2]);
+    let dia, mes;
+    if(a > 12 && b <= 12){ dia = a; mes = b; }
+    else if(b > 12 && a <= 12){ dia = b; mes = a; }
+    else if(diaPrimeiro){ dia = a; mes = b; }
+    else { dia = b; mes = a; }
+    if(dia>=1 && dia<=31 && mes>=1 && mes<=12){
+      const dm = `${String(dia).padStart(2,"0")}/${String(mes).padStart(2,"0")}`;
+      return (m[3] ? `${dm}/${m[3]}` : dm) + (m[4]||"").trimEnd();
+    }
+  }
+  return t.replace(/\/(segunda|terça|quarta|quinta|sexta|sábado|domingo)-?f?e?i?r?a?/i,"").replace(/\/AAAA/i,"").trim();
 }
 const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{23F0}-\u{23FF}]/gu,"").trim();
 
@@ -883,6 +1004,8 @@ const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}
 let FROTA=[], LIMPEZA=[], SOPRADOR=[], MOVS=[], META={};
 /* demanda contratada (aba DEMANDA) e a lista de feriados que vem junto */
 let DEMANDA=[], FERIADOS=new Set();
+/* calibração das balanças (aba CALIBRAÇÃO BALANÇAS) */
+let CALIB=[];
 let momentoCP = "agora";
 /* o log cru, sem agrupar — é dele que sai a linha do tempo */
 let MOVS_BRUTO=[];
@@ -951,6 +1074,8 @@ function lerFrota(rows){
     dt:colIndex(H,"DATA PARADA"), prev:colIndex(H,"PREVIS"), dias:colIndex(H,"DIAS"),
     obs:colIndex(H,"OBSERVA")
   };
+  /* cada coluna de data tem o seu jeito — descobre antes de ler as linhas */
+  const mdDt = modoColuna(rows, h+1, c.dt), mdPrev = modoColuna(rows, h+1, c.prev);
   const out=[];
   for(let i=h+1;i<rows.length;i++){
     const r=rows[i];
@@ -967,7 +1092,7 @@ function lerFrota(rows){
       cat:cell(r,c.cat)||"SEM CATEGORIA", tipo:cell(r,c.tipo),
       mod:cell(r,c.mod), obra:cell(r,c.obra), loc:cell(r,c.loc), pre,
       st:cell(r,c.st)||"Sem status", def:cell(r,c.def),
-      dt:fmtDate(cell(r,c.dt)), prev:fmtDate(cell(r,c.prev)),
+      dt:fmtDate(cell(r,c.dt), mdDt), prev:fmtDate(cell(r,c.prev), mdPrev),
       dias: isNum(d)?Number(d):null, obs:cell(r,c.obs)
     });
   }
@@ -986,13 +1111,17 @@ function lerMovimentacoes(rows){
     mod:colIndex(H,"MODELO"), mud:colIndex(H,"MUDAN"), de:colIndex(H,"DE"),
     para:colIndex(H,"PARA"), motivo:colIndex(H,"MOTIVO"), obra:colIndex(H,"OBRA"), loc:colIndex(H,"LOCAL")
   };
+  const mdQuando = modoColuna(rows, h+1, c.quando);
   const out=[];
   for(let i=h+1;i<rows.length;i++){
     const r=rows[i];
     const pre=cell(r,c.pre);
     if(!pre) continue;
     const bruto=cell(r,c.quando);
-    const [data,hora] = bruto.split(/\s+/);
+    const [cru,hora] = bruto.split(/\s+/);
+    /* normaliza para dia/mês/ano antes de guardar: é assim que a tela mostra
+       e é assim que o instante() lê para ordenar e montar o gráfico */
+    const data = fmtDate(cru, mdQuando);
     out.push({
       data: data||"", hora: (hora && hora!=="00:00") ? hora : "",
       ts: instante(data,hora),
@@ -1071,6 +1200,7 @@ function lerAgenda(rows, extraCol){
     prog:colIndex(H,"DATA PROGRAMADA"), ult:colIndex(H,"ÚLTIMA","ULTIMA"),
     dias:colIndex(H,"DIAS"), st:colIndex(H,"STATUS"), extra:colIndex(H,extraCol)
   };
+  const mdProg = modoColuna(rows, h+1, c.prog), mdUlt = modoColuna(rows, h+1, c.ult);
   const out=[];
   for(let i=h+1;i<rows.length;i++){
     const r=rows[i];
@@ -1078,7 +1208,7 @@ function lerAgenda(rows, extraCol){
     const pre=cell(r,c.pre); if(!pre) continue;
     const d=cell(r,c.dias);
     out.push({
-      pre, mod:cell(r,c.mod), prog:fmtDate(cell(r,c.prog)), ult:fmtDate(cell(r,c.ult)),
+      pre, mod:cell(r,c.mod), prog:fmtDate(cell(r,c.prog), mdProg), ult:fmtDate(cell(r,c.ult), mdUlt),
       dias: isNum(d)?Number(d):null, st:stripEmoji(cell(r,c.st)), extra:cell(r,c.extra)
     });
   }
@@ -1155,6 +1285,162 @@ function lerDemanda(rows){
     });
   }
   return {linhas, feriados};
+}
+
+/* ---------- calibração das balanças ----------
+   A planilha calcula tudo com TODAY(), mas o CSV publicado guarda o valor de
+   quando o Google recalculou por último — que pode ser de ontem. Por isso os
+   dias a vencer são recontados aqui, a partir da data de VENCIMENTO. Assim o
+   aviso da tela é sempre o de hoje, mesmo que a planilha tenha dormido. */
+/* O Google publica data ora como 30/08/2026, ora como 8/30/2026, dependendo de
+   como a coluna foi formatada — e 05/08 sozinha não diz qual é o dia e qual é o
+   mês. Aqui não se chuta: a linha traz a data da calibração, o vencimento e a
+   validade em dias, e vencimento menos calibração TEM que dar a validade. A
+   leitura que fecha essa conta é a certa. Se nenhuma fechar, cai na regra geral
+   do chaveData (dia primeiro, com o número maior que 12 desempatando). */
+function parDatas(txtCal, txtVenc, validade){
+  const parte = t => { const m = String(t||"").trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? [Number(m[1]),Number(m[2]),Number(m[3])] : null; };
+  const a = parte(txtCal), b = parte(txtVenc);
+  const monta = (p, diaPrimeiro) => {
+    const d = diaPrimeiro ? p[0] : p[1], m = diaPrimeiro ? p[1] : p[0];
+    if(d<1 || d>31 || m<1 || m>12) return null;
+    const dt = new Date(p[2], m-1, d);
+    return (dt.getMonth() === m-1 && dt.getDate() === d) ? dt : null;
+  };
+  if(a && b && validade > 0){
+    for(const diaPrimeiro of [true,false]){
+      const dc = monta(a,diaPrimeiro), dv = monta(b,diaPrimeiro);
+      if(dc && dv && Math.round((dv-dc)/86400000) === validade) return dv;
+    }
+  }
+  const k = chaveData(txtVenc);
+  if(!k) return null;
+  const [y,m,d] = k.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+const brDate = dt => dt ? `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()}` : "";
+
+function lerCalibracao(rows){
+  const h = headerRow(rows,"PREFIXO","VENCIMENTO","CALIBRA");
+  if(h<0) return [];
+  const H = rows[h];
+  const c = {
+    pre:colIndex(H,"PREFIXO"), obra:colIndex(H,"OBRA"),
+    validade:colIndex(H,"VALIDADE"),
+    avisar:colIndex(H,"AVISAR"), cal:colIndex(H,"DATA DA"), venc:colIndex(H,"VENCIMENTO"),
+    sitCal:colIndex(H,"SITUAÇÃO DA","SITUACAO DA"),
+    sitEq:colIndex(H,"SITUAÇÃO DO","SITUACAO DO"),
+    loc:colIndex(H,"LOCAL")
+  };
+  const hoje = meiaNoite(new Date()).getTime();
+  const out = [];
+  for(let i=h+1;i<rows.length;i++){
+    const r = rows[i];
+    const pre = cell(r,c.pre);
+    if(!pre || /^prefixo$/i.test(pre)) continue;
+    const avisar = isNum(cell(r,c.avisar)) ? Number(cell(r,c.avisar)) : 5;
+    const validade = isNum(cell(r,c.validade)) ? Number(cell(r,c.validade)) : 0;
+    const dv = parDatas(cell(r,c.cal), cell(r,c.venc), validade);
+    const dias = dv ? Math.round((dv.getTime() - hoje) / 86400000) : null;
+    /* sem data de calibração a balança não tem vencimento: é o caso mais grave
+       de todos, porque ninguém sabe desde quando ela está solta. */
+    const est = dias == null ? "sem"
+              : dias < 0      ? "vencida"
+              : dias <= avisar ? "breve"
+              : dias <= avisar*2 ? "programar"
+              : "ok";
+    out.push({
+      pre, obra: cell(r,c.obra), venc: brDate(dv),
+      dias, avisar, est,
+      sitCal: cell(r,c.sitCal), sitEq: cell(r,c.sitEq) || "—",
+      loc: cell(r,c.loc),
+      naSede: /sede/i.test(cell(r,c.loc))
+    });
+  }
+  return out;
+}
+
+/* ordem da tela: o que aperta primeiro fica em cima */
+const PESO_CAL = { vencida:0, sem:1, breve:2, programar:3, ok:4 };
+const ROTULO_CAL = {
+  vencida:"VENCIDA", sem:"SEM CALIBRAÇÃO", breve:"VENCE EM BREVE",
+  programar:"PROGRAMAR", ok:"EM DIA"
+};
+const CLASSE_CAL = { vencida:"p-bad", sem:"p-mute", breve:"p-warn", programar:"p-warn", ok:"p-ok" };
+
+function calibracao(){
+  const tb = $("cal-tb"), vazio = $("cal-empty"), topo = $("cal-topo");
+  if(!CALIB.length){
+    tb.innerHTML = ""; topo.innerHTML = "";
+    vazio.hidden = false;
+    vazio.textContent = "Não consegui ler a aba CALIBRAÇÃO BALANÇAS da planilha.";
+    $("cal-note").textContent = "—";
+    return;
+  }
+  vazio.hidden = true;
+
+  const lista = CALIB.slice().sort((a,b) =>
+    (PESO_CAL[a.est] - PESO_CAL[b.est]) || ((a.dias ?? 9999) - (b.dias ?? 9999)) || a.pre.localeCompare(b.pre));
+
+  const vencidas = lista.filter(x => x.est === "vencida");
+  const breves   = lista.filter(x => x.est === "breve");
+  const sem      = lista.filter(x => x.est === "sem");
+  const presas   = [...vencidas, ...breves].filter(x => x.naSede);
+
+  /* a faixa de cima: o anel de néon com o caso mais urgente */
+  if(vencidas.length || breves.length){
+    const pior = vencidas[0] || breves[0];
+    const cor  = vencidas.length ? "vencida" : "breve";
+    const n    = vencidas.length || breves.length;
+    const tit  = vencidas.length
+      ? `${n} balança${n>1?"s":""} com calibração vencida`
+      : `${n} balança${n>1?"s":""} vencendo em até ${pior.avisar} dias`;
+    const quem = (vencidas.length ? vencidas : breves).map(x=>x.pre).join(", ");
+    const dias = pior.dias == null ? "—" : Math.abs(pior.dias);
+    const uni  = vencidas.length ? (Math.abs(pior.dias)===1?"dia atrás":"dias atrás")
+                                 : (pior.dias===1?"dia":"dias");
+    topo.innerHTML = `
+      <div class="cal-faixa acesa" style="--neon:${cor==="vencida"?"#FF3B2F":"#FFE600"}">
+        <div class="neon ${cor}"><span class="n">${dias}<span class="u">${uni}</span></span></div>
+        <div class="txt">
+          <div class="tit">${esc(tit)}</div>
+          <p class="sub">${esc(quem)}${presas.length
+            ? ` &middot; ${presas.length === 1 ? "uma está" : presas.length + " estão"} na sede, aguardando retorno para calibração na obra`
+            : ""}</p>
+        </div>
+      </div>`;
+  }else{
+    topo.innerHTML = `
+      <div class="cal-faixa">
+        <div class="txt">
+          <div class="tit">Nenhuma calibração vencendo</div>
+          <p class="sub">${lista.length} balança${lista.length>1?"s":""} acompanhada${lista.length>1?"s":""}${
+            sem.length ? ` &middot; ${sem.length} ainda sem data de calibração` : ""}.</p>
+        </div>
+      </div>`;
+  }
+
+  $("cal-note").textContent =
+    `${lista.length} balanças · 731 vence a cada 30 dias, 720 a cada 60 · aviso ${lista[0].avisar} dias antes`;
+
+  tb.innerHTML = lista.map(x => {
+    const alerta = x.est === "vencida" || x.est === "breve";
+    const num = x.dias == null ? "—" : Math.abs(x.dias);
+    const uni = x.dias == null ? "" : (x.dias < 0 ? "atrás" : "dias");
+    const cel = alerta
+      ? `<div class="neon mini ${x.est}"><span class="n">${num}<span class="u">${uni}</span></span></div>`
+      : `<span class="plano">${x.dias == null ? "—" : x.dias}</span>`;
+    return `<tr>
+      <td data-l="Prefixo"><b>${esc(x.pre)}</b></td>
+      <td data-l="Obra">${esc(x.obra)}</td>
+      <td data-l="Vencimento">${esc(x.venc) || "—"}</td>
+      <td data-l="Dias a vencer"><div class="cal-dias">${cel}</div></td>
+      <td data-l="Calibração"><div class="cal-cel"><span class="pill ${CLASSE_CAL[x.est]}">${ROTULO_CAL[x.est]}</span>${
+        alerta && x.naSede ? `<div class="cal-sede">Na sede, aguardando retorno para calibração na obra</div>` : ""}</div></td>
+      <td data-l="Equipamento">${esc(x.sitEq)}</td>
+      <td data-l="Local">${esc(x.loc) || "—"}</td>
+    </tr>`;
+  }).join("");
 }
 
 const ehUtil = dt => dt.getDay()>=1 && dt.getDay()<=5 && !FERIADOS.has(chaveDe(dt));
@@ -1815,6 +2101,10 @@ function alertas(){
   if(vencidos.length) itens.push(["bad","vencidos",vencidos.length,`passaram da previsão de retorno`]);
   if(semPrev.length)  itens.push(["warn","semprev",semPrev.length, `sem previsão de retorno`]);
   if(limpAtr.length)  itens.push(["warn","limpeza",limpAtr.length, `atrasado${limpAtr.length>1?"s":""} na limpeza de esteiras`]);
+  const calVenc = CALIB.filter(x => x.est === "vencida");
+  const calBrev = CALIB.filter(x => x.est === "breve");
+  if(calVenc.length) itens.push(["bad","calibracao",calVenc.length,`com calibração da balança vencida`]);
+  if(calBrev.length) itens.push(["warn","calibracao",calBrev.length,`com calibração da balança vencendo`]);
 
   caixa.hidden = false;
   caixa.innerHTML = `<span class="tit">Precisa de atenção</span>` + (itens.length
@@ -1829,6 +2119,10 @@ function irPara(acao){
   if(acao === "limpeza"){
     ordemAgenda.esteiras = "dias"; agendas();
     document.getElementById("rodante").scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  if(acao === "calibracao"){
+    document.getElementById("calibracao").scrollIntoView({behavior:"smooth", block:"start"});
     return;
   }
   filtros.st = "Indisponível"; filtros.cat = ""; filtros.obra = ""; filtros.loc = "";
@@ -2297,12 +2591,13 @@ async function carregar(){
   const btn=$("s-reload");
   btn.disabled=true; carimbo("carregando");
   try{
-    const [rf,rl,rs,rm,rd,cb] = await Promise.all([
+    const [rf,rl,rs,rm,rd,rc,cb] = await Promise.all([
       pegar(ABAS.frota,"Controle de Frota"),
       pegar(ABAS.limpeza,"Cronograma Limpeza").catch(()=>null),
       pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null),
       pegar(ABAS.movimentacoes,"Movimentações").catch(()=>null),
       pegar(ABAS.demanda,"Demanda").catch(()=>null),
+      pegar(ABAS.calibracao,"Calibração Balanças").catch(()=>null),
       pegarCarimbo().catch(()=>null)
     ]);
     if(cb){ META.carimboData = cb.data; META.carimboHora = cb.hora; }
@@ -2322,13 +2617,15 @@ async function carregar(){
       META.proxSoprador = fmtDate(kv(rs,"Próxima data prevista"));
     }
     if(rd){ const d = lerDemanda(rd); DEMANDA = d.linhas; FERIADOS = d.feriados; }
+    CALIB = rc ? lerCalibracao(rc) : [];
     desenhar();
     compromisso();
     alertas();
     if(tvLigado) pintaTV();
     evolucao();
+    calibracao();
     movimentacoes();
-    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações", !rd && "Demanda"].filter(Boolean);
+    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações", !rd && "Demanda", !rc && "Calibração Balanças"].filter(Boolean);
     aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
     carimbo("ok");
   }catch(e){
