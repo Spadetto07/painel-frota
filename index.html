@@ -888,7 +888,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956 };
-const VERSAO = "2.1";
+const VERSAO = "2.2";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1616,7 +1616,9 @@ const CABECALHO_TABELA = `<thead><tr>
 const agendaPill = st => {
   const s = String(st).toLowerCase();
   let c = "p-warn";
-  if(s.includes("atrasad")) c="p-bad";
+  /* "parado" vem da aba do soprador: o gerador está indisponível na frota,
+     então não adianta programar limpeza — vermelho, igual ao atrasado. */
+  if(s.includes("atrasad") || s.includes("parad")) c="p-bad";
   else if(s.includes("execut") || s.includes("antecip") || s.includes("em dia") ||
           s.includes("feito") || s.includes("concl")) c="p-ok";
   else if(s.includes("hoje") || s.includes("limpar")) c="p-info";
