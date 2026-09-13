@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Frota 720/731">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://docs.google.com">
+<link rel="preconnect" href="https://sheets.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root{
@@ -888,7 +888,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956 };
-const VERSAO = "2.2";
+const VERSAO = "3.0";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -896,8 +896,8 @@ const POR_PAGINA = 20;
    Lista vazia = nenhuma faixa lateral aparece. */
 const VIDEOS = [];
 /* devolve a data e a hora da ultima modificacao do arquivo no Drive */
-const CARIMBO = "https://script.google.com/macros/s/AKfycbzo3OqQEdXa6OkPaHg7JxX2H6uMAidQv18DjE2JivAoxE_gytAj3UKNwNUarZILFHPp/exec";
-const csvUrl = gid => `https://docs.google.com/spreadsheets/d/e/${PUB}/pub?gid=${gid}&single=true&output=csv&_=${Date.now()}`;
+const CARIMBO = "/api/carimbo";
+const csvUrl = gid => `/api/csv?gid=${gid}&_=${Date.now()}`;
 
 /* ---------- utilitários ---------- */
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1025,9 +1025,16 @@ async function buscar(url, opts){
   const ac = new AbortController();
   const corta = setTimeout(()=>ac.abort(), LIMITE);
   try{
-    return await fetch(url, Object.assign({signal:ac.signal}, opts||{}));
+    const r = await fetch(url, Object.assign({signal:ac.signal}, opts||{}));
+    /* Quando a sessao do Cloudflare Access vence, a resposta volta
+       redirecionada para a tela de login. Falar "recarregue" e mais util do
+       que falar do Google, que nesse caso nem entrou na historia. */
+    if(r.redirected && new URL(r.url).origin !== location.origin){
+      throw new Error("sua sessao expirou - recarregue a pagina para entrar de novo");
+    }
+    return r;
   }catch(e){
-    throw (e && e.name === "AbortError") ? new Error("sem resposta do Google") : e;
+    throw (e && e.name === "AbortError") ? new Error("sem resposta do servidor") : e;
   }finally{
     clearTimeout(corta);
   }

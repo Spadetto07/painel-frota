@@ -1,0 +1,13 @@
+{
+  "name": "painel-frota",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Painel de disponibilidade da frota, servido por Cloudflare Worker e protegido por Cloudflare Access",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.42.0"
+  }
+}

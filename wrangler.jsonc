@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "painel-frota",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-01",
+
+  // O painel é servido da própria raiz do repositório, então nada precisou ser
+  // movido de lugar. O .assetsignore é quem tira o código e a configuração da
+  // lista de arquivos publicados.
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+
+  "vars": {
+    "SHEET_ID": "1I8CSxPKxye2YlGOC_1F0fNJg9NCqvQO2H6DMcY-eYoo",
+    "FUSO": "America/Sao_Paulo"
+  },
+
+  "observability": { "enabled": true }
+}

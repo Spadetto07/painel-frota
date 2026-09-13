@@ -1,0 +1,13 @@
+# Estes arquivos são o código e a configuração do Worker, não páginas do painel.
+# Sem esta lista eles ficariam baixáveis em /worker.js, /wrangler.jsonc etc.
+worker.js
+wrangler.jsonc
+package.json
+package-lock.json
+.assetsignore
+README.md
+CONTEXTO-PAINEL-FROTA.md
+**/.git
+**/node_modules
+**/.wrangler
+**/.DS_Store
