@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Painel de Frota 720/731 — Solicitar acesso</title>
+<link rel="icon" href="../icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<style>
+:root{
+  --bg:#F4F6F8; --surf:#FFFFFF; --surf2:#EDF1F4;
+  --line:#DCE3E8; --ink:#141F29; --ink2:#475763; --ink3:#6E7E8A;
+  --accent:#1E5C7E; --accent-soft:#E3EDF3;
+  --good:#1F7A4D; --good-bg:#E6F4EC; --bad:#B4402A; --bad-bg:#FBEAE6;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#10161B; --surf:#182129; --surf2:#1F2A33; --line:#2C3A44;
+    --ink:#E8EEF2; --ink2:#A9B8C2; --ink3:#7C8B96; --accent:#74B4D4; --accent-soft:#1C2F3B;
+    --good:#4ADE80; --good-bg:#0F2A1C; --bad:#F87171; --bad-bg:#3A1512; }
+}
+*{box-sizing:border-box}
+body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.cartao{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:32px;max-width:420px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+h1{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:28px;margin:0 0 4px}
+p.sub{color:var(--ink2);margin:0 0 24px;font-size:13.5px;line-height:1.5}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--ink2);margin:16px 0 6px}
+input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surf2);color:var(--ink);font-size:15px;font-family:inherit;box-sizing:border-box}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+button{margin-top:24px;width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+button:disabled{opacity:.6;cursor:default}
+.msg{margin-top:16px;padding:12px;border-radius:8px;font-size:13.5px;display:none}
+.msg.ok{background:var(--good-bg);color:var(--good);display:block}
+.msg.erro{background:var(--bad-bg);color:var(--bad);display:block}
+.cf-turnstile{margin-top:16px}
+</style>
+</head>
+<body>
+  <div class="cartao">
+    <h1>Painel de Frota 720/731</h1>
+    <p class="sub">Preencha seus dados para solicitar acesso. Seu pedido é analisado manualmente e você recebe um e-mail assim que for liberado.</p>
+
+    <form id="formCadastro">
+      <label for="nome">Nome completo</label>
+      <input id="nome" name="nome" required autocomplete="name">
+
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" required autocomplete="email">
+
+      <label for="telefone">Telefone (opcional)</label>
+      <input id="telefone" name="telefone" type="tel" autocomplete="tel">
+
+      <label for="obra">Obra (opcional)</label>
+      <select id="obra" name="obra">
+        <option value="">Selecione</option>
+        <option value="720">Obra 720</option>
+        <option value="731">Obra 731</option>
+        <option value="Gestão">Gestão</option>
+      </select>
+
+      <div class="cf-turnstile" data-sitekey="__TURNSTILE_SITE_KEY__" data-callback="onTurnstileOk"></div>
+
+      <button id="botaoEnviar" type="submit" disabled>Solicitar acesso</button>
+      <div id="mensagem" class="msg"></div>
+    </form>
+  </div>
+
+<script>
+  let turnstileToken = null;
+  function onTurnstileOk(token){
+    turnstileToken = token;
+    document.getElementById('botaoEnviar').disabled = false;
+  }
+
+  document.getElementById('formCadastro').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const botao = document.getElementById('botaoEnviar');
+    const mensagem = document.getElementById('mensagem');
+    botao.disabled = true;
+    mensagem.className = 'msg';
+
+    const corpo = {
+      nome: document.getElementById('nome').value,
+      email: document.getElementById('email').value,
+      telefone: document.getElementById('telefone').value,
+      obra: document.getElementById('obra').value,
+      turnstileToken,
+    };
+
+    try{
+      const resp = await fetch('/cadastro/api/enviar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(corpo),
+      });
+      const dados = await resp.json();
+      if (resp.ok){
+        mensagem.textContent = dados.mensagem;
+        mensagem.className = 'msg ok';
+        document.getElementById('formCadastro').reset();
+      } else {
+        mensagem.textContent = dados.erro || 'Algo deu errado, tente novamente.';
+        mensagem.className = 'msg erro';
+        botao.disabled = false;
+      }
+    } catch {
+      mensagem.textContent = 'Falha de conexão. Tente novamente.';
+      mensagem.className = 'msg erro';
+      botao.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -5,9 +5,21 @@ wrangler.jsonc
 package.json
 package-lock.json
 .assetsignore
+.gitignore
 README.md
+SETUP.md
 CONTEXTO-PAINEL-FROTA.md
+.dev.vars.example
+migrations/**
 **/.git
 **/node_modules
 **/.wrangler
 **/.DS_Store
+
+# Rede de segurança: nenhuma chave/credencial pode ser servida como asset público,
+# mesmo que alguém esqueça um arquivo desses dentro da pasta por engano.
+*.pem
+*.key
+*service-account*.json
+*-NAO-COMMITAR.*
+.dev.vars

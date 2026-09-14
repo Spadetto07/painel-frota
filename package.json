@@ -5,7 +5,8 @@
   "description": "Painel de disponibilidade da frota, servido por Cloudflare Worker e protegido por Cloudflare Access",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 execute painel-frota-db --remote --file=./migrations/0001_inicial.sql"
   },
   "devDependencies": {
     "wrangler": "^4.42.0"

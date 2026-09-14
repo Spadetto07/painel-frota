@@ -1,0 +1,15 @@
+# Copie para ".dev.vars" (nunca commitado) para testar localmente com `wrangler dev`.
+# Em produção, os mesmos nomes são Secrets do Worker no dashboard do Cloudflare
+# (Workers & Pages > painel-frota > Settings > Variables and Secrets) — nunca em arquivo.
+
+GOOGLE_CLIENT_EMAIL=nome@upbeat-arch-508522.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMII...\n-----END PRIVATE KEY-----\n"
+
+RESEND_API_KEY=re_xxx
+
+TURNSTILE_SECRET_KEY=0x4xxx
+
+CF_API_TOKEN=xxx
+CF_ACCOUNT_ID=xxx
+CF_ACCESS_APP_ID=xxx
+CF_ACCESS_POLICY_ID=xxx

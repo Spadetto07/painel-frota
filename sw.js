@@ -4,7 +4,7 @@
    Mudou na v3.0: os dados não vêm mais do docs.google.com, vêm do próprio
    Worker em /api/. E como a página agora fica atrás do Cloudflare Access,
    resposta redirecionada (a tela de login) nunca pode ir para o cache. */
-const CACHE = "frota-v3.0";
+const CACHE = "frota-v3.1";
 const CASCA = ["./", "./index.html", "./manifest.webmanifest",
                "./icone-192.png", "./icone-512.png"];
 

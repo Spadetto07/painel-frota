@@ -9,12 +9,26 @@
   // lista de arquivos publicados.
   "assets": {
     "directory": ".",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "run_worker_first": true
   },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "painel-frota-db",
+      "database_id": "e833cd51-64ff-40ef-b5da-db3b9a54fbb9"
+    }
+  ],
 
   "vars": {
     "SHEET_ID": "1I8CSxPKxye2YlGOC_1F0fNJg9NCqvQO2H6DMcY-eYoo",
-    "FUSO": "America/Sao_Paulo"
+    "FUSO": "America/Sao_Paulo",
+    "ADMIN_EMAIL": "viniciusspadetto@gmail.com",
+    // Trocar pelo domínio real depois do primeiro deploy (ex: https://painel-frota.<sua-conta>.workers.dev)
+    "SITE_URL": "https://painel-frota.workers.dev",
+    // Não é secreto (é injetado no HTML público do cadastro) — preencher depois de criar o widget no Turnstile.
+    "TURNSTILE_SITE_KEY": ""
   },
 
   "observability": { "enabled": true }

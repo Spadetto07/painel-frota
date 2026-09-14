@@ -1,0 +1,13 @@
+node_modules/
+.wrangler/
+.dev.vars
+CONTEXTO-PAINEL-FROTA.md
+*.json.key
+chave*.json
+*service-account*.json
+*-NAO-COMMITAR.*
+.claude/
+
+# Não é deste projeto — apareceu na pasta durante outra sessão concorrente.
+# Ver aviso na conversa. Não apagar sem checar com o Vinícius antes.
+acompanhamento-gestacional/
