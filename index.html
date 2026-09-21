@@ -344,6 +344,31 @@ td.def{color:var(--ink2);max-width:34ch}
 @media (max-width:720px){ .cal-cel{align-items:flex-end;text-align:right} }
 .cal-nada{padding:18px;text-align:center;color:var(--ink3);font-size:13px}
 
+/* ---------- emissões atmosféricas ---------- */
+.emi-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.emi-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surf);color:var(--ink2);font-size:12.5px;font-weight:600;
+  font-family:inherit;letter-spacing:.01em;transition:border-color .15s,background .15s}
+.emi-chip:hover{border-color:var(--ink3)}
+.emi-chip b{font-family:"Barlow Condensed",sans-serif;font-size:16px;line-height:1;font-variant-numeric:tabular-nums}
+.emi-chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.emi-chip .pt{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.emi-chip.c-bad .pt{background:var(--bad)} .emi-chip.c-warn .pt{background:var(--warn)}
+.emi-chip.c-ok .pt{background:var(--ok)} .emi-chip.c-mute .pt{background:var(--mute)}
+.emi-chip.c-all .pt{background:var(--accent)}
+
+/* a barra do ciclo: quanto dos 180 dias já foi gasto */
+.ciclo{display:flex;align-items:center;gap:9px;min-width:150px}
+.ciclo-trilho{position:relative;flex:1 1 auto;height:7px;border-radius:999px;background:var(--surf3);overflow:hidden}
+.ciclo-trilho i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--ok);transition:width .4s ease}
+.ciclo-trilho i.w{background:var(--warn)} .ciclo-trilho i.b{background:var(--bad)}
+.ciclo-pct{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;color:var(--ink3);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.emi-tab td{vertical-align:middle}
+.emi-sem{color:var(--ink3)}
+@media (max-width:720px){ .ciclo{min-width:0;width:60%} }
+@media print{ .emi-chips{display:none!important} .ciclo-trilho i{background:#666!important} }
+
 /* ---------- barra de ações ---------- */
 .acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .copiar.destaque{color:var(--accent);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
@@ -677,6 +702,7 @@ footer b{color:var(--ink2);font-weight:600}
     <a href="#frota">Frota completa</a>
     <a href="#rodante">Material rodante</a>
     <a href="#calibracao">Calibração</a>
+    <a href="#emissoes">Emissões</a>
     <a href="#movimentacoes">Movimentações</a>
   </div>
 </nav>
@@ -832,6 +858,24 @@ footer b{color:var(--ink2);font-weight:600}
     </div>
   </section>
 
+  <section id="emissoes">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Emissões atmosféricas</h2><span class="sec-note" id="emi-note">—</span></div>
+    <div class="cal-topo" id="emi-topo"></div>
+    <div class="emi-chips" id="emi-chips" role="group" aria-label="Filtrar por situação"></div>
+    <div class="tablebox">
+      <table class="cal-tab emi-tab">
+        <thead><tr>
+          <th>Prefixo</th><th>Equipamento</th><th>Último teste</th><th>Vencimento</th>
+          <th>Dias a vencer</th><th>Ciclo de 180 dias</th><th>Situação</th><th>Local</th>
+        </tr></thead>
+        <tbody id="emi-tb"></tbody>
+      </table>
+      <div class="empty" id="emi-empty">Carregando…</div>
+    </div>
+    <p class="aside" id="emi-aside">&nbsp;</p>
+  </section>
+
   <section id="movimentacoes">
     <div class="rule"></div>
     <div class="sec-head"><h2>Últimas movimentações</h2><span class="sec-note" id="mov-note">—</span></div>
@@ -887,8 +931,8 @@ footer b{color:var(--ink2);font-weight:600}
 <script>
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
-const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956 };
-const VERSAO = "2.2";
+const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
+const VERSAO = "2.3";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1006,6 +1050,8 @@ let FROTA=[], LIMPEZA=[], SOPRADOR=[], MOVS=[], META={};
 let DEMANDA=[], FERIADOS=new Set();
 /* calibração das balanças (aba CALIBRAÇÃO BALANÇAS) */
 let CALIB=[];
+/* emissões atmosféricas — teste de fumaça com opacímetro (aba EMISSOES ATMOSFERICAS) */
+let EMISSOES=[], filtroEmi="atencao";
 let momentoCP = "agora";
 /* o log cru, sem agrupar — é dele que sai a linha do tempo */
 let MOVS_BRUTO=[];
@@ -1439,6 +1485,165 @@ function calibracao(){
         alerta && x.naSede ? `<div class="cal-sede">Na sede, aguardando retorno para calibração na obra</div>` : ""}</div></td>
       <td data-l="Equipamento">${esc(x.sitEq)}</td>
       <td data-l="Local">${esc(x.loc) || "—"}</td>
+    </tr>`;
+  }).join("");
+}
+
+/* ---------- emissões atmosféricas (teste de fumaça, opacímetro) ----------
+   Mesma cozinha da calibração: os dias a vencer são recontados aqui a partir do
+   VENCIMENTO, e o par data-do-teste + vencimento desempata o formato da data
+   conferindo com a validade. A diferença é que aqui o ciclo é longo (180 dias),
+   então vale a pena mostrar quanto dele já foi gasto. */
+function lerEmissoes(rows){
+  const h = headerRow(rows,"PREFIXO","VENCIMENTO","SITUA");
+  if(h<0) return [];
+  const H = rows[h];
+  const c = {
+    pre:colIndex(H,"PREFIXO"), eq:colIndex(H,"EQUIPAMENTO"),
+    validade:colIndex(H,"VALIDADE"), avisar:colIndex(H,"AVISAR"),
+    teste:colIndex(H,"DATA DO TESTE","DATA DO"), venc:colIndex(H,"VENCIMENTO"),
+    sitEq:colIndex(H,"SITUAÇÃO DO EQUIPAMENTO","SITUACAO DO EQUIPAMENTO"),
+    loc:colIndex(H,"LOCAL")
+  };
+  const hoje = meiaNoite(new Date()).getTime();
+  const out = [];
+  for(let i=h+1;i<rows.length;i++){
+    const r = rows[i];
+    const pre = cell(r,c.pre);
+    if(!pre || /^prefixo$/i.test(pre)) continue;
+    const validade = isNum(cell(r,c.validade)) ? Number(cell(r,c.validade)) : 180;
+    const avisar   = isNum(cell(r,c.avisar))   ? Number(cell(r,c.avisar))   : 25;
+    const dv = parDatas(cell(r,c.teste), cell(r,c.venc), validade);
+    /* a data do teste sai do vencimento menos a validade — exata, sem depender
+       de adivinhar o formato de mais uma coluna */
+    const dt = dv ? new Date(dv.getFullYear(), dv.getMonth(), dv.getDate()-validade) : null;
+    const dias = dv ? Math.round((dv.getTime() - hoje) / 86400000) : null;
+    const est = dias == null ? "sem"
+              : dias < 0        ? "vencido"
+              : dias <= avisar  ? "breve"
+              : dias <= avisar*2 ? "programar"
+              : "ok";
+    /* quanto do ciclo já foi gasto — 0 no dia do teste, 100 no vencimento */
+    const usado = dias == null ? null
+                : Math.max(0, Math.min(100, Math.round((validade - dias) / validade * 100)));
+    out.push({
+      pre, eq: cell(r,c.eq) || "—", validade, avisar,
+      teste: brDate(dt), venc: brDate(dv), dias, est, usado,
+      sitEq: cell(r,c.sitEq) || "—", loc: cell(r,c.loc) || "—"
+    });
+  }
+  return out;
+}
+
+const PESO_EMI = { vencido:0, sem:1, breve:2, programar:3, ok:4 };
+const ROTULO_EMI = { vencido:"VENCIDO", sem:"SEM TESTE", breve:"VENCE EM BREVE", programar:"PROGRAMAR", ok:"EM DIA" };
+const CLASSE_EMI = { vencido:"p-bad", sem:"p-mute", breve:"p-warn", programar:"p-warn", ok:"p-ok" };
+
+/* os botões de filtro: cada um já mostra quantos são */
+const FILTROS_EMI = [
+  {id:"atencao",   rot:"Precisa de ação", cor:"c-bad",  ok:x => x.est==="vencido" || x.est==="breve" || x.est==="sem"},
+  {id:"vencido",   rot:"Vencidos",        cor:"c-bad",  ok:x => x.est==="vencido"},
+  {id:"breve",     rot:"Vence em breve",  cor:"c-warn", ok:x => x.est==="breve"},
+  {id:"programar", rot:"Programar",       cor:"c-warn", ok:x => x.est==="programar"},
+  {id:"sem",       rot:"Sem teste",       cor:"c-mute", ok:x => x.est==="sem"},
+  {id:"ok",        rot:"Em dia",          cor:"c-ok",   ok:x => x.est==="ok"},
+  {id:"todos",     rot:"Todos",           cor:"c-all",  ok:() => true}
+];
+
+function emissoes(){
+  const tb = $("emi-tb"), vazio = $("emi-empty"), topo = $("emi-topo"), chips = $("emi-chips");
+  if(!EMISSOES.length){
+    tb.innerHTML = ""; topo.innerHTML = ""; chips.innerHTML = "";
+    vazio.hidden = false;
+    vazio.textContent = "Não consegui ler a aba EMISSOES ATMOSFERICAS da planilha.";
+    $("emi-note").textContent = "—";
+    return;
+  }
+
+  const ordenada = EMISSOES.slice().sort((a,b) =>
+    (PESO_EMI[a.est] - PESO_EMI[b.est]) || ((a.dias ?? 9999) - (b.dias ?? 9999)) || a.pre.localeCompare(b.pre));
+
+  const vencidos = ordenada.filter(x => x.est === "vencido");
+  const breves   = ordenada.filter(x => x.est === "breve");
+  const sem      = ordenada.filter(x => x.est === "sem");
+  const avisar   = ordenada[0].avisar;
+
+  /* faixa do topo, com o anel de néon, igual ao da calibração */
+  const acao = vencidos.length + breves.length;
+  if(acao){
+    const pior = vencidos[0] || breves[0];
+    const cor  = vencidos.length ? "vencida" : "breve";
+    const n    = vencidos.length || breves.length;
+    const tit  = vencidos.length
+      ? `${n} equipamento${n>1?"s":""} com teste de fumaça vencido`
+      : `${n} equipamento${n>1?"s":""} vencendo em até ${avisar} dias`;
+    const dias = pior.dias == null ? "—" : Math.abs(pior.dias);
+    const uni  = vencidos.length ? (Math.abs(pior.dias)===1?"dia atrás":"dias atrás")
+                                 : (pior.dias===1?"dia":"dias");
+    const quem = (vencidos.length ? vencidos : breves).map(x=>x.pre).join(", ");
+    topo.innerHTML = `
+      <div class="cal-faixa acesa" style="--neon:${cor==="vencida"?"#FF3B2F":"#FFE600"}">
+        <div class="neon ${cor}"><span class="n">${dias}<span class="u">${uni}</span></span></div>
+        <div class="txt">
+          <div class="tit">${esc(tit)}</div>
+          <p class="sub">${esc(quem)}${vencidos.length && breves.length
+            ? ` &middot; e mais ${breves.length} vencendo em até ${avisar} dias` : ""}</p>
+        </div>
+      </div>`;
+  }else{
+    topo.innerHTML = `
+      <div class="cal-faixa">
+        <div class="txt">
+          <div class="tit">Nenhum teste vencendo</div>
+          <p class="sub">${ordenada.length} equipamentos acompanhados${
+            sem.length ? ` &middot; ${sem.length} ainda sem teste registrado` : ""}.</p>
+        </div>
+      </div>`;
+  }
+
+  /* se não há nada pedindo ação, "Precisa de ação" não deve ser o filtro aberto */
+  if(filtroEmi === "atencao" && !acao && !sem.length) filtroEmi = "todos";
+
+  chips.innerHTML = FILTROS_EMI.map(f => {
+    const n = ordenada.filter(f.ok).length;
+    return `<button class="emi-chip ${f.cor}" type="button" data-emi="${f.id}"
+      aria-pressed="${String(f.id === filtroEmi)}"><i class="pt"></i>${f.rot} <b>${n}</b></button>`;
+  }).join("");
+
+  const filtro = FILTROS_EMI.find(f => f.id === filtroEmi) || FILTROS_EMI[FILTROS_EMI.length-1];
+  const lista = ordenada.filter(filtro.ok);
+
+  $("emi-note").textContent =
+    `${ordenada.length} equipamentos · teste de fumaça com opacímetro · validade de ${ordenada[0].validade} dias · aviso ${avisar} dias antes`;
+
+  $("emi-aside").innerHTML =
+    `A barra mostra quanto do ciclo de ${ordenada[0].validade} dias já passou desde o último teste. ` +
+    `Quem não tem data registrada aparece como SEM TESTE — é o caso mais grave, porque não dá para saber desde quando está sem medição.`;
+
+  vazio.hidden = lista.length > 0;
+  if(!lista.length) vazio.textContent = "Nenhum equipamento nesta situação.";
+
+  tb.innerHTML = lista.map(x => {
+    const alerta = x.est === "vencido" || x.est === "breve";
+    const num = x.dias == null ? "—" : Math.abs(x.dias);
+    const uni = x.dias == null ? "" : (x.dias < 0 ? "atrás" : "dias");
+    const cel = alerta
+      ? `<div class="neon mini ${x.est === "vencido" ? "vencida" : "breve"}"><span class="n">${num}<span class="u">${uni}</span></span></div>`
+      : `<span class="plano">${x.dias == null ? "—" : x.dias}</span>`;
+    const naFrota = FROTA.some(e => normPre(e.pre) === normPre(x.pre));
+    const barra = x.usado == null
+      ? `<span class="emi-sem">sem teste registrado</span>`
+      : `<div class="ciclo"><div class="ciclo-trilho"><i class="${x.est==="vencido"?"b":(x.est==="breve"||x.est==="programar")?"w":""}"
+           style="width:${x.usado}%"></i></div><span class="ciclo-pct">${x.usado}%</span></div>`;
+    return `<tr>
+      <td data-l="Prefixo">${naFrota ? `<b data-eq="${esc(x.pre)}">${esc(x.pre)}</b>` : `<b>${esc(x.pre)}</b>`}</td>
+      <td data-l="Equipamento">${esc(x.eq)}</td>
+      <td data-l="Último teste">${esc(x.teste) || "—"}</td>
+      <td data-l="Vencimento">${esc(x.venc) || "—"}</td>
+      <td data-l="Dias a vencer"><div class="cal-dias">${cel}</div></td>
+      <td data-l="Ciclo">${barra}</td>
+      <td data-l="Situação"><span class="pill ${CLASSE_EMI[x.est]}">${ROTULO_EMI[x.est]}</span></td>
+      <td data-l="Local">${esc(x.loc)}</td>
     </tr>`;
   }).join("");
 }
@@ -2593,13 +2798,14 @@ async function carregar(){
   const btn=$("s-reload");
   btn.disabled=true; carimbo("carregando");
   try{
-    const [rf,rl,rs,rm,rd,rc,cb] = await Promise.all([
+    const [rf,rl,rs,rm,rd,rc,re,cb] = await Promise.all([
       pegar(ABAS.frota,"Controle de Frota"),
       pegar(ABAS.limpeza,"Cronograma Limpeza").catch(()=>null),
       pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null),
       pegar(ABAS.movimentacoes,"Movimentações").catch(()=>null),
       pegar(ABAS.demanda,"Demanda").catch(()=>null),
       pegar(ABAS.calibracao,"Calibração Balanças").catch(()=>null),
+      pegar(ABAS.emissoes,"Emissões Atmosféricas").catch(()=>null),
       pegarCarimbo().catch(()=>null)
     ]);
     if(cb){ META.carimboData = cb.data; META.carimboHora = cb.hora; }
@@ -2620,14 +2826,16 @@ async function carregar(){
     }
     if(rd){ const d = lerDemanda(rd); DEMANDA = d.linhas; FERIADOS = d.feriados; }
     CALIB = rc ? lerCalibracao(rc) : [];
+    EMISSOES = re ? lerEmissoes(re) : [];
     desenhar();
     compromisso();
     alertas();
     if(tvLigado) pintaTV();
     evolucao();
     calibracao();
+    emissoes();
     movimentacoes();
-    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações", !rd && "Demanda", !rc && "Calibração Balanças"].filter(Boolean);
+    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações", !rd && "Demanda", !rc && "Calibração Balanças", !re && "Emissões Atmosféricas"].filter(Boolean);
     aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
     carimbo("ok");
   }catch(e){
@@ -2667,6 +2875,8 @@ $("f-link").addEventListener("click", ev => copiar(linkDoFiltro(), ev.currentTar
 document.addEventListener("click", ev => {
   const eq = ev.target.closest("[data-eq]");
   if(eq){ abrirFicha(eq.dataset.eq); return; }
+  const ec = ev.target.closest("[data-emi]");
+  if(ec){ filtroEmi = ec.dataset.emi; emissoes(); return; }
   const al = ev.target.closest("[data-alerta]");
   if(al) irPara(al.dataset.alerta);
 });
