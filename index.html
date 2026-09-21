@@ -932,7 +932,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.3";
+const VERSAO = "2.3.1";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1495,15 +1495,23 @@ function calibracao(){
    conferindo com a validade. A diferença é que aqui o ciclo é longo (180 dias),
    então vale a pena mostrar quanto dele já foi gasto. */
 function lerEmissoes(rows){
-  const h = headerRow(rows,"PREFIXO","VENCIMENTO","SITUA");
+  const h = headerRow(rows,"PREFIXO","VALIDADE");
   if(h<0) return [];
   const H = rows[h];
+  /* O Google serve o cabeçalho com alguns minutos de atraso depois de uma
+     mudança na aba, e nesse intervalo as últimas colunas chegam em branco.
+     Então cada coluna é procurada pelo nome e, se não achar, cai na posição
+     conhecida — a seção continua de pé enquanto o cache não vira. */
+  const ou = (achado, posicao) => achado >= 0 ? achado : posicao;
   const c = {
-    pre:colIndex(H,"PREFIXO"), eq:colIndex(H,"EQUIPAMENTO"),
-    validade:colIndex(H,"VALIDADE"), avisar:colIndex(H,"AVISAR"),
-    teste:colIndex(H,"DATA DO TESTE","DATA DO"), venc:colIndex(H,"VENCIMENTO"),
-    sitEq:colIndex(H,"SITUAÇÃO DO EQUIPAMENTO","SITUACAO DO EQUIPAMENTO"),
-    loc:colIndex(H,"LOCAL")
+    pre:   ou(colIndex(H,"PREFIXO"), 0),
+    eq:    ou(colIndex(H,"EQUIPAMENTO"), 1),
+    validade: ou(colIndex(H,"VALIDADE"), 2),
+    avisar:ou(colIndex(H,"AVISAR"), 3),
+    teste: ou(colIndex(H,"DATA DO TESTE","DATA DO"), 4),
+    venc:  ou(colIndex(H,"VENCIMENTO"), 5),
+    sitEq: ou(colIndex(H,"SITUAÇÃO DO EQUIPAMENTO","SITUACAO DO EQUIPAMENTO"), 8),
+    loc:   ou(colIndex(H,"LOCAL"), 9)
   };
   const hoje = meiaNoite(new Date()).getTime();
   const out = [];
