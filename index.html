@@ -222,7 +222,7 @@ input[type="search"]{min-width:190px;flex:1 1 190px;max-width:280px}
 select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .count{font-size:12.5px;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
 
-.tablebox{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;box-shadow:var(--shadow)}
+.tablebox{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;scrollbar-gutter:stable;box-shadow:var(--shadow)}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
 thead th{position:sticky;top:0;background:var(--surf2);text-align:left;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
 tbody td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top}
@@ -292,6 +292,8 @@ td.def{color:var(--ink2);max-width:34ch}
 @media (max-width:560px){ .logo{max-height:40px;max-width:130px} }
 
 /* ---------- calibração das balanças ---------- */
+/* precisa estar registrada para o navegador saber interpolar o ângulo */
+@property --giro{syntax:"<angle>";initial-value:0deg;inherits:false}
 /* Duas cores de néon: amarelo quando está chegando a data, vermelho quando já passou.
    Os tons são fixos de propósito — néon não muda entre tema claro e escuro. */
 .cal-topo{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:18px}
@@ -309,8 +311,13 @@ td.def{color:var(--ink2);max-width:34ch}
   width:64px;height:64px;border-radius:50%}
 .neon.vencida{--neon:#FF3B2F}
 .neon.breve{--neon:#FFE600}
+/* O giro é do GRADIENTE, não do elemento. Girar o elemento com transform faz a
+   caixa dele crescer e encolher a cada quadro (um quadrado girado chega a 1,41x),
+   e dentro de um contêiner com rolagem isso cria e apaga a barra sem parar.
+   Animando o ângulo do conic-gradient o desenho é o mesmo e a caixa não mexe. */
 .neon::after{content:"";position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
-  background:conic-gradient(from 0turn,transparent 0 55%,color-mix(in srgb,var(--neon) 60%,transparent) 78%,var(--neon) 92%,transparent 100%);
+  --giro:0deg;
+  background:conic-gradient(from var(--giro),transparent 0 55%,color-mix(in srgb,var(--neon) 60%,transparent) 78%,var(--neon) 92%,transparent 100%);
   filter:blur(7px);opacity:.9;animation:neon-gira 2.4s linear infinite}
 .neon::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
   border:2.5px solid var(--neon);
@@ -321,7 +328,7 @@ td.def{color:var(--ink2);max-width:34ch}
   font-size:26px;line-height:.9;color:var(--ink);font-variant-numeric:tabular-nums;text-align:center}
 .neon .u{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:8.5px;font-weight:600;
   letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-top:2px}
-@keyframes neon-gira{to{transform:rotate(1turn)}}
+@keyframes neon-gira{from{--giro:0deg}to{--giro:360deg}}
 @keyframes neon-pulsa{0%,100%{opacity:1}50%{opacity:.55}}
 
 /* quem não gosta de coisa piscando continua vendo o anel, só que parado */
@@ -334,7 +341,7 @@ td.def{color:var(--ink2);max-width:34ch}
 .neon.mini{width:44px;height:44px}
 .neon.mini .n{font-size:18px}
 .neon.mini .u{font-size:7.5px;letter-spacing:.08em}
-.cal-dias{display:flex;align-items:center;gap:9px}
+.cal-dias{display:flex;align-items:center;gap:9px;min-height:52px}
 .cal-dias .plano{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;
   color:var(--ink2);font-variant-numeric:tabular-nums}
 .cal-sede{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:11px;font-weight:600;
@@ -932,7 +939,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.3.1";
+const VERSAO = "2.3.2";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
