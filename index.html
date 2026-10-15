@@ -953,7 +953,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.4.1";
+const VERSAO = "2.4.2";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -2405,12 +2405,15 @@ function montarParadas(hist){
 }
 
 function duracaoTxt(ms){
-  /* sempre em horas: "170 h 32 min", "18 h", "45 min" */
+  /* até 24 h: "17 h 31 min"; passou de 24 h: "7 dias e 2 horas" */
   if(ms == null || ms < 0) return "";
   const totalMin = Math.max(1, Math.round(ms/60000));
   const h = Math.floor(totalMin/60), min = totalMin % 60;
   if(!h) return `${min} min`;
-  return min ? `${h.toLocaleString("pt-BR")} h ${min} min` : `${h.toLocaleString("pt-BR")} h`;
+  if(h < 24) return min ? `${h} h ${min} min` : `${h} h`;
+  const d = Math.floor(h/24), hr = h % 24;
+  const dTxt = `${d} dia${d === 1 ? "" : "s"}`;
+  return hr ? `${dTxt} e ${hr} hora${hr === 1 ? "" : "s"}` : dTxt;
 }
 
 const quandoTxt = m => m ? `${m.data || "—"}${m.hora ? " " + m.hora : ""}` : "";
