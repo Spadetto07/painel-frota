@@ -557,6 +557,20 @@ body.tv-on{overflow:hidden}
 .flinha .q{font-family:"IBM Plex Mono",monospace;color:var(--ink3);font-size:11.5px;font-variant-numeric:tabular-nums}
 .flinha .por{color:var(--ink2);margin-top:3px;line-height:1.4}
 .fvazio{font-size:12.5px;color:var(--ink3)}
+.fpars{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.fpar{background:var(--surf2);border:1px solid var(--line);border-left:4px solid var(--mute);border-radius:10px;padding:11px 13px;font-size:12.5px}
+.fpar.aberta{border-left-color:var(--bad-solid);background:color-mix(in srgb,var(--bad-bg) 60%,var(--surf2))}
+.fpar.fechada{border-left-color:var(--ok-solid)}
+.fpar-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fpar-dur{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fpar.aberta .fpar-dur{color:var(--bad);font-weight:600}
+.fpar-mot{margin-top:8px;font-weight:600;color:var(--ink);line-height:1.4;text-transform:uppercase}
+.fpar-antes{margin-top:4px;color:var(--ink3);font-size:11.5px;line-height:1.4}
+.fpar-antes span{font-family:"IBM Plex Mono",monospace;font-size:11px}
+.fpar-datas{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:9px;padding-top:8px;border-top:1px solid var(--line-soft)}
+.fpar-datas .k{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.fpar-datas .v{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.fpar-datas .v.ainda{font-family:inherit;color:var(--bad)}
 .copiar{font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:var(--surf2);border:1px solid var(--line);
   border-radius:999px;padding:5px 12px;cursor:pointer;white-space:nowrap}
 .copiar:hover{background:var(--surf3)}
@@ -939,7 +953,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.3.2";
+const VERSAO = "2.4";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -2355,6 +2369,80 @@ function irPara(acao){
   document.getElementById("frota").scrollIntoView({behavior:"smooth", block:"start"});
 }
 
+/* ---------- histórico da ficha: uma parada por cartão ----------
+   A planilha grava cada mudança numa linha: parou, mudou o motivo, voltou.
+   Na ficha isso vira UMA parada só — motivo, data de parada e data de
+   liberação —, para não repetir "ficou disponível / ficou indisponível". */
+const semTexto = t => !t || /^[\s—–\-]*$/.test(String(t));
+
+function montarParadas(hist){
+  const asc = hist.slice().reverse();          /* MOVS vem da mais recente para a mais antiga */
+  const out = [];
+  let aberta = null;
+  const anotaMotivo = (p, m) => {
+    if(semTexto(m.motivo)) return;
+    const ult = p.motivos[p.motivos.length-1];
+    if(!ult || ult.txt.trim().toUpperCase() !== String(m.motivo).trim().toUpperCase())
+      p.motivos.push({ txt:m.motivo, data:m.data });
+  };
+  asc.forEach(m => {
+    if(m.tipo === "ind"){
+      if(aberta){ anotaMotivo(aberta, m); return; }   /* já estava parado: só reforça o motivo */
+      aberta = { inicio:m, fim:null, motivos:[] };
+      anotaMotivo(aberta, m);
+      out.push(aberta);
+    } else if(m.tipo === "motivo"){
+      if(aberta) anotaMotivo(aberta, m);
+      else out.push({ avulso:m });
+    } else if(m.tipo === "disp"){
+      if(aberta){ aberta.fim = m; aberta = null; }
+      else out.push({ inicio:null, fim:m, motivos:[] });  /* parou antes do registro começar */
+    } else {
+      out.push({ avulso:m });
+    }
+  });
+  return out.reverse();                         /* mais recente em cima */
+}
+
+function duracaoTxt(ms){
+  if(ms == null || ms < 0) return "";
+  const h = ms / 3600000;
+  if(h < 1)  return `${Math.max(1, Math.round(ms/60000))} min`;
+  if(h < 24) return `${Math.round(h)} h`;
+  const d = Math.round(h/24*10)/10;
+  return `${String(d).replace(".", ",")} dia${d === 1 ? "" : "s"}`;
+}
+
+const quandoTxt = m => m ? `${m.data || "—"}${m.hora ? " " + m.hora : ""}` : "";
+
+function cartaoParada(p){
+  if(p.avulso){
+    const m = p.avulso;
+    return `<li class="fpar avulso">
+      <div class="fpar-top">${pillMov(m.tipo)}<span class="fpar-dur">${esc(quandoTxt(m))}</span></div>
+      <div class="fpar-mot">${esc(semTexto(m.motivo) ? "Sem motivo informado" : m.motivo)}</div>
+    </li>`;
+  }
+  const aberta = !p.fim;
+  const ini = p.inicio, fim = p.fim;
+  const fimTs = aberta ? Date.now() : fim.ts;
+  const dur = (ini && ini.ts != null && fimTs != null) ? duracaoTxt(fimTs - ini.ts) : "";
+  const motivo = p.motivos.length ? p.motivos[p.motivos.length-1].txt : "Sem motivo informado";
+  const antes = p.motivos.slice(0, -1);
+  return `<li class="fpar ${aberta ? "aberta" : "fechada"}">
+    <div class="fpar-top">
+      <span class="pill ${aberta ? "p-bad forte" : "p-ok forte"}">${esc(aberta ? TEXTO_MOV.ind : TEXTO_MOV.disp)}</span>
+      ${dur ? `<span class="fpar-dur">${aberta ? "parado há " : ""}${esc(dur)}${aberta ? "" : " parado"}</span>` : ""}
+    </div>
+    <div class="fpar-mot">${esc(motivo)}</div>
+    ${antes.length ? `<div class="fpar-antes">Antes: ${antes.map(a => `${esc(a.txt)} <span>(${esc(a.data)})</span>`).join(" · ")}</div>` : ""}
+    <div class="fpar-datas">
+      <div><span class="k">Data de parada</span><span class="v">${ini ? esc(quandoTxt(ini)) : "antes do registro"}</span></div>
+      <div><span class="k">Data de liberação</span><span class="v${aberta ? " ainda" : ""}">${aberta ? "Ainda parado" : esc(quandoTxt(fim))}</span></div>
+    </div>
+  </li>`;
+}
+
 /* ---------- ficha do equipamento ---------- */
 let fichaAberta = null;
 
@@ -2405,11 +2493,8 @@ function abrirFicha(pre){
       <div class="fgrid">${linha("Programado", lim.prog)}${linha("Última limpeza", lim.ult)}</div></div>`;
   }
 
-  html += `<div class="fbloco"><h4>Histórico</h4>` + (hist.length
-    ? `<ul class="flinha">` + hist.map(m => `<li>
-        <span class="q">${esc(m.data)}${m.hora ? "<br>"+esc(m.hora) : ""}</span>
-        <span>${pillMov(m.tipo)}<div class="por">${esc(m.motivo || "Sem motivo informado")}</div></span>
-      </li>`).join("") + `</ul>`
+  html += `<div class="fbloco"><h4>Histórico de paradas</h4>` + (hist.length
+    ? `<ul class="fpars">` + montarParadas(hist).map(cartaoParada).join("") + `</ul>`
     : `<p class="fvazio">Nenhuma movimentação registrada para este equipamento ainda.</p>`) + `</div>`;
 
   $("ficha-corpo").innerHTML = html;
