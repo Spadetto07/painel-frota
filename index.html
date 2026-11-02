@@ -686,6 +686,139 @@ footer b{color:var(--ink2);font-weight:600}
   .railbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 }
 
+/* =====================================================================
+   v2.5 — repaginada (padrões do 21st.dev trazidos para o HTML puro)
+   Mantém as cores e a cara de antes; muda acabamento, ritmo e detalhe.
+   ===================================================================== */
+:root{ --r:14px; --r-sm:10px; --ease:cubic-bezier(.2,.7,.2,1);
+  --ring:color-mix(in srgb,var(--line) 80%,transparent);
+  --lift:0 1px 2px rgba(20,31,41,.06), 0 14px 32px -20px rgba(20,31,41,.45); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --lift:0 1px 2px rgba(0,0,0,.5), 0 16px 36px -18px rgba(0,0,0,.95); } }
+:root[data-theme="dark"]{ --lift:0 1px 2px rgba(0,0,0,.5), 0 16px 36px -18px rgba(0,0,0,.95); }
+
+/* cabeçalho e navegação */
+.mast{background:linear-gradient(180deg,var(--surf),color-mix(in srgb,var(--surf) 70%,var(--bg)))}
+.stamp{border-radius:var(--r);border-left-width:1px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stamp::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--accent)}
+.dot.live{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:pulsa-vivo 2.4s var(--ease) infinite}
+@keyframes pulsa-vivo{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.jump a{transition:background .18s var(--ease),color .18s var(--ease)}
+.jump a.ativo{background:var(--accent-soft);color:var(--accent)}
+
+/* títulos de seção */
+section{padding-top:40px}
+.rule{width:28px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 30%,transparent))}
+h2{font-size:24px}
+
+/* superfícies: canto maior, contorno fino, sombra que só aparece de perto */
+.kpi,.panel,.card-graf,.cats,.cp-grade,.tablebox,.dcard,.veredito,.banner,.ind{border-radius:var(--r)}
+.kpi,.panel,.card-graf,.cats,.cp-grade,.tablebox,.dcard,.ind{border-color:var(--ring)}
+.dcard,.kpi{transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease)}
+@media (hover:hover){
+  .dcard:hover,.kpi:hover{transform:translateY(-2px);box-shadow:var(--lift);border-color:var(--line)}
+}
+
+/* cartões do Panorama — padrão KPI card */
+.kpi{display:flex;flex-direction:column;gap:2px;padding:16px 18px 14px;position:relative;overflow:hidden}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;
+  background:var(--surf2);color:var(--ink3);border:1px solid var(--ring)}
+.kico svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kpi.hero .kico{background:color-mix(in srgb,var(--accent) 14%,var(--surf));color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.kpi.ok .kico{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.kpi.bad .kico{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 28%,transparent)}
+.kpi-mid{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;min-height:56px}
+.kpi .val{margin-top:4px}
+.spark{width:104px;height:36px;flex:0 1 104px;min-width:0;overflow:visible;margin-bottom:6px}
+.sp-line{fill:none;stroke:var(--ink3);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sp-area{fill:var(--ink3);opacity:.09}
+.sp-dot{fill:var(--ink3);stroke:var(--surf);stroke-width:2}
+.kpi.hero .sp-line{stroke:var(--accent)} .kpi.hero .sp-area,.kpi.hero .sp-dot{fill:var(--accent)}
+.kpi.ok .sp-line{stroke:var(--ok)} .kpi.ok .sp-area,.kpi.ok .sp-dot{fill:var(--ok)}
+.kpi.bad .sp-line{stroke:var(--bad)} .kpi.bad .sp-area,.kpi.bad .sp-dot{fill:var(--bad)}
+.kpi .sp-dot{stroke:var(--surf)}
+.kpi-delta{display:flex;align-items:center;gap:6px;font-size:12px;min-height:20px;margin-top:2px}
+.dl{display:inline-flex;align-items:center;gap:3px;font-weight:600;font-variant-numeric:tabular-nums;padding:1px 7px 1px 5px;border-radius:999px}
+.dl svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dl.bom{color:var(--ok);background:var(--ok-bg)}
+.dl.ruim{color:var(--bad);background:var(--bad-bg)}
+.dl.igual{color:var(--ink3);background:var(--surf2);padding:1px 7px}
+.dl-p{color:var(--ink3)}
+.kpi .foot{margin-top:0}
+
+/* controles segmentados (mesmo desenho em todo lugar) */
+.cp-chips,.periodos{display:inline-flex;flex-wrap:wrap;gap:3px;background:var(--surf2);padding:3px;border-radius:12px;border:1px solid var(--ring)}
+.cp-chips .chip,.periodos .chip{border:0;border-radius:9px;background:transparent;padding:6px 13px;color:var(--ink2);transition:background .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease)}
+.cp-chips .chip:hover,.periodos .chip:hover{background:color-mix(in srgb,var(--surf) 60%,transparent);color:var(--ink)}
+.cp-chips .chip[aria-pressed="true"],.periodos .chip[aria-pressed="true"]{background:var(--surf);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 1px var(--ring)}
+.chips{border-radius:12px;border-color:var(--ring)} .chip{border-radius:9px;transition:background .18s var(--ease),color .18s var(--ease)}
+
+/* etiquetas de status */
+.pill{padding:3px 10px 3px 8px;letter-spacing:.02em}
+.pill::before{box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+
+/* veredito do compromisso */
+.veredito{box-shadow:var(--lift);position:relative;overflow:hidden}
+.veredito.ok::after,.veredito.bad::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 140% at 100% 0%,rgba(255,255,255,.16),transparent 55%)}
+
+/* barras de categoria e da frota */
+.bar{border-radius:999px;height:14px}
+.catrow{transition:background .15s var(--ease);border-radius:10px}
+
+/* cartões dos parados */
+.dcard{border-left-width:1px;position:relative;padding-left:18px}
+.dcard::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--bad)}
+
+/* ficha lateral */
+.ficha-fundo{animation:fundo-entra .2s var(--ease)}
+.ficha-cx{animation:gaveta-entra .26s var(--ease);box-shadow:-24px 0 60px -30px rgba(0,0,0,.6)}
+@keyframes fundo-entra{from{opacity:0}to{opacity:1}}
+@keyframes gaveta-entra{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.ficha-top{background:linear-gradient(160deg,var(--accent-soft),var(--surf2) 65%)}
+.ficha-top h3{font-size:28px}
+.ficha-st{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ficha-loc{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);
+  padding:2px 8px;border-radius:999px;border:1px solid var(--ring);background:var(--surf)}
+.ficha-x{border-radius:10px;transition:background .15s var(--ease)}
+.fbloco{background:var(--surf);border:1px solid var(--ring);border-radius:var(--r);padding:13px 14px 14px;margin-bottom:12px;position:relative}
+.fbloco h4{margin-bottom:10px}
+.fpar{border-radius:var(--r-sm)}
+
+/* faixa de 30 dias — padrão Status Bar */
+.sbar-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink3);margin-bottom:8px}
+.sbar-head b{font-family:"Barlow Condensed",sans-serif;font-size:22px;color:var(--ink);font-weight:700;margin-right:2px}
+.sbar{display:flex;gap:2px;height:40px;align-items:stretch}
+.sb{flex:1 1 0;min-width:0;padding:0;border:0;border-radius:4px;cursor:pointer;position:relative;overflow:hidden;
+  background:var(--ok);opacity:.92;transition:opacity .15s var(--ease),transform .15s var(--ease)}
+.sb i{position:absolute;left:0;right:0;bottom:0;height:var(--p);background:var(--bad)}
+.sb.bad{background:var(--bad)}
+.sb.sem{background:var(--surf3);cursor:default}
+.sb:hover,.sb:focus-visible{opacity:1;transform:scaleY(1.08)}
+.sb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sbar-eixo{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:6px;font-family:"IBM Plex Mono",monospace}
+.sb-dica{position:absolute;z-index:6;pointer-events:none;background:var(--surf);border:1px solid var(--line);border-radius:10px;
+  box-shadow:var(--lift);padding:7px 10px;font-size:12px;line-height:1.35;max-width:260px;display:flex;flex-direction:column;gap:2px}
+.sb-dica b{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink3);font-weight:600}
+.sb-dica span{color:var(--ink)}
+
+/* entrada suave das seções */
+.anima main section{opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.anima main section.visto{opacity:1;transform:none}
+
+/* telas pequenas */
+@media (max-width:560px){
+  .spark{width:80px;flex-basis:80px}
+  .kpi .val{font-size:44px} .kpi.hero .val{font-size:54px}
+  .ficha-top h3{font-size:24px}
+}
+/* impressão: nada de animação nem sombra nova */
+@media print{
+  .anima main section{opacity:1!important;transform:none!important}
+  .kico,.spark,.kpi-delta,.sb-dica{display:none!important}
+  .dcard::before{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .dot.live{animation:none} .anima main section{opacity:1;transform:none} }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (prefers-reduced-motion:reduce){.rail{display:none!important}}
 </style>
@@ -739,10 +872,30 @@ footer b{color:var(--ink2);font-weight:600}
     <div class="rule"></div>
     <div class="sec-head"><h2>Panorama</h2></div>
     <div class="kpis">
-      <div class="kpi hero"><div class="lab">Disponibilidade</div><div class="val" id="k-pct">—</div><div class="foot">base: disponíveis + indisponíveis</div></div>
-      <div class="kpi"><div class="lab">Frota total</div><div class="val" id="k-tot">—</div><div class="foot">equipamentos cadastrados</div></div>
-      <div class="kpi ok"><div class="lab">Disponíveis</div><div class="val" id="k-disp">—</div><div class="foot">prontos para operar</div></div>
-      <div class="kpi bad"><div class="lab">Indisponíveis</div><div class="val" id="k-ind">—</div><div class="foot">parados por manutenção</div></div>
+      <div class="kpi hero">
+        <div class="kpi-top"><span class="lab">Disponibilidade</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1.4"/></svg></span></div>
+        <div class="kpi-mid"><div class="val" id="k-pct">—</div><svg class="spark" id="s-pct" aria-hidden="true"></svg></div>
+        <div class="kpi-delta" id="d-pct">&nbsp;</div>
+        <div class="foot">base: disponíveis + indisponíveis</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-top"><span class="lab">Frota total</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 15V8h10v7"/><path d="M13 10h4l3 3v2h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span></div>
+        <div class="kpi-mid"><div class="val" id="k-tot">—</div></div>
+        <div class="kpi-delta" id="d-tot">&nbsp;</div>
+        <div class="foot">equipamentos cadastrados</div>
+      </div>
+      <div class="kpi ok">
+        <div class="kpi-top"><span class="lab">Disponíveis</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.3l2.5 2.5 5-5.2"/></svg></span></div>
+        <div class="kpi-mid"><div class="val" id="k-disp">—</div><svg class="spark" id="s-disp" aria-hidden="true"></svg></div>
+        <div class="kpi-delta" id="d-disp">&nbsp;</div>
+        <div class="foot">prontos para operar</div>
+      </div>
+      <div class="kpi bad">
+        <div class="kpi-top"><span class="lab">Indisponíveis</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.5 6.2a4 4 0 0 0-5.1 5.1L4.5 16.2a1.6 1.6 0 0 0 2.3 2.3l4.9-4.9a4 4 0 0 0 5.1-5.1l-2.4 2.4-2.1-.4-.4-2.1z"/></svg></span></div>
+        <div class="kpi-mid"><div class="val" id="k-ind">—</div><svg class="spark" id="s-ind" aria-hidden="true"></svg></div>
+        <div class="kpi-delta" id="d-ind">&nbsp;</div>
+        <div class="foot">parados por manutenção</div>
+      </div>
     </div>
     <p class="aside" id="k-aside">&nbsp;</p>
   </section>
@@ -934,6 +1087,7 @@ footer b{color:var(--ink2);font-weight:600}
         <p class="eyebrow" id="ficha-cat">&nbsp;</p>
         <h3 id="ficha-tit">—</h3>
         <p class="sub" id="ficha-mod" style="margin-top:4px">&nbsp;</p>
+        <div class="ficha-st" id="ficha-st"></div>
       </div>
       <button class="ficha-x" id="ficha-x" type="button" aria-label="Fechar ficha">&times;</button>
     </div>
@@ -953,7 +1107,7 @@ footer b{color:var(--ink2);font-weight:600}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.4.3";
+const VERSAO = "2.5";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1906,6 +2060,51 @@ function listaAgenda(itens, ciclo, chave, ehHoje, vazio){
     </li>`).join("") || `<li><div class="pl-sub">${vazio}</div></li>`;
 }
 
+/* ---------- cartões do Panorama: mini-gráfico e variação desde ontem ----------
+   Padrão do "KPI card" do 21st: o número, a linha dos últimos dias ao lado e a
+   variação colorida pelo que é bom — disponibilidade subir é bom, parados subir é ruim. */
+const SETA_SOBE = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M4.2 3H9v4.8"/></svg>`;
+const SETA_DESCE = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 4.2V9H4.2"/></svg>`;
+
+function spark(id, vals){
+  const el = $(id); if(!el) return;
+  const v = vals.filter(x => x != null && isFinite(x));
+  if(v.length < 2){ el.innerHTML = ""; el.removeAttribute("viewBox"); return; }
+  const W = 104, H = 36, p = 3;
+  const mn = Math.min(...v), mx = Math.max(...v), rg = (mx - mn) || 1;
+  const pts = v.map((y,i) => [p + i*(W-2*p)/(v.length-1), H - p - (y-mn)/rg*(H-2*p)]);
+  const d = pts.map((q,i) => (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" ");
+  const ult = pts[pts.length-1];
+  el.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  el.innerHTML = `<path class="sp-area" d="${d} L${ult[0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z"/>` +
+    `<path class="sp-line" d="${d}"/><circle class="sp-dot" cx="${ult[0].toFixed(1)}" cy="${ult[1].toFixed(1)}" r="2.8"/>`;
+}
+
+function variacao(id, agora, antes, bomSobe, fmt){
+  const el = $(id); if(!el) return;
+  if(agora == null || antes == null){ el.innerHTML = "&nbsp;"; return; }
+  const dif = agora - antes;
+  if(Math.abs(dif) < 0.05){ el.innerHTML = `<span class="dl igual">sem mudança</span><span class="dl-p">desde ontem</span>`; return; }
+  const sobe = dif > 0, bom = sobe === bomSobe;
+  el.innerHTML = `<span class="dl ${bom ? "bom" : "ruim"}">${sobe ? SETA_SOBE : SETA_DESCE}${fmt(Math.abs(dif))}</span><span class="dl-p">desde ontem</span>`;
+}
+
+function kpiTendencia(disp, ind, base){
+  const S = (typeof serieHistorico === "function" && MOVS_BRUTO.length) ? serieHistorico(15) : [];
+  if(S.length < 2){
+    ["s-pct","s-disp","s-ind"].forEach(i => spark(i, []));
+    ["d-pct","d-disp","d-ind"].forEach(i => { const el = $(i); if(el) el.innerHTML = "&nbsp;"; });
+  } else {
+    const ontem = S[S.length-2];
+    spark("s-pct", S.map(x => x.pct)); spark("s-disp", S.map(x => x.ok)); spark("s-ind", S.map(x => x.ind));
+    variacao("d-pct", base ? disp/base*100 : null, ontem.pct, true, v => v.toFixed(1).replace(".",",") + " p.p.");
+    variacao("d-disp", disp, ontem.ok, true, v => String(Math.round(v)));
+    variacao("d-ind", ind, ontem.ind, false, v => String(Math.round(v)));
+  }
+  const nCat = new Set(FROTA.map(e => e.cat)).size;
+  const dt = $("d-tot"); if(dt) dt.innerHTML = `<span class="dl-p">em ${nCat} categoria${nCat === 1 ? "" : "s"}</span>`;
+}
+
 function desenhar(){
   const disp = FROTA.filter(e=>pillClass(e.st)==="p-ok").length;
   const ind  = FROTA.filter(e=>pillClass(e.st)==="p-bad").length;
@@ -1916,6 +2115,7 @@ function desenhar(){
   $("k-tot").textContent = FROTA.length;
   $("k-disp").textContent = disp;
   $("k-ind").textContent = ind;
+  kpiTendencia(disp, ind, base);
 
   const forasCont = {};
   FROTA.filter(e=>pillClass(e.st)==="p-mute").forEach(e=>{ forasCont[e.st]=(forasCont[e.st]||0)+1; });
@@ -2449,6 +2649,84 @@ function cartaoParada(p){
   </li>`;
 }
 
+/* ---------- ficha: últimos 30 dias, um tracinho por dia ----------
+   Padrão da "Status Bar" do 21st (página de status): cada dia é uma barra,
+   verde quando rodou o dia todo, vermelha na parte do dia em que ficou parado.
+   Passando o dedo/mouse aparece o dia, as horas paradas e o motivo. */
+function faixa30(pre, hist){
+  const DIAS = 30, agora = Date.now();
+  const inicioReg = MOVS_BRUTO.reduce((m,x) => (x.ts != null && x.ts < m) ? x.ts : m, Infinity);
+  const pars = montarParadas(hist).filter(p => !p.avulso).map(p => ({
+    a: (p.inicio && p.inicio.ts != null) ? p.inicio.ts : inicioReg,
+    b: (p.fim && p.fim.ts != null) ? p.fim.ts : agora,
+    mot: p.motivos.length ? p.motivos[p.motivos.length-1].txt : "Sem motivo informado"
+  }));
+  const e = FROTA.find(x => x.pre === pre);
+  if(e && classeEstado(e.st) === "ind" && !pars.some(p => p.b >= agora)){
+    const t = instante(e.dt, "00:00");
+    if(t != null) pars.push({ a:t, b:agora, mot:e.def || "Sem motivo informado" });
+  }
+  const hoje0 = meiaNoite(new Date()).getTime();
+  const inicio = isFinite(inicioReg) ? inicioReg : (pars.length ? Math.min(...pars.map(p => p.a)) : hoje0);
+  const dias = [];
+  for(let d = DIAS-1; d >= 0; d--){
+    const ini = hoje0 - d*DIA, fim = Math.min(ini + DIA, agora);
+    if(fim <= inicio){ dias.push({ ini, sem:true }); continue; }
+    const a0 = Math.max(ini, inicio);
+    let parado = 0; const mots = [];
+    pars.forEach(p => {
+      const o = Math.min(p.b, fim) - Math.max(p.a, a0);
+      if(o > 0){ parado += o; if(!mots.includes(p.mot)) mots.push(p.mot); }
+    });
+    const tot = fim - a0;
+    dias.push({ ini, frac: tot > 0 ? Math.min(1, parado/tot) : 0, ms: parado, mots });
+  }
+  return dias;
+}
+
+const DIA_SEM = ["dom","seg","ter","qua","qui","sex","sáb"];
+function blocoFaixa(pre, hist){
+  const dias = faixa30(pre, hist);
+  const com = dias.filter(x => !x.sem);
+  if(!com.length) return "";
+  const pct = 1 - com.reduce((s,x) => s + x.frac, 0) / com.length;
+  const diasParado = com.filter(x => x.frac > 0).length;
+  const barras = dias.map(x => {
+    const dt = new Date(x.ini);
+    const rot = `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()} · ${DIA_SEM[dt.getDay()]}`;
+    let cls, txt;
+    if(x.sem){ cls = "sem"; txt = "Antes do início dos registros"; }
+    else if(x.frac <= 0){ cls = "ok"; txt = "Disponível o dia todo"; }
+    else {
+      cls = x.frac >= 0.999 ? "bad" : "meio";
+      txt = (x.frac >= 0.999 ? "Parado o dia todo" : `Parado ${duracaoTxt(x.ms)}`) + (x.mots.length ? " — " + x.mots.join(" / ") : "");
+    }
+    const h = x.sem ? 0 : Math.round(x.frac * 100);
+    return `<button type="button" class="sb ${cls}" style="--p:${h}%" data-dica="${esc(rot)}|${esc(txt)}" aria-label="${esc(rot)}: ${esc(txt)}"><i></i></button>`;
+  }).join("");
+  const d0 = new Date(dias[0].ini);
+  return `<div class="fbloco"><h4>Últimos 30 dias</h4>
+    <div class="sbar-head"><span><b>${(pct*100).toFixed(0)}%</b> do tempo disponível</span>
+      <span>${diasParado ? `${diasParado} dia${diasParado === 1 ? "" : "s"} com parada` : "nenhuma parada"}</span></div>
+    <div class="sbar" role="group" aria-label="Disponibilidade dia a dia nos últimos 30 dias">${barras}</div>
+    <div class="sbar-eixo"><span>${String(d0.getDate()).padStart(2,"0")}/${String(d0.getMonth()+1).padStart(2,"0")}</span><span>hoje</span></div>
+    <div class="sb-dica" id="sb-dica" hidden></div></div>`;
+}
+
+function dicaFaixa(alvo){
+  const box = $("sb-dica"); if(!box) return;
+  if(!alvo){ box.hidden = true; return; }
+  const [rot, txt] = String(alvo.dataset.dica || "").split("|");
+  box.innerHTML = `<b>${rot}</b><span>${txt}</span>`;
+  box.hidden = false;
+  const pai = box.parentElement.getBoundingClientRect(), r = alvo.getBoundingClientRect();
+  const w = box.offsetWidth;
+  let x = r.left - pai.left + r.width/2 - w/2;
+  x = Math.max(0, Math.min(x, pai.width - w));
+  box.style.left = x + "px";
+  box.style.top = (r.top - pai.top - box.offsetHeight - 8) + "px";
+}
+
 /* ---------- ficha do equipamento ---------- */
 let fichaAberta = null;
 
@@ -2470,13 +2748,13 @@ function abrirFicha(pre){
   $("ficha-tit").textContent = pre;
   $("ficha-cat").textContent = e ? e.cat : "Equipamento";
   $("ficha-mod").textContent = e ? [e.mod, e.tipo].filter(Boolean).join(" · ") : "não está na aba Controle de Frota";
+  $("ficha-st").innerHTML = e ? pill(e.st) + (e.loc ? `<span class="ficha-loc">${e.obra ? "Obra " + esc(e.obra) + " · " : ""}${esc(e.loc)}</span>` : "") : "";
 
   const linha = (k,v) => `<div><span class="k">${k}</span><span class="v">${esc(v || "—")}</span></div>`;
   let html = "";
 
   if(e){
     html += `<div class="fbloco"><h4>Situação agora</h4>
-      <div style="margin-bottom:10px">${pill(e.st)}</div>
       <div class="fgrid">
         ${linha("Obra", e.obra)}${linha("Local", e.loc)}
         ${linha("Parado desde", e.dt)}${linha("Previsão de retorno", e.prev)}
@@ -2498,6 +2776,8 @@ function abrirFicha(pre){
       <div style="margin-bottom:10px">${agendaPill(lim.st)} ${chipDias(lim.dias, LIMPEZA.length)}</div>
       <div class="fgrid">${linha("Programado", lim.prog)}${linha("Última limpeza", lim.ult)}</div></div>`;
   }
+
+  html += blocoFaixa(pre, hist);
 
   html += `<div class="fbloco"><h4>Histórico de paradas</h4>` + (hist.length
     ? `<ul class="fpars">` + montarParadas(hist).map(cartaoParada).join("") + `</ul>`
@@ -3086,6 +3366,38 @@ setInterval(() => {
   if(Date.now() - ultimaCarga >= intervalo){ ultimaCarga = Date.now(); carregar(); }
 }, 30*1000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) carregar(); });
+/* dica dos tracinhos de 30 dias (mouse, toque e teclado) */
+(function(){
+  const corpo = $("ficha-corpo"); if(!corpo) return;
+  const achar = ev => ev.target.closest && ev.target.closest(".sb");
+  corpo.addEventListener("pointerover", ev => { const b = achar(ev); if(b) dicaFaixa(b); });
+  corpo.addEventListener("pointerleave", () => dicaFaixa(null));
+  corpo.addEventListener("focusin", ev => { const b = achar(ev); dicaFaixa(b || null); });
+  corpo.addEventListener("click", ev => { const b = achar(ev); if(b) dicaFaixa(b); });
+  corpo.addEventListener("scroll", () => dicaFaixa(null), {passive:true});
+})();
+
+/* entrada suave das seções ao rolar (só quando o movimento é permitido) */
+(function(){
+  if(!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.documentElement.classList.add("anima");
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if(en.isIntersecting){ en.target.classList.add("visto"); io.unobserve(en.target); }
+  }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll("main section, .wrap > section").forEach(sec => io.observe(sec));
+  setTimeout(() => document.querySelectorAll("section").forEach(sec => sec.classList.add("visto")), 2500);
+})();
+/* marca na barra de navegação a seção que está na tela */
+(function(){
+  if(!("IntersectionObserver" in window)) return;
+  const links = [...document.querySelectorAll("nav.jump a[href^='#']")];
+  const mapa = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    const a = mapa.get(en.target.id);
+    if(a && en.isIntersecting){ links.forEach(l => l.classList.remove("ativo")); a.classList.add("ativo"); }
+  }), { rootMargin: "-45% 0px -50% 0px" });
+  mapa.forEach((a, id) => { const sec = document.getElementById(id); if(sec) io.observe(sec); });
+})();
 </script>
 </body>
 </html>
