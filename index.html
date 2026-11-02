@@ -714,9 +714,6 @@ h2{font-size:24px}
 .kpi,.panel,.card-graf,.cats,.cp-grade,.tablebox,.dcard,.veredito,.banner,.ind{border-radius:var(--r)}
 .kpi,.panel,.card-graf,.cats,.cp-grade,.tablebox,.dcard,.ind{border-color:var(--ring)}
 .dcard,.kpi{transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease)}
-@media (hover:hover){
-  .dcard:hover,.kpi:hover{transform:translateY(-2px);box-shadow:var(--lift);border-color:var(--line)}
-}
 
 /* cartões do Panorama — padrão KPI card */
 .kpi{display:flex;flex-direction:column;gap:2px;padding:16px 18px 14px;position:relative;overflow:hidden}
@@ -802,9 +799,6 @@ h2{font-size:24px}
 .sb-dica b{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink3);font-weight:600}
 .sb-dica span{color:var(--ink)}
 
-/* entrada suave das seções */
-.anima main section{opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
-.anima main section.visto{opacity:1;transform:none}
 
 /* telas pequenas */
 @media (max-width:560px){
@@ -814,11 +808,68 @@ h2{font-size:24px}
 }
 /* impressão: nada de animação nem sombra nova */
 @media print{
-  .anima main section{opacity:1!important;transform:none!important}
   .kico,.spark,.kpi-delta,.sb-dica{display:none!important}
   .dcard::before{display:none}
 }
-@media (prefers-reduced-motion:reduce){ .dot.live{animation:none} .anima main section{opacity:1;transform:none} }
+@media (prefers-reduced-motion:reduce){ .dot.live{animation:none} }
+/* ---- v2.6: quadro da frota (o elemento forte da página) ---- */
+.quadro{display:grid;grid-template-columns:minmax(232px,280px) 1fr;margin-top:22px;
+  background:var(--surf);border:1px solid var(--ring);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.q-resumo{padding:22px 22px 20px;border-right:1px solid var(--line-soft);
+  background:linear-gradient(170deg,var(--accent-soft),var(--surf) 72%);display:flex;flex-direction:column}
+.q-pct{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:clamp(56px,6.2vw,84px);line-height:.86;
+  color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.q-leg{margin:8px 0 0;font-size:14px;color:var(--ink2)}
+.q-tend{display:flex;align-items:center;gap:10px;margin-top:14px}
+.q-tend .spark{flex:0 0 96px;width:96px;margin:0}
+.q-tend .sp-line{stroke:var(--accent)} .q-tend .sp-area,.q-tend .sp-dot{fill:var(--accent)} .q-tend .sp-dot{stroke:var(--surf)}
+.q-num{display:grid;gap:0;margin:20px 0 0}
+.q-num>div{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:10px;padding:9px 0;border-top:1px solid var(--line-soft)}
+.q-num dt{font-size:13.5px;color:var(--ink2)}
+.q-num dd{margin:0;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.q-num .ok dd{color:var(--ok)} .q-num .bad dd{color:var(--bad)}
+.q-num .kpi-delta{grid-column:1/-1;min-height:0;margin-top:3px;font-size:11.5px}
+.q-num .kpi-delta:empty,.q-tend .kpi-delta:empty{display:none}
+
+.q-placas{padding:14px 18px 16px;display:flex;flex-direction:column}
+.q-linha{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:start;padding:8px 0;border-top:1px solid var(--line-soft)}
+.q-linha:first-child{border-top:0}
+.q-cat{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:16px;line-height:1.15;color:var(--ink);padding-top:5px}
+.q-cat span{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:11.5px;color:var(--bad);margin-top:2px}
+.q-tags{display:flex;flex-wrap:wrap;gap:5px}
+/* a placa: código estampado, canto vivo, como as plaquetas das máquinas */
+.placa{font:600 12px/1 "IBM Plex Mono",monospace;letter-spacing:.01em;padding:7px 8px 6px;border-radius:4px;cursor:pointer;
+  display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap;
+  border:1px solid color-mix(in srgb,var(--ok) 34%,transparent);background:var(--ok-bg);color:color-mix(in srgb,var(--ok) 70%,var(--ink))}
+.placa small{font:700 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.02em;opacity:.92}
+.placa.ind{background:var(--bad-solid);border-color:var(--bad-solid);color:var(--on-solid)}
+.placa.fora{background:transparent;border-style:dashed;border-color:var(--line);color:var(--ink3)}
+.placa:hover{filter:brightness(1.06);border-color:currentColor}
+.placa:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* o único movimento automático da página: o quadro acende placa por placa na primeira leitura */
+.q-placas.acende .placa{animation:placa-acende .32s var(--ease) both;animation-delay:calc(var(--i) * 18ms)}
+@keyframes placa-acende{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+
+/* datas e números em texto normal com algarismos tabulares; mono fica só para prefixos */
+.fpar-datas .v,.sbar-eixo,.sb-dica b,.fpar-dur{font-family:"IBM Plex Sans",sans-serif;font-variant-numeric:tabular-nums}
+.fpar-datas .k{text-transform:none;letter-spacing:0;font-size:11.5px}
+
+@media (max-width:820px){
+  .quadro{grid-template-columns:1fr}
+  .q-resumo{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .q-num{grid-template-columns:repeat(3,1fr);column-gap:14px}
+  .q-num>div{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .q-linha{grid-template-columns:1fr;gap:6px}
+  .q-cat{padding-top:0}
+}
+@media print{
+  .quadro{box-shadow:none;border:1px solid #bbb}
+  .placa{background:#fff!important;color:#000!important;border:1px solid #999!important}
+  .placa.ind{background:#000!important;color:#fff!important}
+}
+@media (prefers-reduced-motion:reduce){ .q-placas.acende .placa{animation:none} }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (prefers-reduced-motion:reduce){.rail{display:none!important}}
 </style>
@@ -871,31 +922,18 @@ h2{font-size:24px}
   <section id="panorama">
     <div class="rule"></div>
     <div class="sec-head"><h2>Panorama</h2></div>
-    <div class="kpis">
-      <div class="kpi hero">
-        <div class="kpi-top"><span class="lab">Disponibilidade</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1.4"/></svg></span></div>
-        <div class="kpi-mid"><div class="val" id="k-pct">—</div><svg class="spark" id="s-pct" aria-hidden="true"></svg></div>
-        <div class="kpi-delta" id="d-pct">&nbsp;</div>
-        <div class="foot">base: disponíveis + indisponíveis</div>
+    <div class="quadro">
+      <div class="q-resumo">
+        <div class="q-pct" id="k-pct">—</div>
+        <p class="q-leg">da frota disponível agora</p>
+        <div class="q-tend"><svg class="spark" id="s-pct" aria-hidden="true"></svg><div class="kpi-delta" id="d-pct">&nbsp;</div></div>
+        <dl class="q-num">
+          <div class="ok"><dt>Rodando</dt><dd id="k-disp">—</dd><div class="kpi-delta" id="d-disp">&nbsp;</div></div>
+          <div class="bad"><dt>Parados</dt><dd id="k-ind">—</dd><div class="kpi-delta" id="d-ind">&nbsp;</div></div>
+          <div class="tot"><dt>Na frota</dt><dd id="k-tot">—</dd><div class="kpi-delta" id="d-tot">&nbsp;</div></div>
+        </dl>
       </div>
-      <div class="kpi">
-        <div class="kpi-top"><span class="lab">Frota total</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 15V8h10v7"/><path d="M13 10h4l3 3v2h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span></div>
-        <div class="kpi-mid"><div class="val" id="k-tot">—</div></div>
-        <div class="kpi-delta" id="d-tot">&nbsp;</div>
-        <div class="foot">equipamentos cadastrados</div>
-      </div>
-      <div class="kpi ok">
-        <div class="kpi-top"><span class="lab">Disponíveis</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.3l2.5 2.5 5-5.2"/></svg></span></div>
-        <div class="kpi-mid"><div class="val" id="k-disp">—</div><svg class="spark" id="s-disp" aria-hidden="true"></svg></div>
-        <div class="kpi-delta" id="d-disp">&nbsp;</div>
-        <div class="foot">prontos para operar</div>
-      </div>
-      <div class="kpi bad">
-        <div class="kpi-top"><span class="lab">Indisponíveis</span><span class="kico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.5 6.2a4 4 0 0 0-5.1 5.1L4.5 16.2a1.6 1.6 0 0 0 2.3 2.3l4.9-4.9a4 4 0 0 0 5.1-5.1l-2.4 2.4-2.1-.4-.4-2.1z"/></svg></span></div>
-        <div class="kpi-mid"><div class="val" id="k-ind">—</div><svg class="spark" id="s-ind" aria-hidden="true"></svg></div>
-        <div class="kpi-delta" id="d-ind">&nbsp;</div>
-        <div class="foot">parados por manutenção</div>
-      </div>
+      <div class="q-placas" id="q-placas" role="group" aria-label="Quadro da frota: uma placa por equipamento, vermelho é parado"></div>
     </div>
     <p class="aside" id="k-aside">&nbsp;</p>
   </section>
@@ -1107,7 +1145,7 @@ h2{font-size:24px}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.5";
+const VERSAO = "2.6";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -2084,7 +2122,7 @@ function variacao(id, agora, antes, bomSobe, fmt){
   const el = $(id); if(!el) return;
   if(agora == null || antes == null){ el.innerHTML = "&nbsp;"; return; }
   const dif = agora - antes;
-  if(Math.abs(dif) < 0.05){ el.innerHTML = `<span class="dl igual">sem mudança</span><span class="dl-p">desde ontem</span>`; return; }
+  if(Math.abs(dif) < 0.05){ el.innerHTML = ""; return; }
   const sobe = dif > 0, bom = sobe === bomSobe;
   el.innerHTML = `<span class="dl ${bom ? "bom" : "ruim"}">${sobe ? SETA_SOBE : SETA_DESCE}${fmt(Math.abs(dif))}</span><span class="dl-p">desde ontem</span>`;
 }
@@ -2102,7 +2140,38 @@ function kpiTendencia(disp, ind, base){
     variacao("d-ind", ind, ontem.ind, false, v => String(Math.round(v)));
   }
   const nCat = new Set(FROTA.map(e => e.cat)).size;
-  const dt = $("d-tot"); if(dt) dt.innerHTML = `<span class="dl-p">em ${nCat} categoria${nCat === 1 ? "" : "s"}</span>`;
+  const dt = $("d-tot"); if(dt) dt.innerHTML = `<span class="dl-p">${nCat} categorias</span>`;
+}
+
+/* ---------- quadro da frota ----------
+   O quadro de placas da oficina, na tela: cada equipamento é uma placa com o
+   prefixo, agrupada pela categoria. Rodando fica quieto; parado acende em
+   vermelho com os dias parado. Clicar abre a ficha. */
+const nomeCat = c => { const t = String(c||"").toLowerCase(); return t.charAt(0).toUpperCase() + t.slice(1); };
+let quadroAceso = false;
+function quadro(){
+  const box = $("q-placas"); if(!box) return;
+  const curtos = {};
+  FROTA.forEach(e => { const k = String(e.pre).replace(/\s*\(.*?\)\s*/g,"").trim(); curtos[k] = (curtos[k]||0) + 1; });
+  const curto = pre => { const k = String(pre).replace(/\s*\(.*?\)\s*/g,"").trim(); return curtos[k] > 1 ? pre : k; };
+  const ordem = []; FROTA.forEach(e => { if(!ordem.includes(e.cat)) ordem.push(e.cat); });
+  let i = 0;
+  box.innerHTML = ordem.map(cat => {
+    const l = FROTA.filter(e => e.cat === cat);
+    const parados = l.filter(e => classeEstado(e.st) === "ind").length;
+    return `<div class="q-linha"><div class="q-cat">${esc(nomeCat(cat))}${parados ? `<span>${parados} parado${parados === 1 ? "" : "s"}</span>` : ""}</div>
+      <div class="q-tags">${l.map(e => {
+        const c = classeEstado(e.st);
+        const dias = c === "ind" && e.dias != null ? `<small>${e.dias}d</small>` : "";
+        const dica = c === "ind" ? `${e.pre} — parado${e.dias != null ? ` há ${e.dias} dia${e.dias === 1 ? "" : "s"}` : ""}${e.def ? ": " + e.def : ""}`
+                   : `${e.pre} — ${e.st}`;
+        return `<button type="button" class="placa ${c}" data-eq="${esc(e.pre)}" style="--i:${i++}" title="${esc(dica)}" aria-label="${esc(dica)}">${esc(curto(e.pre))}${dias}</button>`;
+      }).join("")}</div></div>`;
+  }).join("");
+  if(!quadroAceso && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+    box.classList.add("acende"); quadroAceso = true;
+    setTimeout(() => box.classList.remove("acende"), 2200);
+  }
 }
 
 function desenhar(){
@@ -2116,6 +2185,7 @@ function desenhar(){
   $("k-disp").textContent = disp;
   $("k-ind").textContent = ind;
   kpiTendencia(disp, ind, base);
+  quadro();
 
   const forasCont = {};
   FROTA.filter(e=>pillClass(e.st)==="p-mute").forEach(e=>{ forasCont[e.st]=(forasCont[e.st]||0)+1; });
@@ -3377,16 +3447,6 @@ document.addEventListener("visibilitychange",()=>{ if(!document.hidden) carregar
   corpo.addEventListener("scroll", () => dicaFaixa(null), {passive:true});
 })();
 
-/* entrada suave das seções ao rolar (só quando o movimento é permitido) */
-(function(){
-  if(!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  document.documentElement.classList.add("anima");
-  const io = new IntersectionObserver(es => es.forEach(en => {
-    if(en.isIntersecting){ en.target.classList.add("visto"); io.unobserve(en.target); }
-  }), { rootMargin: "0px 0px -8% 0px" });
-  document.querySelectorAll("main section, .wrap > section").forEach(sec => io.observe(sec));
-  setTimeout(() => document.querySelectorAll("section").forEach(sec => sec.classList.add("visto")), 2500);
-})();
 /* marca na barra de navegação a seção que está na tela */
 (function(){
   if(!("IntersectionObserver" in window)) return;
