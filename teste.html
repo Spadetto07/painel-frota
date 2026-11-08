@@ -2912,17 +2912,24 @@ function linkDoFiltro(){
 
 async function copiar(texto, botao, ok){
   const antes = botao.textContent;
+  /* 1º o jeito antigo, ainda dentro do clique (funciona mesmo quando a área de
+     transferência moderna trava); se não der, a API nova com prazo de 1,5 s */
+  let feito = false;
   try{
-    await navigator.clipboard.writeText(texto);
-    botao.textContent = ok;
-  }catch(err){
     const ta = document.createElement("textarea");
-    ta.value = texto; ta.style.position = "fixed"; ta.style.opacity = "0";
-    document.body.appendChild(ta); ta.select();
-    botao.textContent = document.execCommand("copy") ? ok : "Copie manualmente";
+    ta.value = texto; ta.setAttribute("readonly",""); ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, texto.length);
+    feito = document.execCommand("copy");
     ta.remove();
+  }catch(e){ feito = false; }
+  if(!feito && navigator.clipboard){
+    try{
+      await Promise.race([navigator.clipboard.writeText(texto), new Promise((_,r) => setTimeout(() => r(new Error("tempo")), 1500))]);
+      feito = true;
+    }catch(e){ feito = false; }
   }
-  setTimeout(() => botao.textContent = antes, 2200);
+  botao.textContent = feito ? ok : "Não consegui copiar — tente de novo";
+  setTimeout(() => botao.textContent = antes, 2400);
 }
 
 
