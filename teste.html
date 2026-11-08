@@ -1,0 +1,3523 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Disponibilidade da Frota</title>
+<meta name="description" content="Status de disponibilidade da frota das obras 720 e 731, lido ao vivo da planilha de manutenção.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1E5C7E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%9A%9C</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icone-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Frota 720/731">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://docs.google.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F4F6F8; --surf:#FFFFFF; --surf2:#EDF1F4; --surf3:#E4EAEF;
+  --line:#D6DEE5; --line-soft:#E6ECF1;
+  --ink:#141F29; --ink2:#475763; --ink3:#6E7E8A;
+  --accent:#1E5C7E; --accent-soft:#E3EDF3;
+  --ok:#3E9B6B; --bad:#A3231A; --warn:#C98A00; --warn-ink:#8A5D00; --mute:#5B6570;
+  --ok-bg:#E7F3EC; --bad-bg:#FAE9E7; --warn-bg:#FBF1DD; --mute-bg:#EAEEF1;
+  --ok-solid:#2F7A53; --bad-solid:#A3231A; --on-solid:#FFFFFF;
+  /* escala de dias sem limpeza: um tom só, do mais claro ao mais escuro */
+  --d1:#E3EDF3; --d1t:#14303D; --d2:#BCD6E4; --d2t:#14303D; --d3:#8CBAD1; --d3t:#0E2530;
+  --d4:#3A7B9B; --d4t:#FFFFFF; --d5:#12455F; --d5t:#FFFFFF;
+  --shadow:0 1px 2px rgba(20,31,41,.06), 0 8px 24px -18px rgba(20,31,41,.35);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161B; --surf:#182129; --surf2:#1F2A33; --surf3:#26333D;
+    --line:#2E3C47; --line-soft:#243139;
+    --ink:#E8EEF2; --ink2:#A9B8C2; --ink3:#7C8B96;
+    --accent:#74B4D4; --accent-soft:#1C2F3B;
+    --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
+    --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
+    --ok-solid:#57BE86; --bad-solid:#E4664D; --on-solid:#0E1519;
+    --d1:#1B2C36; --d1t:#95A6B2; --d2:#22485A; --d2t:#CFE0EA; --d3:#2F6B84; --d3t:#EAF3F8;
+    --d4:#4E97BA; --d4t:#0E1519; --d5:#8CCDEA; --d5t:#0E1519;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161B; --surf:#182129; --surf2:#1F2A33; --surf3:#26333D;
+  --line:#2E3C47; --line-soft:#243139;
+  --ink:#E8EEF2; --ink2:#A9B8C2; --ink3:#7C8B96;
+  --accent:#74B4D4; --accent-soft:#1C2F3B;
+  --ok:#57BE86; --bad:#CF4A34; --warn:#C79426; --warn-ink:#DCAA45; --mute:#828C99;
+  --ok-bg:#16302468; --bad-bg:#3A1A1568; --warn-bg:#33270D68; --mute-bg:#232C3468;
+    --ok-solid:#57BE86; --bad-solid:#E4664D; --on-solid:#0E1519;
+    --d1:#1B2C36; --d1t:#95A6B2; --d2:#22485A; --d2t:#CFE0EA; --d3:#2F6B84; --d3t:#EAF3F8;
+    --d4:#4E97BA; --d4t:#0E1519; --d5:#8CCDEA; --d5t:#0E1519;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Barlow Condensed","IBM Plex Sans",system-ui,sans-serif;margin:0;text-wrap:balance;letter-spacing:.01em}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+.mast{background:var(--surf);border-bottom:1px solid var(--line)}
+.mast-in{padding:26px 0 22px;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+h1{font-size:clamp(30px,5.4vw,44px);font-weight:700;line-height:1.02;text-transform:uppercase;letter-spacing:.005em}
+.sub{color:var(--ink2);font-size:13.5px;margin-top:7px;max-width:58ch}
+
+.stamp{flex:0 0 auto;background:var(--surf2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r);padding:11px 15px;line-height:1.35;min-width:236px}
+.stamp .k{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex:0 0 auto}
+.dot.live{background:var(--ok)} .dot.err{background:var(--bad)} .dot.load{background:var(--warn)}
+.stamp .v{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:3px;white-space:nowrap}
+.stamp .z{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.reload{margin-top:9px;font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:transparent;border:1px solid var(--line);border-radius:7px;padding:4px 10px;cursor:pointer}
+.reload:hover{background:var(--surf3)}
+.reload:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.reload[disabled]{opacity:.5;cursor:default}
+
+nav.jump{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--surf) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.jump-in{display:flex;gap:6px;overflow-x:auto;padding:9px 20px;max-width:1180px;margin:0 auto;scrollbar-width:none}
+.jump-in::-webkit-scrollbar{display:none}
+.jump a{flex:0 0 auto;font-size:12.5px;font-weight:600;color:var(--ink2);text-decoration:none;padding:6px 12px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.jump a:hover{background:var(--surf2);color:var(--ink)}
+.jump a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+section{padding:34px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+h2{font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.sec-note{font-size:12.5px;color:var(--ink3)}
+.rule{height:2px;background:var(--accent);width:36px;margin-bottom:12px;border-radius:2px}
+
+.banner{margin:18px 0 0;padding:13px 16px;border-radius:var(--r);border:1px solid var(--line);background:var(--surf);font-size:13.5px;color:var(--ink2);box-shadow:var(--shadow)}
+.banner.err{border-left:3px solid var(--bad);background:var(--bad-bg);color:var(--ink)}
+.banner b{color:var(--ink)}
+.banner code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--surf2);padding:1px 5px;border-radius:4px}
+
+.kpis{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:12px;margin-top:22px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.kpi .val{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:52px;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi.hero{background:linear-gradient(160deg,var(--accent-soft),var(--surf) 70%);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
+.kpi.hero .val{font-size:64px;color:var(--accent)}
+.kpi .foot{font-size:12px;color:var(--ink3);margin-top:4px}
+.kpi.ok .val{color:var(--ok)} .kpi.bad .val{color:var(--bad)}
+.aside{font-size:12.5px;color:var(--ink3);margin-top:10px}
+
+/* ---- compromisso da frota ---- */
+.veredito{display:flex;align-items:center;gap:22px;margin-top:22px;padding:22px 26px;border-radius:var(--r);border:1px solid var(--line);background:var(--surf);box-shadow:var(--shadow);flex-wrap:wrap}
+.veredito.ok{background:var(--ok-solid);border-color:var(--ok-solid)}
+.veredito.bad{background:var(--bad-solid);border-color:var(--bad-solid)}
+.veredito.ok .vd-tit,.veredito.bad .vd-tit,.veredito.ok .vd-num,.veredito.bad .vd-num{color:var(--on-solid)}
+.veredito.ok .vd-sub,.veredito.bad .vd-sub{color:var(--on-solid);opacity:.88}
+.vd-num{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:76px;line-height:.85;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.vd-txt{flex:1 1 260px;min-width:0}
+.vd-tit{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:34px;line-height:1.05;letter-spacing:.01em;color:var(--ink)}
+.vd-sub{font-size:13.5px;margin-top:6px;color:var(--ink2);line-height:1.5}
+.cp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.cp-chips .chip{font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--ink2);cursor:pointer}
+.cp-chips .chip:hover{background:var(--surf2);color:var(--ink)}
+.cp-chips .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.cp-chips .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cp-grade{margin-top:14px;background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.cp-linha{display:grid;grid-template-columns:1fr auto auto 118px;gap:14px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line-soft)}
+.cp-linha:last-child{border-bottom:0}
+.cp-linha.falta{background:var(--bad-bg)}
+.cp-nome{font-weight:600;font-size:14px;min-width:0}
+.cp-frente{font-size:12px;color:var(--ink3);font-weight:400;margin-top:2px}
+.cp-n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1;font-variant-numeric:tabular-nums;text-align:center;min-width:58px}
+.cp-n small{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+.cp-sit{font-size:12.5px;font-weight:600;text-align:right;white-space:nowrap}
+.cp-sit.falta{color:var(--bad)}
+.cp-sit.limite{color:var(--warn-ink)}
+.cp-sit.sobra{color:var(--ink3)}
+.cp-vazio{padding:18px;font-size:13.5px;color:var(--ink3)}
+.cp-cab{display:grid;grid-template-columns:1fr auto auto 118px;gap:14px;padding:9px 18px;background:var(--surf2);border-bottom:1px solid var(--line);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.cp-cab span:nth-child(2),.cp-cab span:nth-child(3){text-align:center;min-width:58px}
+.cp-cab span:last-child{text-align:right}
+@media(max-width:640px){
+  .vd-num{font-size:56px}
+  .vd-tit{font-size:26px}
+  .cp-linha,.cp-cab{grid-template-columns:1fr auto auto;gap:10px;padding-left:14px;padding-right:14px}
+  .cp-linha .cp-sit{grid-column:1/-1;text-align:left;margin-top:2px}
+  .cp-cab span:last-child{display:none}
+}
+
+.cats{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:6px 18px 14px;box-shadow:var(--shadow)}
+.catgroup{border-bottom:1px solid var(--line-soft)}
+.catgroup:last-of-type{border-bottom:0}
+.catrow{display:grid;grid-template-columns:170px 1fr 116px;align-items:center;gap:14px;padding:9px 18px;margin:0 -18px;border-radius:6px}
+.catrow[role="button"]{cursor:pointer}
+.catrow[role="button"]:hover{background:var(--surf2)}
+.catrow[role="button"]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.catrow.total{border-top:2px solid var(--line);margin-top:4px;padding-top:12px;font-weight:600;cursor:default}
+.catname{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.chev{flex:0 0 auto;color:var(--ink3);transition:transform .15s ease}
+.catrow[aria-expanded="true"] .chev{transform:rotate(90deg);color:var(--accent)}
+.catrow[aria-expanded="true"] .catname{color:var(--ink)}
+.catdet{padding:2px 0 16px;margin:0 -18px;background:var(--surf2);border-radius:6px}
+.catdet .cabecalho{display:flex;flex-wrap:wrap;gap:4px 16px;padding:11px 18px 9px;font-size:12px;color:var(--ink3)}
+.catdet .cabecalho b{color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+.catdet .rolagem{overflow-x:auto;padding:0 18px}
+.catdet table{background:var(--surf);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.catdet thead th{position:static;background:var(--surf3)}
+/* dentro de uma categoria aberta a coluna Categoria seria a mesma em toda linha */
+.catdet thead th:nth-child(2), .catdet td.catlabel{display:none}
+.bar{display:flex;height:20px;border-radius:4px;overflow:hidden;background:var(--surf2)}
+.bar i{display:block;height:100%;font-style:normal}
+.bar i.d{background:var(--ok);border-radius:4px 0 0 4px}
+.bar i.i{background:var(--bad);border-radius:0 4px 4px 0;margin-left:2px}
+.bar i.d.full{border-radius:4px}
+.bar i.i.only{border-radius:4px;margin-left:0}
+.catrow:hover .bar i{filter:brightness(1.08)}
+.catnums{display:flex;align-items:baseline;justify-content:flex-end;gap:9px;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.catnums b{font-family:"Barlow Condensed",sans-serif;font-size:21px;font-weight:700;color:var(--ink);min-width:52px;text-align:right}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:12px 0 0;padding-left:2px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:2.5px 9px 2.5px 7px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.p-ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.p-ok::before{background:var(--ok)}
+.p-bad{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.p-bad::before{background:var(--bad)}
+.p-warn{background:var(--warn-bg);color:var(--warn-ink);border-color:color-mix(in srgb,var(--warn) 34%,transparent)}
+.p-warn::before{background:var(--warn)}
+.p-mute{background:var(--mute-bg);color:var(--mute);border-color:color-mix(in srgb,var(--mute) 30%,transparent)}
+.p-mute::before{background:var(--mute)}
+.p-info{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
+.p-info::before{background:var(--accent)}
+
+.downs{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:12px}
+.dcard{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:var(--r);padding:13px 15px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:7px}
+.dcard.long{background:linear-gradient(100deg,var(--bad-bg),var(--surf) 55%)}
+.dtop{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.dpre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px}
+.ddays{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1;color:var(--bad);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ddays small{font-family:"IBM Plex Sans",sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);display:block;text-align:right;margin-top:1px}
+.dmodel{font-size:12.5px;color:var(--ink3);margin-top:-4px}
+.ddef{font-size:13.5px;color:var(--ink);line-height:1.4}
+.dmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--ink3);border-top:1px solid var(--line-soft);padding-top:7px;margin-top:auto}
+.dmeta b{color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.chips{display:flex;gap:5px;background:var(--surf2);padding:3px;border-radius:8px;border:1px solid var(--line)}
+.chip{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);padding:5px 11px;border-radius:6px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--surf);color:var(--ink);box-shadow:var(--shadow)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+select,input[type="search"]{font:inherit;font-size:13px;color:var(--ink);background:var(--surf);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+input[type="search"]{min-width:190px;flex:1 1 190px;max-width:280px}
+select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.count{font-size:12.5px;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+
+.tablebox{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;scrollbar-gutter:stable;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+thead th{position:sticky;top:0;background:var(--surf2);text-align:left;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surf2)}
+td.pre{font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap}
+td.dim{color:var(--ink3)}
+td.def{color:var(--ink2);max-width:34ch}
+.catlabel{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+.empty{padding:26px 14px;text-align:center;color:var(--ink3);font-size:13.5px}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.phead{padding:14px 16px 12px;border-bottom:1px solid var(--line);background:var(--surf2)}
+.phead h3{font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.phead p{margin:4px 0 0;font-size:12.5px;color:var(--ink3)}
+.pstats{display:flex;gap:22px;padding:12px 16px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.pstat .k{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.pstat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums}
+.pstat .v.mono{font-family:"IBM Plex Mono",monospace;font-size:16px}
+.pstat .v.sm{font-size:19px}
+.plist{margin:0;padding:0;list-style:none}
+.plist li{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:9px 16px;border-bottom:1px solid var(--line-soft);align-items:center}
+.plist li:last-child{border-bottom:0}
+.plist li.today{background:var(--accent-soft)}
+.pl-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.pl-pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13.5px}
+.pl-mod{font-size:12px;color:var(--ink3)}
+.pl-sub{grid-column:1/-1;font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.pl-tags{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.plist li{border-left:4px solid transparent}
+.plist li.f1{border-left-color:var(--d1)}
+.plist li.f2{border-left-color:var(--d2)}
+.plist li.f3{border-left-color:var(--d3)}
+.plist li.f4{border-left-color:var(--d4)}
+.plist li.f5{border-left-color:var(--d5)}
+.dias{display:inline-flex;align-items:baseline;gap:4px;padding:2.5px 8px;border-radius:6px;
+  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:11.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dias small{font-size:10px;font-weight:500;opacity:.85}
+.d0{background:var(--surf3);color:var(--ink3)}
+.d1{background:var(--d1);color:var(--d1t)}
+.d2{background:var(--d2);color:var(--d2t)}
+.d3{background:var(--d3);color:var(--d3t)}
+.d4{background:var(--d4);color:var(--d4t)}
+.d5{background:var(--d5);color:var(--d5t)}
+.pbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:8px 16px;border-bottom:1px solid var(--line-soft)}
+.escala{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink3);flex-wrap:wrap}
+.escala .passos{display:flex;gap:2px}
+.escala i{width:20px;height:9px;border-radius:2px;display:block}
+.ordbtn{font:inherit;font-size:11.5px;font-weight:600;color:var(--accent);background:var(--surf2);
+  border:1px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer;white-space:nowrap}
+.ordbtn:hover{background:var(--surf3)}
+.ordbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.skel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--ink3);font-size:13.5px;box-shadow:var(--shadow)}
+
+
+/* ---------- logo e avisos de conexão ---------- */
+.marca{display:flex;align-items:center;gap:14px}
+.logo{max-height:56px;max-width:190px;width:auto;height:auto;flex:0 0 auto}
+.logo[hidden]{display:none}
+.offline{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:70;
+  background:var(--warn-bg);color:var(--warn-ink);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);
+  border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:600;box-shadow:var(--shadow)}
+.offline[hidden]{display:none}
+@media (max-width:560px){ .logo{max-height:40px;max-width:130px} }
+
+/* ---------- calibração das balanças ---------- */
+/* precisa estar registrada para o navegador saber interpolar o ângulo */
+@property --giro{syntax:"<angle>";initial-value:0deg;inherits:false}
+/* Duas cores de néon: amarelo quando está chegando a data, vermelho quando já passou.
+   Os tons são fixos de propósito — néon não muda entre tema claro e escuro. */
+.cal-topo{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:18px}
+.cal-faixa{flex:1 1 320px;display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:var(--r);
+  border:1px solid var(--line);background:var(--surf);box-shadow:var(--shadow)}
+.cal-faixa.acesa{border-color:color-mix(in srgb,var(--neon) 55%,var(--line));
+  background:linear-gradient(100deg,color-mix(in srgb,var(--neon) 12%,var(--surf)),var(--surf) 60%)}
+.cal-faixa .txt{min-width:0}
+.cal-faixa .tit{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:21px;line-height:1.12;
+  text-transform:uppercase;letter-spacing:.02em;color:var(--ink)}
+.cal-faixa .sub{margin:4px 0 0;font-size:12.5px;color:var(--ink2)}
+
+/* o anel de néon girando */
+.neon{--neon:#FFE600;position:relative;flex:0 0 auto;display:grid;place-items:center;
+  width:64px;height:64px;border-radius:50%}
+.neon.vencida{--neon:#FF3B2F}
+.neon.breve{--neon:#FFE600}
+/* O giro é do GRADIENTE, não do elemento. Girar o elemento com transform faz a
+   caixa dele crescer e encolher a cada quadro (um quadrado girado chega a 1,41x),
+   e dentro de um contêiner com rolagem isso cria e apaga a barra sem parar.
+   Animando o ângulo do conic-gradient o desenho é o mesmo e a caixa não mexe. */
+.neon::after{content:"";position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
+  --giro:0deg;
+  background:conic-gradient(from var(--giro),transparent 0 55%,color-mix(in srgb,var(--neon) 60%,transparent) 78%,var(--neon) 92%,transparent 100%);
+  filter:blur(7px);opacity:.9;animation:neon-gira 2.4s linear infinite}
+.neon::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  border:2.5px solid var(--neon);
+  box-shadow:0 0 5px var(--neon),0 0 13px color-mix(in srgb,var(--neon) 75%,transparent),
+             inset 0 0 9px color-mix(in srgb,var(--neon) 45%,transparent);
+  animation:neon-pulsa 1.7s ease-in-out infinite}
+.neon .n{position:relative;z-index:2;font-family:"Barlow Condensed",sans-serif;font-weight:700;
+  font-size:26px;line-height:.9;color:var(--ink);font-variant-numeric:tabular-nums;text-align:center}
+.neon .u{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:8.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-top:2px}
+@keyframes neon-gira{from{--giro:0deg}to{--giro:360deg}}
+@keyframes neon-pulsa{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* quem não gosta de coisa piscando continua vendo o anel, só que parado */
+@media (prefers-reduced-motion: reduce){
+  .neon::after{animation:none;opacity:.6}
+  .neon::before{animation:none}
+}
+
+/* o mesmo anel, miúdo, dentro da tabela */
+.neon.mini{width:44px;height:44px}
+.neon.mini .n{font-size:18px}
+.neon.mini .u{font-size:7.5px;letter-spacing:.08em}
+.cal-dias{display:flex;align-items:center;gap:9px;min-height:52px}
+.cal-dias .plano{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;
+  color:var(--ink2);font-variant-numeric:tabular-nums}
+.cal-sede{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:11px;font-weight:600;
+  letter-spacing:.03em;color:var(--warn-ink)}
+.cal-tab td{vertical-align:middle}
+.cal-cel{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+@media (max-width:720px){ .cal-cel{align-items:flex-end;text-align:right} }
+.cal-nada{padding:18px;text-align:center;color:var(--ink3);font-size:13px}
+
+/* ---------- emissões atmosféricas ---------- */
+.emi-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.emi-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surf);color:var(--ink2);font-size:12.5px;font-weight:600;
+  font-family:inherit;letter-spacing:.01em;transition:border-color .15s,background .15s}
+.emi-chip:hover{border-color:var(--ink3)}
+.emi-chip b{font-family:"Barlow Condensed",sans-serif;font-size:16px;line-height:1;font-variant-numeric:tabular-nums}
+.emi-chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.emi-chip .pt{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.emi-chip.c-bad .pt{background:var(--bad)} .emi-chip.c-warn .pt{background:var(--warn)}
+.emi-chip.c-ok .pt{background:var(--ok)} .emi-chip.c-mute .pt{background:var(--mute)}
+.emi-chip.c-all .pt{background:var(--accent)}
+
+/* a barra do ciclo: quanto dos 180 dias já foi gasto */
+.ciclo{display:flex;align-items:center;gap:9px;min-width:150px}
+.ciclo-trilho{position:relative;flex:1 1 auto;height:7px;border-radius:999px;background:var(--surf3);overflow:hidden}
+.ciclo-trilho i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--ok);transition:width .4s ease}
+.ciclo-trilho i.w{background:var(--warn)} .ciclo-trilho i.b{background:var(--bad)}
+.ciclo-pct{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;color:var(--ink3);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.emi-tab td{vertical-align:middle}
+.emi-sem{color:var(--ink3)}
+@media (max-width:720px){ .ciclo{min-width:0;width:60%} }
+@media print{ .emi-chips{display:none!important} .ciclo-trilho i{background:#666!important} }
+
+/* ---------- barra de ações ---------- */
+.acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.copiar.whats{color:var(--ok);background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 32%,transparent)}
+.copiar.destaque{color:var(--accent);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
+
+/* ---------- impressão ---------- */
+@media print{
+  @page{size:A4;margin:12mm}
+  :root{--bg:#fff;--surf:#fff;--surf2:#fff;--surf3:#f2f2f2;--line:#bbb;--line-soft:#ddd;
+        --ink:#000;--ink2:#333;--ink3:#555;--shadow:none}
+  body{background:#fff;color:#000;font-size:10.5pt}
+  nav.jump, .acoes, .filters, .reload, .maisbtn, .ordbtn, .copiar, .periodos,
+  .tv, .ficha, .rail, .railbtn, #alert{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .mast{border-bottom:2px solid #000}
+  section{padding:10px 0 4px;break-inside:auto}
+  .kpi, .dcard, .panel, .card-graf, .ind, .cats{break-inside:avoid;box-shadow:none;border:1px solid #bbb}
+  .mov li, .plist li, .rein li{break-inside:avoid}
+  table{font-size:9pt}
+  thead th{position:static;background:#eee!important;color:#000!important}
+  .pill{border:1px solid #999!important;background:#fff!important;color:#000!important}
+  .pill.forte{background:#fff!important;color:#000!important}
+  .dias{background:#f2f2f2!important;color:#000!important;border:1px solid #ccc}
+  /* néon não existe no papel: vira um círculo preto simples com o número dentro */
+  .neon::before{box-shadow:none!important;border-color:#000!important;animation:none!important}
+  .neon::after{display:none!important}
+  .neon .n, .neon .u{color:#000!important}
+  .cal-faixa{break-inside:avoid;box-shadow:none;border:1px solid #bbb;background:#fff!important}
+  .cal-sede{color:#000!important}
+  #movimentacoes{break-before:page}
+  footer{border-top:1px solid #999}
+  /* a folha é estreita e as regras de celular entrariam no lugar errado */
+  .kpis{grid-template-columns:repeat(4,1fr)!important}
+  .kpi.hero{grid-column:auto!important}
+  .kpi .val{font-size:34px}
+  .kpi.hero .val{font-size:40px}
+  .two{grid-template-columns:1fr 1fr!important}
+  .inds{grid-template-columns:1fr 1fr 1.3fr!important}
+  .catrow{grid-template-columns:150px 1fr 104px!important;row-gap:0!important}
+  .catnums{grid-column:auto!important;justify-content:flex-end!important}
+  .catnums b{min-width:0!important;text-align:right!important}
+  .downs{grid-template-columns:1fr 1fr!important}
+  .catdet{display:none!important}
+  /* as barras carregam a informação: precisam sair na impressão */
+  .bar, .bar *, .sw, .rein .barra, .garea, .glinha{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* ---------- modo TV ---------- */
+body.tv-on > header, body.tv-on > nav, body.tv-on > main, body.tv-on > footer{display:none}
+body.tv-on{overflow:hidden}
+.tv{position:fixed;inset:0;z-index:90;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;
+  font-size:clamp(14px,1.15vw,22px)}
+.tv[hidden]{display:none}
+.tv-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+  padding:2.2vh 2.4vw 1.6vh;border-bottom:1px solid var(--line);background:var(--surf)}
+.tv-top .eyebrow{font-size:.62em;margin-bottom:.3em}
+.tv-top h1{font-size:2.6em;line-height:1;text-transform:uppercase}
+.tv-rel{text-align:right;flex:0 0 auto}
+.tv-rel .hora{font-family:"IBM Plex Mono",monospace;font-size:2.2em;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.tv-rel .car{font-size:.72em;color:var(--ink3);margin-top:.3em}
+.tv-corpo{flex:1;padding:2.4vh 2.4vw;overflow:hidden;display:flex;flex-direction:column}
+.tv-rod{display:flex;align-items:center;gap:16px;padding:1.1vh 2.4vw 1.4vh;border-top:1px solid var(--line);background:var(--surf)}
+.tv-prog{flex:1;height:4px;background:var(--surf3);border-radius:2px;overflow:hidden}
+.tv-prog i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px}
+.tv-pontos{display:flex;gap:6px}
+.tv-pontos i{width:8px;height:8px;border-radius:50%;background:var(--surf3)}
+.tv-pontos i.on{background:var(--accent)}
+.tv-sair{font:inherit;font-size:.72em;font-weight:600;color:var(--ink3);background:transparent;border:1px solid var(--line);
+  border-radius:999px;padding:.35em .9em;cursor:pointer}
+.tv-sair:hover{color:var(--ink);background:var(--surf2)}
+
+.tv-vd{display:flex;flex-direction:column;justify-content:center}
+.tv-vd.ok{background:var(--ok-solid);border-color:var(--ok-solid)}
+.tv-vd.bad{background:var(--bad-solid);border-color:var(--bad-solid)}
+.tv-vd.ok .k,.tv-vd.bad .k,.tv-vd.ok .n,.tv-vd.bad .n{color:var(--on-solid)}
+.tv-vd .p{font-size:1.05em;font-weight:600;margin-top:.6em;color:var(--on-solid);opacity:.9}
+.tv-vd .q{font-size:.82em;margin-top:.35em;color:var(--on-solid);opacity:.75}
+.tv-cps{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:1vh 1vw;align-content:start}
+.tv-cp{background:var(--surf2);border:1px solid var(--line);border-left:5px solid var(--ok-solid);border-radius:10px;padding:1.1vh 1vw;
+  display:flex;align-items:baseline;gap:.7em;flex-wrap:wrap}
+.tv-cp.falta{border-left-color:var(--bad-solid);background:var(--bad-bg)}
+.tv-cp .nome{flex:1 1 auto;font-weight:600;font-size:.92em;min-width:0}
+.tv-cp .par{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.1em;line-height:1;font-variant-numeric:tabular-nums}
+.tv-cp .par span{font-size:.5em;color:var(--ink3);margin-left:.15em}
+.tv-cp.falta .par b{color:var(--bad)}
+.tv-cp .sit{flex:1 1 100%;font-size:.72em;font-weight:600;color:var(--ink3)}
+.tv-cp.limite{border-left-color:var(--warn)}
+.tv-cp.limite .sit{color:var(--warn-ink)}
+.tv-cp.falta .sit{color:var(--bad)}
+.tv-hero{display:grid;grid-template-columns:1.05fr 1.45fr;gap:2vw;flex:1;align-items:stretch}
+.tv-esq{display:flex;flex-direction:column;gap:2vh}
+.tv-esq .tv-big{flex:1}
+.tv-big{background:linear-gradient(160deg,var(--accent-soft),var(--surf) 72%);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));
+  border-radius:14px;padding:2.4vh 2vw;display:flex;flex-direction:column;justify-content:center}
+.tv-big .k{font-size:.8em;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.tv-big .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:9.5em;line-height:.86;color:var(--accent);font-variant-numeric:tabular-nums}
+.tv-tres{display:grid;grid-template-columns:repeat(3,1fr);gap:1vw;margin-top:2vh}
+.tv-tres > div{background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:1.4vh 1vw}
+.tv-tres .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.9em;line-height:1;font-variant-numeric:tabular-nums}
+.tv-tres .k{font-size:.66em;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.tv-tres .ok .n{color:var(--ok)} .tv-tres .bad .n{color:var(--bad)}
+.tv-cx{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:1.8vh 1.4vw;display:flex;flex-direction:column}
+.tv-cx h2{font-size:1.05em;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);margin-bottom:1vh}
+.tv-cx .graf{flex:1;display:flex;align-items:center}
+.tv-cx .graf svg{width:100%;height:auto}
+
+.tv-grade{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2vw 1.2vw;flex:1;align-content:start}
+.tv-card{background:var(--surf);border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:12px;padding:1.5vh 1.2vw}
+.tv-card .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.tv-card .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5em}
+.tv-card .d{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.1em;line-height:1;color:var(--bad)}
+.tv-card .d small{display:block;font-size:.3em;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.tv-card .mod{font-size:.76em;color:var(--ink3)}
+.tv-card .def{font-size:.86em;margin-top:.6vh;line-height:1.35}
+.tv-barras{display:flex;flex-direction:column;gap:1.1vh;flex:1;justify-content:center}
+.tv-barras .l{display:grid;grid-template-columns:11em 1fr 5.5em;gap:1vw;align-items:center;font-size:1em}
+.tv-barras .nome{font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-size:.86em}
+.tv-barras .bar{height:1.5em;border-radius:5px;background:var(--surf3);overflow:hidden;display:flex}
+.tv-barras .bar i{display:block;height:100%}
+.tv-barras .pc{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.7em;text-align:right;font-variant-numeric:tabular-nums}
+.tv-lista{display:flex;flex-direction:column;gap:.9vh;flex:1}
+.tv-lista li{display:grid;grid-template-columns:10em 1fr auto;gap:1vw;align-items:center;background:var(--surf);
+  border:1px solid var(--line);border-left:5px solid var(--mute);border-radius:10px;padding:1.1vh 1vw;list-style:none}
+.tv-lista li.voltou{border-left-color:var(--ok-solid)}
+.tv-lista li.parou{border-left-color:var(--bad-solid)}
+.tv-lista li.motivo{border-left-color:var(--warn)}
+.tv-lista .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.15em}
+.tv-lista .q{font-family:"IBM Plex Mono",monospace;font-size:.76em;color:var(--ink3)}
+.tv-lista .txt{font-size:.9em}
+.tv-vazio{margin:auto;color:var(--ink3);font-size:1.2em}
+@media (max-width:900px){ .tv-hero{grid-template-columns:1fr} .tv-grade{grid-template-columns:1fr 1fr} }
+
+/* ---------- faixa de alertas ---------- */
+.alertas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
+.alertas .tit{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-right:2px}
+.al{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12.5px;font-weight:600;
+  border-radius:999px;padding:6px 13px 6px 11px;cursor:pointer;border:1px solid transparent;background:var(--surf);box-shadow:var(--shadow)}
+.al b{font-family:"IBM Plex Mono",monospace;font-size:14px}
+.al:hover{filter:brightness(1.06)}
+.al:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.al.bad{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 32%,transparent)}
+.al.warn{background:var(--warn-bg);color:var(--warn-ink);border-color:color-mix(in srgb,var(--warn) 36%,transparent)}
+.al.info{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
+.al.ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent);cursor:default}
+
+/* ---------- prefixo clicável ---------- */
+.eqbtn{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;
+  border-bottom:1px dotted color-mix(in srgb,currentColor 45%,transparent)}
+.eqbtn:hover{color:var(--accent)}
+.eqbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* ---------- ficha do equipamento ---------- */
+.ficha{position:fixed;inset:0;z-index:80;display:flex;justify-content:flex-end}
+.ficha[hidden]{display:none}
+.ficha-fundo{position:absolute;inset:0;background:rgba(6,12,17,.55);backdrop-filter:blur(2px)}
+.ficha-cx{position:relative;width:min(520px,100%);height:100%;background:var(--surf);border-left:1px solid var(--line);
+  box-shadow:-24px 0 60px -30px rgba(0,0,0,.6);display:flex;flex-direction:column;animation:entra .18s ease-out}
+@keyframes entra{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.ficha-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px 14px;border-bottom:1px solid var(--line);background:var(--surf2)}
+.ficha-top h3{font-size:24px;font-family:"IBM Plex Mono",monospace;font-weight:600;letter-spacing:0}
+.ficha-x{font:inherit;font-size:18px;line-height:1;color:var(--ink3);background:transparent;border:1px solid var(--line);
+  border-radius:8px;width:34px;height:34px;cursor:pointer;flex:0 0 auto}
+.ficha-x:hover{background:var(--surf3);color:var(--ink)}
+.ficha-corpo{padding:16px 20px 26px;overflow-y:auto;flex:1}
+.fbloco{margin-bottom:20px}
+.fbloco h4{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin:0 0 8px;
+  font-family:"IBM Plex Sans",sans-serif}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;font-size:13px}
+.fgrid .k{font-size:11px;color:var(--ink3);display:block}
+.fgrid .v{font-weight:600;color:var(--ink)}
+.fgrid .larga{grid-column:1/-1}
+.fnum{display:flex;gap:20px;flex-wrap:wrap}
+.fnum div{min-width:74px}
+.fnum .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.fnum .k{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.flinha{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.flinha li{display:grid;grid-template-columns:82px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
+.flinha li:last-child{border-bottom:0}
+.flinha .q{font-family:"IBM Plex Mono",monospace;color:var(--ink3);font-size:11.5px;font-variant-numeric:tabular-nums}
+.flinha .por{color:var(--ink2);margin-top:3px;line-height:1.4}
+.fvazio{font-size:12.5px;color:var(--ink3)}
+.fpars{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.fpar{background:var(--surf2);border:1px solid var(--line);border-left:4px solid var(--mute);border-radius:10px;padding:11px 13px;font-size:12.5px}
+.fpar.aberta{border-left-color:var(--bad-solid);background:color-mix(in srgb,var(--bad-bg) 60%,var(--surf2))}
+.fpar.fechada{border-left-color:var(--ok-solid)}
+.fpar-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fpar-dur{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fpar.aberta .fpar-dur{color:var(--bad);font-weight:600}
+.fpar-mot{margin-top:8px;font-weight:600;color:var(--ink);line-height:1.4;text-transform:uppercase}
+.fpar-antes{margin-top:4px;color:var(--ink3);font-size:11.5px;line-height:1.4}
+.fpar-antes span{font-family:"IBM Plex Mono",monospace;font-size:11px}
+.fpar-datas{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:9px;padding-top:8px;border-top:1px solid var(--line-soft)}
+.fpar-datas .k{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.fpar-datas .v{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.fpar-datas .v.ainda{font-family:inherit;color:var(--bad)}
+.copiar{font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:var(--surf2);border:1px solid var(--line);
+  border-radius:999px;padding:5px 12px;cursor:pointer;white-space:nowrap}
+.copiar:hover{background:var(--surf3)}
+.copiar:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:560px){ .ficha-cx{width:100%} .fgrid{grid-template-columns:1fr} }
+
+/* ---------- evolução: gráfico e indicadores ---------- */
+.card-graf{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px 10px;margin-top:20px}
+.graf-head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.graf-head h3{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.graf-head p{margin:3px 0 0;font-size:12px;color:var(--ink3)}
+.periodos{display:flex;gap:6px}
+.graf-wrap{position:relative;margin-top:6px}
+.graf-wrap svg{display:block;width:100%}
+.gx line,.gy line{stroke:var(--line-soft)}
+.gx text,.gy text{fill:var(--ink3);font-size:11px;font-family:"IBM Plex Sans",sans-serif}
+.glinha{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.garea{fill:var(--accent);opacity:.12}
+.gmeta{stroke:var(--ink3);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+.gcursor{stroke:var(--accent);stroke-width:1}
+.gponto{fill:var(--accent);stroke:var(--surf);stroke-width:2}
+.dica{position:absolute;pointer-events:none;z-index:5;background:var(--surf2);border:1px solid var(--line);
+  border-radius:8px;padding:7px 10px;box-shadow:var(--shadow);font-size:12px;line-height:1.4;white-space:nowrap}
+.dica b{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--ink)}
+.dica span{color:var(--ink3)}
+.grafvazio{padding:34px 0;text-align:center;color:var(--ink3);font-size:13px}
+
+.inds{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:12px;margin-top:12px;align-items:start}
+.ind{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;box-shadow:var(--shadow)}
+.ind .lab{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.ind .lab span{letter-spacing:0;text-transform:none;font-weight:500}
+.ind .val{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:44px;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums}
+.ind .val small{font-size:17px;font-weight:600;color:var(--ink3);margin-left:6px}
+.ind .foot{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.45}
+.rein{list-style:none;margin:9px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
+.rein li{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;font-size:12.5px}
+.rein .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px}
+.rein .barra{height:8px;border-radius:4px;background:var(--accent);min-width:6px}
+.rein .qt{font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600;font-size:12px}
+.rein .vazio{grid-column:1/-1;color:var(--ink3)}
+@media (max-width:900px){ .inds{grid-template-columns:1fr} }
+
+/* ---------- movimentações ---------- */
+.mov{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mov li{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--mute);border-radius:var(--r);padding:12px 15px;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:118px 1fr auto;gap:4px 16px;align-items:baseline}
+.mov li.voltou{border-left-width:7px;border-left-color:var(--ok-solid)}
+.mov li.parou{border-left-width:7px;border-left-color:var(--bad-solid)}
+.mov li.motivo{border-left-color:var(--warn)}
+.mov .pill.forte{font-size:12px;padding:3.5px 12px;border-color:transparent;color:var(--on-solid);letter-spacing:.01em}
+.mov .pill.forte::before{display:none}
+.mov .pill.forte.p-ok{background:var(--ok-solid)}
+.mov .pill.forte.p-bad{background:var(--bad-solid)}
+.mov .quando{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mov .quando b{display:block;color:var(--ink2);font-weight:600;font-size:13px}
+.mov .oque{min-width:0}
+.mov .oque .eq{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.mov .oque .pre{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:14.5px}
+.mov .oque .mod{font-size:12px;color:var(--ink3)}
+.mov .oque .por{font-size:13.5px;color:var(--ink);margin-top:3px;line-height:1.4}
+.mov .onde{font-size:11.5px;color:var(--ink3);white-space:nowrap;text-align:right}
+.maisbtn{margin:14px auto 0;display:block;font:inherit;font-size:13px;font-weight:600;color:var(--accent);background:var(--surf);
+  border:1px solid var(--line);border-radius:8px;padding:9px 18px;cursor:pointer;box-shadow:var(--shadow)}
+.maisbtn:hover{background:var(--surf2)}
+.maisbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){
+  .mov li{grid-template-columns:1fr;gap:6px}
+  .mov .onde{text-align:left}
+}
+
+footer{margin-top:38px;border-top:1px solid var(--line);background:var(--surf)}
+.foot-in{padding:20px 0 30px;font-size:12.5px;color:var(--ink3);display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between}
+footer b{color:var(--ink2);font-weight:600}
+
+@media (max-width:900px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi.hero{grid-column:1/-1}
+  .two{grid-template-columns:1fr}
+  .catrow{grid-template-columns:130px 1fr;row-gap:6px}
+  .catnums{grid-column:1/-1;justify-content:flex-start}
+  .catnums b{min-width:0;text-align:left}
+}
+@media (max-width:720px){
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tbody tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+  tbody tr:last-child{border-bottom:0}
+  tbody td{border:0;padding:2px 0;display:flex;gap:10px;justify-content:space-between;align-items:baseline}
+  tbody td::before{content:attr(data-l);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);flex:0 0 auto}
+  td.def{max-width:none;text-align:right}
+  td.hide-m{display:none}
+  td.opt.void{display:none}
+  .count{margin-left:0;width:100%}
+}
+/* ---------- vídeos nas laterais ---------- */
+.rail{display:none}
+.railbtn{display:none}
+@media (min-width:1560px){
+  body.vid .rail{
+    position:fixed;top:58px;bottom:20px;z-index:20;pointer-events:none;
+    width:min(340px, calc((100vw - 1180px)/2 - 40px));
+    display:flex;flex-direction:column;justify-content:center;padding:14px 0;
+  }
+  body.vid .rail.esq{left:20px}
+  body.vid .rail.dir{right:20px}
+  .rail video{width:100%;max-height:calc(100vh - 96px);object-fit:cover;display:block;
+    border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);background:var(--surf2)}
+  body.temvid .railbtn{display:block;position:fixed;left:20px;bottom:18px;z-index:41;
+    font:inherit;font-size:12px;font-weight:600;color:var(--ink2);
+    background:var(--surf);border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;cursor:pointer;box-shadow:var(--shadow);opacity:.72}
+  .railbtn:hover{opacity:1;background:var(--surf2)}
+  .railbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+}
+
+/* =====================================================================
+   v2.5 — repaginada (padrões do 21st.dev trazidos para o HTML puro)
+   Mantém as cores e a cara de antes; muda acabamento, ritmo e detalhe.
+   ===================================================================== */
+:root{ --r:14px; --r-sm:10px; --ease:cubic-bezier(.2,.7,.2,1);
+  --ring:color-mix(in srgb,var(--line) 80%,transparent);
+  --lift:0 1px 2px rgba(20,31,41,.06), 0 14px 32px -20px rgba(20,31,41,.45); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --lift:0 1px 2px rgba(0,0,0,.5), 0 16px 36px -18px rgba(0,0,0,.95); } }
+:root[data-theme="dark"]{ --lift:0 1px 2px rgba(0,0,0,.5), 0 16px 36px -18px rgba(0,0,0,.95); }
+
+/* cabeçalho e navegação */
+.mast{background:linear-gradient(180deg,var(--surf),color-mix(in srgb,var(--surf) 70%,var(--bg)))}
+.stamp{border-radius:var(--r);border-left-width:1px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stamp::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--accent)}
+.dot.live{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:pulsa-vivo 2.4s var(--ease) infinite}
+@keyframes pulsa-vivo{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.jump a{transition:background .18s var(--ease),color .18s var(--ease)}
+.jump a.ativo{background:var(--accent-soft);color:var(--accent)}
+
+/* títulos de seção */
+section{padding-top:40px}
+.rule{width:28px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 30%,transparent))}
+h2{font-size:24px}
+
+/* superfícies: canto maior, contorno fino, sombra que só aparece de perto */
+.kpi,.panel,.card-graf,.cats,.cp-grade,.tablebox,.dcard,.veredito,.banner,.ind{border-radius:var(--r)}
+.kpi,.panel,.card-graf,.cats,.cp-grade,.tablebox,.dcard,.ind{border-color:var(--ring)}
+.dcard,.kpi{transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease)}
+
+/* cartões do Panorama — padrão KPI card */
+.kpi{display:flex;flex-direction:column;gap:2px;padding:16px 18px 14px;position:relative;overflow:hidden}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;
+  background:var(--surf2);color:var(--ink3);border:1px solid var(--ring)}
+.kico svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kpi.hero .kico{background:color-mix(in srgb,var(--accent) 14%,var(--surf));color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.kpi.ok .kico{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.kpi.bad .kico{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 28%,transparent)}
+.kpi-mid{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;min-height:56px}
+.kpi .val{margin-top:4px}
+.spark{width:104px;height:36px;flex:0 1 104px;min-width:0;overflow:visible;margin-bottom:6px}
+.sp-line{fill:none;stroke:var(--ink3);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sp-area{fill:var(--ink3);opacity:.09}
+.sp-dot{fill:var(--ink3);stroke:var(--surf);stroke-width:2}
+.kpi.hero .sp-line{stroke:var(--accent)} .kpi.hero .sp-area,.kpi.hero .sp-dot{fill:var(--accent)}
+.kpi.ok .sp-line{stroke:var(--ok)} .kpi.ok .sp-area,.kpi.ok .sp-dot{fill:var(--ok)}
+.kpi.bad .sp-line{stroke:var(--bad)} .kpi.bad .sp-area,.kpi.bad .sp-dot{fill:var(--bad)}
+.kpi .sp-dot{stroke:var(--surf)}
+.kpi-delta{display:flex;align-items:center;gap:6px;font-size:12px;min-height:20px;margin-top:2px}
+.dl{display:inline-flex;align-items:center;gap:3px;font-weight:600;font-variant-numeric:tabular-nums;padding:1px 7px 1px 5px;border-radius:999px}
+.dl svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dl.bom{color:var(--ok);background:var(--ok-bg)}
+.dl.ruim{color:var(--bad);background:var(--bad-bg)}
+.dl.igual{color:var(--ink3);background:var(--surf2);padding:1px 7px}
+.dl-p{color:var(--ink3)}
+.kpi .foot{margin-top:0}
+
+/* controles segmentados (mesmo desenho em todo lugar) */
+.cp-chips,.periodos{display:inline-flex;flex-wrap:wrap;gap:3px;background:var(--surf2);padding:3px;border-radius:12px;border:1px solid var(--ring)}
+.cp-chips .chip,.periodos .chip{border:0;border-radius:9px;background:transparent;padding:6px 13px;color:var(--ink2);transition:background .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease)}
+.cp-chips .chip:hover,.periodos .chip:hover{background:color-mix(in srgb,var(--surf) 60%,transparent);color:var(--ink)}
+.cp-chips .chip[aria-pressed="true"],.periodos .chip[aria-pressed="true"]{background:var(--surf);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 1px var(--ring)}
+.chips{border-radius:12px;border-color:var(--ring)} .chip{border-radius:9px;transition:background .18s var(--ease),color .18s var(--ease)}
+
+/* etiquetas de status */
+.pill{padding:3px 10px 3px 8px;letter-spacing:.02em}
+.pill::before{box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+
+/* veredito do compromisso */
+.veredito{box-shadow:var(--lift);position:relative;overflow:hidden}
+.veredito.ok::after,.veredito.bad::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 140% at 100% 0%,rgba(255,255,255,.16),transparent 55%)}
+
+/* barras de categoria e da frota */
+.bar{border-radius:999px;height:14px}
+.catrow{transition:background .15s var(--ease);border-radius:10px}
+
+/* cartões dos parados */
+.dcard{border-left-width:1px;position:relative;padding-left:18px}
+.dcard::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--bad)}
+
+/* ficha lateral */
+.ficha-fundo{animation:fundo-entra .2s var(--ease)}
+.ficha-cx{animation:gaveta-entra .26s var(--ease);box-shadow:-24px 0 60px -30px rgba(0,0,0,.6)}
+@keyframes fundo-entra{from{opacity:0}to{opacity:1}}
+@keyframes gaveta-entra{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.ficha-top{background:linear-gradient(160deg,var(--accent-soft),var(--surf2) 65%)}
+.ficha-top h3{font-size:28px}
+.ficha-st{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ficha-loc{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);
+  padding:2px 8px;border-radius:999px;border:1px solid var(--ring);background:var(--surf)}
+.ficha-x{border-radius:10px;transition:background .15s var(--ease)}
+.fbloco{background:var(--surf);border:1px solid var(--ring);border-radius:var(--r);padding:13px 14px 14px;margin-bottom:12px;position:relative}
+.fbloco h4{margin-bottom:10px}
+.fpar{border-radius:var(--r-sm)}
+
+/* faixa de 30 dias — padrão Status Bar */
+.sbar-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink3);margin-bottom:8px}
+.sbar-head b{font-family:"Barlow Condensed",sans-serif;font-size:22px;color:var(--ink);font-weight:700;margin-right:2px}
+.sbar{display:flex;gap:2px;height:40px;align-items:stretch}
+.sb{flex:1 1 0;min-width:0;padding:0;border:0;border-radius:4px;cursor:pointer;position:relative;overflow:hidden;
+  background:var(--ok);opacity:.92;transition:opacity .15s var(--ease),transform .15s var(--ease)}
+.sb i{position:absolute;left:0;right:0;bottom:0;height:var(--p);background:var(--bad)}
+.sb.bad{background:var(--bad)}
+.sb.sem{background:var(--surf3);cursor:default}
+.sb:hover,.sb:focus-visible{opacity:1;transform:scaleY(1.08)}
+.sb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sbar-eixo{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:6px;font-family:"IBM Plex Mono",monospace}
+.sb-dica{position:absolute;z-index:6;pointer-events:none;background:var(--surf);border:1px solid var(--line);border-radius:10px;
+  box-shadow:var(--lift);padding:7px 10px;font-size:12px;line-height:1.35;max-width:260px;display:flex;flex-direction:column;gap:2px}
+.sb-dica b{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink3);font-weight:600}
+.sb-dica span{color:var(--ink)}
+
+
+/* telas pequenas */
+@media (max-width:560px){
+  .spark{width:80px;flex-basis:80px}
+  .kpi .val{font-size:44px} .kpi.hero .val{font-size:54px}
+  .ficha-top h3{font-size:24px}
+}
+/* impressão: nada de animação nem sombra nova */
+@media print{
+  .kico,.spark,.kpi-delta,.sb-dica{display:none!important}
+  .dcard::before{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .dot.live{animation:none} }
+/* ---- v2.6: quadro da frota (o elemento forte da página) ---- */
+.quadro{display:grid;grid-template-columns:minmax(232px,280px) 1fr;margin-top:22px;
+  background:var(--surf);border:1px solid var(--ring);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.q-resumo{padding:22px 22px 20px;border-right:1px solid var(--line-soft);
+  background:linear-gradient(170deg,var(--accent-soft),var(--surf) 72%);display:flex;flex-direction:column}
+.q-pct{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:clamp(56px,6.2vw,84px);line-height:.86;
+  color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.q-leg{margin:8px 0 0;font-size:14px;color:var(--ink2)}
+.q-tend{display:flex;align-items:center;gap:10px;margin-top:14px}
+.q-tend .spark{flex:0 0 96px;width:96px;margin:0}
+.q-tend .sp-line{stroke:var(--accent)} .q-tend .sp-area,.q-tend .sp-dot{fill:var(--accent)} .q-tend .sp-dot{stroke:var(--surf)}
+.q-num{display:grid;gap:0;margin:20px 0 0}
+.q-num>div{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:10px;padding:9px 0;border-top:1px solid var(--line-soft)}
+.q-num dt{font-size:13.5px;color:var(--ink2)}
+.q-num dd{margin:0;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.q-num .ok dd{color:var(--ok)} .q-num .bad dd{color:var(--bad)}
+.q-num .kpi-delta{grid-column:1/-1;min-height:0;margin-top:3px;font-size:11.5px}
+.q-num .kpi-delta:empty,.q-tend .kpi-delta:empty{display:none}
+
+.q-placas{padding:14px 18px 16px;display:flex;flex-direction:column}
+.q-linha{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:start;padding:8px 0;border-top:1px solid var(--line-soft)}
+.q-linha:first-child{border-top:0}
+.q-cat{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:16px;line-height:1.15;color:var(--ink);padding-top:5px}
+.q-cat span{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:11.5px;color:var(--bad);margin-top:2px}
+.q-tags{display:flex;flex-wrap:wrap;gap:5px}
+/* a placa: código estampado, canto vivo, como as plaquetas das máquinas */
+.placa{font:600 12px/1 "IBM Plex Mono",monospace;letter-spacing:.01em;padding:7px 8px 6px;border-radius:4px;cursor:pointer;
+  display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap;
+  border:1px solid color-mix(in srgb,var(--ok) 34%,transparent);background:var(--ok-bg);color:color-mix(in srgb,var(--ok) 70%,var(--ink))}
+.placa small{font:700 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.02em;opacity:.92}
+.placa.ind{background:var(--bad-solid);border-color:var(--bad-solid);color:var(--on-solid)}
+.placa.fora{background:transparent;border-style:dashed;border-color:var(--line);color:var(--ink3)}
+.placa:hover{filter:brightness(1.06);border-color:currentColor}
+.placa:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* o único movimento automático da página: o quadro acende placa por placa na primeira leitura */
+.q-placas.acende .placa{animation:placa-acende .32s var(--ease) both;animation-delay:calc(var(--i) * 18ms)}
+@keyframes placa-acende{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+
+/* datas e números em texto normal com algarismos tabulares; mono fica só para prefixos */
+.fpar-datas .v,.sbar-eixo,.sb-dica b,.fpar-dur{font-family:"IBM Plex Sans",sans-serif;font-variant-numeric:tabular-nums}
+.fpar-datas .k{text-transform:none;letter-spacing:0;font-size:11.5px}
+
+@media (max-width:820px){
+  .quadro{grid-template-columns:1fr}
+  .q-resumo{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .q-num{grid-template-columns:repeat(3,1fr);column-gap:14px}
+  .q-num>div{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .q-linha{grid-template-columns:1fr;gap:6px}
+  .q-cat{padding-top:0}
+}
+@media print{
+  .quadro{box-shadow:none;border:1px solid #bbb}
+  .placa{background:#fff!important;color:#000!important;border:1px solid #999!important}
+  .placa.ind{background:#000!important;color:#fff!important}
+}
+@media (prefers-reduced-motion:reduce){ .q-placas.acende .placa{animation:none} }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){.rail{display:none!important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <div class="marca-bloco">
+      <div class="marca">
+        <img class="logo" id="logo" alt="" hidden>
+        <div>
+          <p class="eyebrow">Obras 720 &amp; 731 &middot; Manutenção</p>
+          <h1>Disponibilidade da Frota</h1>
+        </div>
+      </div>
+      <p class="sub">Lido direto da planilha de controle de manutenção. Sempre que ela for salva, o controle de disponibilidade dos equipamentos é atualizado aqui.</p>
+    </div>
+    <div class="stamp">
+      <div class="k"><i class="dot load" id="s-dot"></i><span id="s-state">Lendo a planilha…</span></div>
+      <div class="v" id="s-date">—</div>
+      <div class="z" id="s-time">&nbsp;</div>
+      <button class="reload" id="s-reload" disabled>Buscar de novo</button>
+    </div>
+  </div>
+</header>
+
+<nav class="jump" aria-label="Seções">
+  <div class="jump-in">
+    <a href="#panorama">Panorama</a>
+    <a href="#compromisso">Compromisso</a>
+    <a href="#categorias">Por categoria</a>
+    <a href="#evolucao">Evolução</a>
+    <a href="#parados">Equipamentos parados</a>
+    <a href="#frota">Frota completa</a>
+    <a href="#rodante">Material rodante</a>
+    <a href="#calibracao">Calibração</a>
+    <a href="#emissoes">Emissões</a>
+    <a href="#movimentacoes">Movimentações</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div id="alert"></div>
+  <div class="alertas" id="alertas" hidden></div>
+  <div class="acoes">
+    <button class="copiar destaque" id="s-tv" type="button" title="Tela cheia para pendurar numa TV">Modo TV</button>
+    <button class="copiar whats" id="s-whats" type="button" title="Copia o resumo das máquinas de linha para colar no WhatsApp">Resumo para o WhatsApp</button>
+  </div>
+
+  <section id="panorama">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Panorama</h2></div>
+    <div class="quadro">
+      <div class="q-resumo">
+        <div class="q-pct" id="k-pct">—</div>
+        <p class="q-leg">da frota disponível agora</p>
+        <div class="q-tend"><svg class="spark" id="s-pct" aria-hidden="true"></svg><div class="kpi-delta" id="d-pct">&nbsp;</div></div>
+        <dl class="q-num">
+          <div class="ok"><dt>Rodando</dt><dd id="k-disp">—</dd><div class="kpi-delta" id="d-disp">&nbsp;</div></div>
+          <div class="bad"><dt>Parados</dt><dd id="k-ind">—</dd><div class="kpi-delta" id="d-ind">&nbsp;</div></div>
+          <div class="tot"><dt>Na frota</dt><dd id="k-tot">—</dd><div class="kpi-delta" id="d-tot">&nbsp;</div></div>
+        </dl>
+      </div>
+      <div class="q-placas" id="q-placas" role="group" aria-label="Quadro da frota: uma placa por equipamento, vermelho é parado"></div>
+    </div>
+    <p class="aside" id="k-aside">&nbsp;</p>
+  </section>
+
+  <section id="compromisso">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Estamos devendo equipamento?</h2><span class="sec-note">demanda contratada por frente &middot; conferida contra a frota disponível</span></div>
+
+    <div class="veredito" id="cp-vd"><div class="vd-txt"><div class="vd-tit">Carregando&hellip;</div></div></div>
+
+    <div class="cp-chips" id="cp-chips" role="group" aria-label="Momento do dia">
+      <button type="button" class="chip" data-mom="agora" aria-pressed="true">Agora</button>
+      <button type="button" class="chip" data-mom="util" aria-pressed="false">Pico do dia útil</button>
+      <button type="button" class="chip" data-mom="fds" aria-pressed="false">Fim de semana, de dia</button>
+      <button type="button" class="chip" data-mom="noite" aria-pressed="false">Turno da noite</button>
+    </div>
+
+    <div class="cp-grade" id="cp-grade"></div>
+    <p class="aside" id="cp-aside">&nbsp;</p>
+  </section>
+
+  <section id="categorias">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Disponibilidade por categoria</h2><span class="sec-note">clique numa categoria para abrir a lista &middot; emprestados e sucata ficam fora do cálculo</span></div>
+    <div class="cats" id="cats"><div class="skel">Carregando…</div></div>
+    <p class="legend">
+      <span><i class="sw" style="background:var(--ok)"></i> Disponível</span>
+      <span><i class="sw" style="background:var(--bad)"></i> Indisponível</span>
+      <span><i class="sw" style="background:var(--mute)"></i> Fora da base (emprestada, sucata)</span>
+    </p>
+  </section>
+
+  <section id="evolucao">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Evolução e indicadores</h2><span class="sec-note" id="ev-note">—</span></div>
+    <div class="card-graf">
+      <div class="graf-head">
+        <div>
+          <h3>Disponibilidade da frota</h3>
+          <p id="graf-sub">—</p>
+        </div>
+        <div class="periodos" role="group" aria-label="Período do gráfico">
+          <button class="chip" data-dias="30" aria-pressed="true">30 dias</button>
+          <button class="chip" data-dias="60" aria-pressed="false">60 dias</button>
+          <button class="chip" data-dias="90" aria-pressed="false">90 dias</button>
+        </div>
+      </div>
+      <div class="graf-wrap" id="graf-wrap"><div id="graf-svg"></div><div class="dica" id="graf-dica" hidden></div></div>
+    </div>
+    <div class="inds">
+      <div class="ind">
+        <div class="lab">Tempo médio de parada</div>
+        <div class="val" id="i-mttr">—</div>
+        <div class="foot" id="i-mttr-sub">—</div>
+      </div>
+      <div class="ind">
+        <div class="lab">Parados além da previsão</div>
+        <div class="val" id="i-atraso">—</div>
+        <div class="foot" id="i-atraso-sub">—</div>
+      </div>
+      <div class="ind wide">
+        <div class="lab">Quem mais parou <span id="i-rein-per"></span></div>
+        <ol class="rein" id="i-rein"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="parados">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Equipamentos parados</h2><span class="sec-note" id="parados-note">—</span></div>
+    <div class="downs" id="downs"></div>
+  </section>
+
+  <section id="frota">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Frota completa</h2><span class="sec-note">filtre e busque por prefixo, modelo ou defeito</span></div>
+    <div class="filters">
+      <div class="chips" role="group" aria-label="Filtrar por status">
+        <button class="chip" data-st="todos" aria-pressed="true">Todos</button>
+        <button class="chip" data-st="Disponível" aria-pressed="false">Disponíveis</button>
+        <button class="chip" data-st="Indisponível" aria-pressed="false">Parados</button>
+        <button class="chip" data-st="outros" aria-pressed="false">Outros</button>
+      </div>
+      <select id="f-cat" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+      <select id="f-obra" aria-label="Obra"><option value="">Todas as obras</option></select>
+      <select id="f-local" aria-label="Local"><option value="">Obra e sede</option></select>
+      <input type="search" id="f-q" placeholder="Buscar prefixo, modelo, defeito…" aria-label="Buscar">
+      <button class="copiar" id="f-link" type="button" title="Copia um link que já abre a página com estes filtros">Copiar link do filtro</button>
+      <span class="count" id="f-count"></span>
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>Prefixo</th><th>Categoria</th><th>Modelo</th><th>Obra</th><th>Local</th><th>Status</th><th>Defeito / intervenção</th><th>Parado desde</th><th>Dias</th><th>Previsão</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+      <div class="empty" id="tb-empty">Carregando…</div>
+    </div>
+  </section>
+
+  <section id="rodante">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Material rodante &amp; preventivas</h2><span class="sec-note">limpeza e inspeção de esteiras · preventiva com soprador nos geradores</span></div>
+    <div class="two">
+      <div class="panel">
+        <div class="phead"><h3>Limpeza de esteiras</h3><p id="c-sub">—</p></div>
+        <div class="pstats" id="c-stats"></div>
+        <div class="pbar"><div class="escala" id="c-escala"></div><button class="ordbtn" id="c-ord" type="button">Mais dias primeiro</button></div>
+        <ul class="plist" id="esteiras"></ul>
+      </div>
+      <div class="panel">
+        <div class="phead"><h3>Preventiva com soprador</h3><p id="g-sub">—</p></div>
+        <div class="pstats" id="g-stats"></div>
+        <div class="pbar"><div class="escala" id="g-escala"></div><button class="ordbtn" id="g-ord" type="button">Mais dias primeiro</button></div>
+        <ul class="plist" id="geradores"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="calibracao">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Calibração das balanças</h2><span class="sec-note" id="cal-note">—</span></div>
+    <div class="cal-topo" id="cal-topo"></div>
+    <div class="tablebox">
+      <table class="cal-tab">
+        <thead><tr>
+          <th>Prefixo</th><th>Obra</th><th>Vencimento</th><th>Dias a vencer</th>
+          <th>Situação da calibração</th><th>Situação do equipamento</th><th>Local</th>
+        </tr></thead>
+        <tbody id="cal-tb"></tbody>
+      </table>
+      <div class="empty" id="cal-empty">Carregando…</div>
+    </div>
+  </section>
+
+  <section id="emissoes">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Emissões atmosféricas</h2><span class="sec-note" id="emi-note">—</span></div>
+    <div class="cal-topo" id="emi-topo"></div>
+    <div class="emi-chips" id="emi-chips" role="group" aria-label="Filtrar por situação"></div>
+    <div class="tablebox">
+      <table class="cal-tab emi-tab">
+        <thead><tr>
+          <th>Prefixo</th><th>Equipamento</th><th>Último teste</th><th>Vencimento</th>
+          <th>Dias a vencer</th><th>Ciclo de 180 dias</th><th>Situação</th><th>Local</th>
+        </tr></thead>
+        <tbody id="emi-tb"></tbody>
+      </table>
+      <div class="empty" id="emi-empty">Carregando…</div>
+    </div>
+    <p class="aside" id="emi-aside">&nbsp;</p>
+  </section>
+
+  <section id="movimentacoes">
+    <div class="rule"></div>
+    <div class="sec-head"><h2>Últimas movimentações</h2><span class="sec-note" id="mov-note">—</span></div>
+    <ol class="mov" id="mov"></ol>
+    <button class="maisbtn" id="mov-mais" hidden>Ver movimentações anteriores</button>
+  </section>
+</main>
+
+<div class="offline" id="offline" hidden>Sem internet — mostrando os últimos dados que chegaram.</div>
+
+<div class="tv" id="tv" hidden>
+  <div class="tv-top">
+    <div>
+      <p class="eyebrow">Obras 720 &amp; 731 &middot; Manutenção</p>
+      <h1 id="tv-tit">Panorama</h1>
+    </div>
+    <div class="tv-rel">
+      <div class="hora" id="tv-hora">--:--</div>
+      <div class="car" id="tv-car">&nbsp;</div>
+    </div>
+  </div>
+  <div class="tv-corpo" id="tv-corpo"></div>
+  <div class="tv-rod">
+    <div class="tv-pontos" id="tv-pontos"></div>
+    <div class="tv-prog"><i id="tv-barra"></i></div>
+    <button class="tv-sair" id="tv-sair" type="button">Sair do modo TV</button>
+  </div>
+</div>
+
+<div class="ficha" id="ficha" hidden>
+  <div class="ficha-fundo" id="ficha-fundo"></div>
+  <aside class="ficha-cx" role="dialog" aria-modal="true" aria-labelledby="ficha-tit">
+    <div class="ficha-top">
+      <div>
+        <p class="eyebrow" id="ficha-cat">&nbsp;</p>
+        <h3 id="ficha-tit">—</h3>
+        <p class="sub" id="ficha-mod" style="margin-top:4px">&nbsp;</p>
+        <div class="ficha-st" id="ficha-st"></div>
+      </div>
+      <button class="ficha-x" id="ficha-x" type="button" aria-label="Fechar ficha">&times;</button>
+    </div>
+    <div class="ficha-corpo" id="ficha-corpo"></div>
+  </aside>
+</div>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>Fonte: planilha <b>Controle de Manutenção e Disponibilidade da Frota</b> — abas Controle de Frota, Cronograma Limpeza e Preventiva Soprador.</span>
+    <span>Painel <b id="f-versao">—</b></span>
+    <span>O carimbo no topo é a hora em que a planilha foi salva pela última vez — igual para todo mundo, não a hora em que você abriu a página. O Google leva alguns minutos para propagar uma edição recém-salva.</span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
+const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
+const VERSAO = "2.7";
+const POR_PAGINA = 20;
+
+/* Vídeos curtos que rodam nas laterais, em loop infinito.
+   Os arquivos ficam na pasta "videos" do repositório; basta listar os nomes aqui.
+   Lista vazia = nenhuma faixa lateral aparece. */
+const VIDEOS = [];
+/* devolve a data e a hora da ultima modificacao do arquivo no Drive */
+const CARIMBO = "https://script.google.com/macros/s/AKfycbzo3OqQEdXa6OkPaHg7JxX2H6uMAidQv18DjE2JivAoxE_gytAj3UKNwNUarZILFHPp/exec";
+const csvUrl = gid => `https://docs.google.com/spreadsheets/d/e/${PUB}/pub?gid=${gid}&single=true&output=csv&_=${Date.now()}`;
+
+/* ---------- utilitários ---------- */
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = id => document.getElementById(id);
+
+function parseCSV(text){
+  const rows=[]; let row=[], f="", q=false;
+  text = text.replace(/^﻿/,"");
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){ f+='"'; i++; } else q=false; }
+      else f+=c;
+    } else if(c==='"'){ q=true; }
+    else if(c===','){ row.push(f); f=""; }
+    else if(c==='\n'){ row.push(f); f=""; rows.push(row); row=[]; }
+    else if(c!=='\r'){ f+=c; }
+  }
+  row.push(f); rows.push(row);
+  return rows;
+}
+const cell = (r,i) => (r && r[i]!=null ? String(r[i]).trim() : "");
+const isNum = v => v!=="" && !isNaN(Number(v));
+
+function headerRow(rows, ...must){
+  for(let i=0;i<rows.length;i++){
+    const up = rows[i].map(c=>String(c).toUpperCase());
+    if(must.every(m => up.some(c => c.includes(m)))) return i;
+  }
+  return -1;
+}
+function colIndex(hdr, ...names){
+  const up = hdr.map(c=>String(c).trim().toUpperCase());
+  for(const n of names){ const i = up.findIndex(c => c.startsWith(n)); if(i>=0) return i; }
+  return -1;
+}
+/* valor da célula seguinte a um rótulo, em qualquer lugar da planilha */
+function kv(rows, label){
+  const L = label.toUpperCase();
+  for(const r of rows){
+    for(let i=0;i<r.length;i++){
+      if(String(r[i]).trim().toUpperCase().startsWith(L)){
+        for(let j=i+1;j<r.length;j++){ const v=cell(r,j); if(v) return v; }
+      }
+    }
+  }
+  return "";
+}
+/* ---------- datas ----------
+   Toda data que aparece na tela sai em DIA/MÊS/ANO, o padrão daqui.
+
+   O problema: a planilha publica os dois formatos DENTRO DA MESMA COLUNA,
+   porque cada célula carrega a formatação de quando foi digitada. Na coluna
+   PREVISÃO, por exemplo, convivem "28/09" (dia primeiro) e "9/14/2026" (mês
+   primeiro). Então não dá para ter uma regra única para o site inteiro.
+
+   A solução tem dois níveis:
+   1) por valor — número maior que 12 só pode ser dia, isso resolve sozinho a
+      maioria dos casos ("20/07" e "9/14" não têm dúvida);
+   2) por coluna — quando os dois números cabem nos dois papéis ("05/08"), vale
+      o jeito que aparece mais vezes nas datas sem dúvida daquela coluna, que
+      modoColuna descobre lendo a coluna inteira antes.
+   Empate total cai em dia primeiro, que é como se escreve no Brasil. */
+
+/* Lê a coluna toda e responde: aqui o dia vem primeiro? */
+function modoColuna(rows, inicio, idx){
+  if(idx == null || idx < 0) return true;
+  let dia = 0, mes = 0;
+  for(let i = inicio; i < rows.length; i++){
+    const m = cell(rows[i], idx).match(/^(\d{1,2})\/(\d{1,2})(\/|$)/);
+    if(!m) continue;
+    const a = Number(m[1]), b = Number(m[2]);
+    if(a > 12 && b <= 12) dia++;
+    else if(b > 12 && a <= 12) mes++;
+  }
+  return dia >= mes;
+}
+
+/* diaPrimeiro só decide o empate; os casos com número > 12 se resolvem sozinhos */
+function fmtDate(v, diaPrimeiro = true){
+  if(!v) return "";
+  const t = String(v).trim();
+  const iso = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(.*)$/);
+  if(iso) return `${iso[3].padStart(2,"0")}/${iso[2].padStart(2,"0")}/${iso[1]}${(iso[4]||"").replace(/^[T\s]+/," ").trimEnd()}`;
+  /* o que vier depois da data (uma hora, por exemplo) segue junto */
+  const m = t.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?(.*)$/);
+  if(m){
+    const a = Number(m[1]), b = Number(m[2]);
+    let dia, mes;
+    if(a > 12 && b <= 12){ dia = a; mes = b; }
+    else if(b > 12 && a <= 12){ dia = b; mes = a; }
+    else if(diaPrimeiro){ dia = a; mes = b; }
+    else { dia = b; mes = a; }
+    if(dia>=1 && dia<=31 && mes>=1 && mes<=12){
+      const dm = `${String(dia).padStart(2,"0")}/${String(mes).padStart(2,"0")}`;
+      return (m[3] ? `${dm}/${m[3]}` : dm) + (m[4]||"").trimEnd();
+    }
+  }
+  return t.replace(/\/(segunda|terça|quarta|quinta|sexta|sábado|domingo)-?f?e?i?r?a?/i,"").replace(/\/AAAA/i,"").trim();
+}
+const stripEmoji = s => String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{23F0}-\u{23FF}]/gu,"").trim();
+
+/* ---------- estado ---------- */
+let FROTA=[], LIMPEZA=[], SOPRADOR=[], MOVS=[], META={};
+/* demanda contratada (aba DEMANDA) e a lista de feriados que vem junto */
+let DEMANDA=[], FERIADOS=new Set();
+/* calibração das balanças (aba CALIBRAÇÃO BALANÇAS) */
+let CALIB=[];
+/* emissões atmosféricas — teste de fumaça com opacímetro (aba EMISSOES ATMOSFERICAS) */
+let EMISSOES=[], filtroEmi="atencao";
+let momentoCP = "agora";
+/* o log cru, sem agrupar — é dele que sai a linha do tempo */
+let MOVS_BRUTO=[];
+let periodoHist = 30;
+let movVisiveis = POR_PAGINA;
+/* categorias que o usuário deixou abertas — sobrevivem à atualização automática */
+const abertas = new Set();
+const filtros = {st:"todos", cat:"", obra:"", loc:"", q:"", especial:""};
+
+/* ---------- leitura ---------- */
+const espera = ms => new Promise(r=>setTimeout(r,ms));
+
+/* Nenhuma espera é infinita: sem resposta em LIMITE ms a tentativa falha,
+   senão a página fica presa em "Lendo a planilha..." para sempre. */
+const LIMITE = 10000;
+async function buscar(url, opts){
+  const ac = new AbortController();
+  const corta = setTimeout(()=>ac.abort(), LIMITE);
+  try{
+    return await fetch(url, Object.assign({signal:ac.signal}, opts||{}));
+  }catch(e){
+    throw (e && e.name === "AbortError") ? new Error("sem resposta do Google") : e;
+  }finally{
+    clearTimeout(corta);
+  }
+}
+
+/* o Google devolve 500 de vez em quando; tenta de novo antes de desistir */
+async function tentar(fn, vezes=3){
+  let ultimo;
+  for(let i=0;i<vezes;i++){
+    try{ return await fn(); }
+    catch(e){ ultimo=e; if(i<vezes-1) await espera(1200*(i+1)); }
+  }
+  throw ultimo;
+}
+
+async function pegarCarimbo(){
+  return tentar(async()=>{
+    const r = await buscar(CARIMBO + "?_=" + Date.now());
+    if(!r.ok) throw new Error("carimbo " + r.status);
+    const j = await r.json();
+    if(!j || !j.ok) throw new Error("carimbo indisponível");
+    return j;
+  });
+}
+
+async function pegar(gid, nome){
+  return tentar(async()=>{
+    const r = await buscar(csvUrl(gid), {cache:"no-store"});
+    if(!r.ok) throw new Error(`${nome}: o Google respondeu ${r.status}`);
+    const t = await r.text();
+    if(/<html/i.test(t.slice(0,200))) throw new Error(`${nome}: a aba não está publicada`);
+    return parseCSV(t);
+  });
+}
+
+function lerFrota(rows){
+  const h = headerRow(rows,"PREFIXO","STATUS","CATEGORIA");
+  if(h<0) throw new Error("Controle de Frota: não achei a linha de cabeçalho (ITEM / CATEGORIA / PREFIXO / STATUS)");
+  const H = rows[h];
+  const c = {
+    item:colIndex(H,"ITEM"), cat:colIndex(H,"CATEGORIA"), tipo:colIndex(H,"TIPO"),
+    mod:colIndex(H,"MODELO"), obra:colIndex(H,"OBRA"), loc:colIndex(H,"LOCAL"),
+    pre:colIndex(H,"PREFIXO"), st:colIndex(H,"STATUS"), def:colIndex(H,"DEFEITO"),
+    dt:colIndex(H,"DATA PARADA"), prev:colIndex(H,"PREVIS"), dias:colIndex(H,"DIAS"),
+    obs:colIndex(H,"OBSERVA")
+  };
+  /* cada coluna de data tem o seu jeito — descobre antes de ler as linhas */
+  const mdDt = modoColuna(rows, h+1, c.dt), mdPrev = modoColuna(rows, h+1, c.prev);
+  const out=[];
+  for(let i=h+1;i<rows.length;i++){
+    const r=rows[i];
+    /* Depois da frota a mesma aba tem a tabela de peças, que começa com outro
+       cabeçalho ITEM. Ali a leitura para. */
+    if(/^item$/i.test(cell(r,c.item))) break;
+    /* Vale a linha que tem prefixo E categoria. As faixas laranja de categoria não têm
+       nem um nem outro, e o equipamento entra mesmo se o número do ITEM estiver vazio. */
+    const pre=cell(r,c.pre); if(!pre || /^prefixo$/i.test(pre)) continue;
+    if(!cell(r,c.cat)) continue;
+    const d=cell(r,c.dias);
+    out.push({
+      n: isNum(cell(r,c.item)) ? Number(cell(r,c.item)) : null,
+      cat:cell(r,c.cat)||"SEM CATEGORIA", tipo:cell(r,c.tipo),
+      mod:cell(r,c.mod), obra:cell(r,c.obra), loc:cell(r,c.loc), pre,
+      st:cell(r,c.st)||"Sem status", def:cell(r,c.def),
+      dt:fmtDate(cell(r,c.dt), mdDt), prev:fmtDate(cell(r,c.prev), mdPrev),
+      dias: isNum(d)?Number(d):null, obs:cell(r,c.obs)
+    });
+  }
+  if(!out.length) throw new Error("Controle de Frota: cabeçalho encontrado, mas nenhuma linha de equipamento");
+  META.atualizado = fmtDate((kv(rows,"Atualizado em")||"").replace(/^:\s*/,"")) ||
+                    fmtDate((rows[1]||[]).join(" ").match(/Atualizado em:\s*([^|]+)/)?.[1]||"");
+  return out;
+}
+
+function lerMovimentacoes(rows){
+  const h = headerRow(rows,"PREFIXO","MUDAN","MOTIVO");
+  if(h<0) return [];
+  const H = rows[h];
+  const c = {
+    quando:colIndex(H,"DATA"), pre:colIndex(H,"PREFIXO"), cat:colIndex(H,"CATEGORIA"),
+    mod:colIndex(H,"MODELO"), mud:colIndex(H,"MUDAN"), de:colIndex(H,"DE"),
+    para:colIndex(H,"PARA"), motivo:colIndex(H,"MOTIVO"), obra:colIndex(H,"OBRA"), loc:colIndex(H,"LOCAL")
+  };
+  const mdQuando = modoColuna(rows, h+1, c.quando);
+  const out=[];
+  for(let i=h+1;i<rows.length;i++){
+    const r=rows[i];
+    const pre=cell(r,c.pre);
+    if(!pre) continue;
+    const bruto=cell(r,c.quando);
+    const [cru,hora] = bruto.split(/\s+/);
+    /* normaliza para dia/mês/ano antes de guardar: é assim que a tela mostra
+       e é assim que o instante() lê para ordenar e montar o gráfico */
+    const data = fmtDate(cru, mdQuando);
+    out.push({
+      data: data||"", hora: (hora && hora!=="00:00") ? hora : "",
+      ts: instante(data,hora),
+      pre, cat:cell(r,c.cat), mod:cell(r,c.mod),
+      tipo: tipoMov(cell(r,c.mud), cell(r,c.de), cell(r,c.para)),
+      de:cell(r,c.de), para:cell(r,c.para), motivo:cell(r,c.motivo),
+      obra:cell(r,c.obra), loc:cell(r,c.loc)
+    });
+  }
+  MOVS_BRUTO = out.slice();
+  return agrupar(out);   /* a planilha já grava a mais recente no topo */
+}
+
+/** "29/08/2026" + "17:12" -> Date */
+function instante(data, hora){
+  const d = String(data||"").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!d) return null;
+  const [hh,mm] = String(hora||"00:00").split(":").map(Number);
+  const x = new Date(+d[3], +d[2]-1, +d[1], hh||0, mm||0);
+  return isNaN(x.getTime()) ? null : x.getTime();
+}
+
+/* Os quatro textos da seção de movimentações moram aqui.
+   Mudar a frase aqui muda a página inteira, inclusive o histórico já gravado. */
+const TEXTO_MOV = {
+  disp:   "Equipamento ficou disponível para operação",
+  ind:    "Equipamento ficou indisponível para operação",
+  motivo: "Motivo atualizado",
+  outro:  "Mudou de status"
+};
+
+/** Descobre o tipo pelo DE -> PARA; se não der, cai no que a planilha escreveu. */
+function tipoMov(mud, de, para){
+  const d=String(de||"").toLowerCase(), p=String(para||"").toLowerCase(), m=String(mud||"").toLowerCase();
+  if(d.startsWith("indispon") && p.startsWith("dispon")) return "disp";
+  if(d.startsWith("dispon") && p.startsWith("indispon")) return "ind";
+  if(m.includes("voltou") || m.includes("ficou dispon")) return "disp";
+  if(m.includes("parado") || m.includes("parou") || m.includes("ficou indispon")) return "ind";
+  if(m.includes("motivo")) return "motivo";
+  return "outro";
+}
+
+/**
+ * Edições seguidas no mesmo equipamento são uma coisa só.
+ * Mudar o status e depois escrever o motivo gera duas linhas na planilha;
+ * aqui elas viram uma movimentação, do estado inicial ao final.
+ */
+function agrupar(movs){
+  const JANELA = 30*60*1000;
+  const saida = [];
+  movs.forEach(m=>{
+    const ant = saida[saida.length-1];
+    const junta = ant && ant.pre===m.pre && ant.ts!=null && m.ts!=null &&
+                  Math.abs(ant.ts - m.ts) <= JANELA;
+    if(!junta){ saida.push(Object.assign({}, m)); return; }
+    /* a lista vem da mais recente para a mais antiga: 'ant' é o fim, 'm' é o começo */
+    ant.de = m.de;
+    ant.motivo = ant.motivo || m.motivo;
+    ant.fundido = true;
+    if(ant.de === ant.para){ ant.tipo = "motivo"; }
+    else {
+      const t = tipoMov("", ant.de, ant.para);
+      if(t !== "outro") ant.tipo = t;   /* pontas ilegíveis: fica o tipo que já tinha */
+    }
+  });
+  /* parou e voltou dentro da janela: no fim das contas não saiu do lugar */
+  return saida.filter(m => !(m.fundido && m.de === m.para));
+}
+
+function lerAgenda(rows, extraCol){
+  const h = headerRow(rows,"PREFIXO","STATUS","LIMPEZA");
+  if(h<0) return [];
+  const H = rows[h];
+  const c = {
+    item:colIndex(H,"ITEM"), mod:colIndex(H,"MODELO"), pre:colIndex(H,"PREFIXO"),
+    prog:colIndex(H,"DATA PROGRAMADA"), ult:colIndex(H,"ÚLTIMA","ULTIMA"),
+    dias:colIndex(H,"DIAS"), st:colIndex(H,"STATUS"), extra:colIndex(H,extraCol)
+  };
+  const mdProg = modoColuna(rows, h+1, c.prog), mdUlt = modoColuna(rows, h+1, c.ult);
+  const out=[];
+  for(let i=h+1;i<rows.length;i++){
+    const r=rows[i];
+    if(!isNum(cell(r,c.item))) continue;
+    const pre=cell(r,c.pre); if(!pre) continue;
+    const d=cell(r,c.dias);
+    out.push({
+      pre, mod:cell(r,c.mod), prog:fmtDate(cell(r,c.prog), mdProg), ult:fmtDate(cell(r,c.ult), mdUlt),
+      dias: isNum(d)?Number(d):null, st:stripEmoji(cell(r,c.st)), extra:cell(r,c.extra)
+    });
+  }
+  return out;
+}
+
+/* ---------- compromisso: demanda contratada x frota disponível ----------
+   A aba DEMANDA tem duas tabelas: as linhas de demanda e, depois de uma
+   linha escrita FERIADOS, a lista de datas em que o regime ADM não roda.
+   Tudo é editável na planilha — quantidade, horário, dias e situação. */
+
+/* "12/10/2026" -> "2026-10-12". A planilha publica em dia/mês/ano, mas se
+   um dia vier trocado o número maior que 12 desempata sozinho. */
+function chaveData(v){
+  const t = String(v==null?"":v).trim();
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+  m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(!m) return "";
+  let d = Number(m[1]), mes = Number(m[2]);
+  if(mes > 12 && d <= 12){ const x=d; d=mes; mes=x; }
+  if(d<1 || d>31 || mes<1 || mes>12) return "";
+  return `${m[3]}-${String(mes).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+}
+const chaveDe = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
+
+/* Na planilha o prefixo às vezes vem com a descrição junto — "CAM-279 (MUNCK)".
+   Para casar com a demanda tiramos o que está entre parênteses e os espaços. */
+const normPre = v => String(v==null?"":v).toUpperCase().replace(/\(.*?\)/g,"").replace(/\s+/g,"").trim();
+
+/* "CARREGADEIRAS" e "Carregadeira" viram a mesma coisa */
+function normCat(v){
+  return String(v==null?"":v).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim()
+    .replace(/s$/,"");
+}
+
+function lerDemanda(rows){
+  const h = headerRow(rows,"CATEGORIA","QUANTIDADE","REGIME");
+  if(h<0) return {linhas:[], feriados:new Set()};
+  const H = rows[h];
+  const c = {
+    obra:colIndex(H,"OBRA"), frente:colIndex(H,"FRENTE"), cat:colIndex(H,"CATEGORIA"),
+    pre:colIndex(H,"PREFIXO"), qtd:colIndex(H,"QUANTIDADE"), reg:colIndex(H,"REGIME"),
+    ini:colIndex(H,"HORA INICIO","HORA IN"), fim:colIndex(H,"HORA FIM"),
+    dias:colIndex(H,"DIAS"), sit:colIndex(H,"SITUA"), obs:colIndex(H,"OBSERVA")
+  };
+  const linhas = [], feriados = new Set();
+  let lendo = "demanda";
+  for(let i=h+1;i<rows.length;i++){
+    const r = rows[i];
+    const a0 = cell(r,0);
+    if(/^feriados?$/i.test(a0)){ lendo = "feriados"; continue; }
+    if(lendo === "feriados"){
+      if(/^data$/i.test(a0)) continue;
+      const k = chaveData(a0);
+      if(k) feriados.add(k);
+      continue;
+    }
+    const cat = cell(r,c.cat);
+    const qtd = Number(cell(r,c.qtd));
+    if(!cat || !qtd) continue;
+    const ini = cell(r,c.ini), fim = cell(r,c.fim);
+    linhas.push({
+      obra: cell(r,c.obra), frente: cell(r,c.frente), cat,
+      pre: cell(r,c.pre).toUpperCase(), qtd,
+      reg: cell(r,c.reg) || "—",
+      ini: isNum(ini) ? Number(ini) : 0,
+      fim: isNum(fim) ? Number(fim) : 24,
+      todoDia: !/seg|util|útil/i.test(cell(r,c.dias)),
+      ativo: !/suspens|inativ|parad/i.test(cell(r,c.sit)),
+      obs: cell(r,c.obs)
+    });
+  }
+  return {linhas, feriados};
+}
+
+/* ---------- calibração das balanças ----------
+   A planilha calcula tudo com TODAY(), mas o CSV publicado guarda o valor de
+   quando o Google recalculou por último — que pode ser de ontem. Por isso os
+   dias a vencer são recontados aqui, a partir da data de VENCIMENTO. Assim o
+   aviso da tela é sempre o de hoje, mesmo que a planilha tenha dormido. */
+/* O Google publica data ora como 30/08/2026, ora como 8/30/2026, dependendo de
+   como a coluna foi formatada — e 05/08 sozinha não diz qual é o dia e qual é o
+   mês. Aqui não se chuta: a linha traz a data da calibração, o vencimento e a
+   validade em dias, e vencimento menos calibração TEM que dar a validade. A
+   leitura que fecha essa conta é a certa. Se nenhuma fechar, cai na regra geral
+   do chaveData (dia primeiro, com o número maior que 12 desempatando). */
+function parDatas(txtCal, txtVenc, validade){
+  const parte = t => { const m = String(t||"").trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? [Number(m[1]),Number(m[2]),Number(m[3])] : null; };
+  const a = parte(txtCal), b = parte(txtVenc);
+  const monta = (p, diaPrimeiro) => {
+    const d = diaPrimeiro ? p[0] : p[1], m = diaPrimeiro ? p[1] : p[0];
+    if(d<1 || d>31 || m<1 || m>12) return null;
+    const dt = new Date(p[2], m-1, d);
+    return (dt.getMonth() === m-1 && dt.getDate() === d) ? dt : null;
+  };
+  if(a && b && validade > 0){
+    for(const diaPrimeiro of [true,false]){
+      const dc = monta(a,diaPrimeiro), dv = monta(b,diaPrimeiro);
+      if(dc && dv && Math.round((dv-dc)/86400000) === validade) return dv;
+    }
+  }
+  const k = chaveData(txtVenc);
+  if(!k) return null;
+  const [y,m,d] = k.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+const brDate = dt => dt ? `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()}` : "";
+
+function lerCalibracao(rows){
+  const h = headerRow(rows,"PREFIXO","VENCIMENTO","CALIBRA");
+  if(h<0) return [];
+  const H = rows[h];
+  const c = {
+    pre:colIndex(H,"PREFIXO"), obra:colIndex(H,"OBRA"),
+    validade:colIndex(H,"VALIDADE"),
+    avisar:colIndex(H,"AVISAR"), cal:colIndex(H,"DATA DA"), venc:colIndex(H,"VENCIMENTO"),
+    sitCal:colIndex(H,"SITUAÇÃO DA","SITUACAO DA"),
+    sitEq:colIndex(H,"SITUAÇÃO DO","SITUACAO DO"),
+    loc:colIndex(H,"LOCAL")
+  };
+  const hoje = meiaNoite(new Date()).getTime();
+  const out = [];
+  for(let i=h+1;i<rows.length;i++){
+    const r = rows[i];
+    const pre = cell(r,c.pre);
+    if(!pre || /^prefixo$/i.test(pre)) continue;
+    const avisar = isNum(cell(r,c.avisar)) ? Number(cell(r,c.avisar)) : 5;
+    const validade = isNum(cell(r,c.validade)) ? Number(cell(r,c.validade)) : 0;
+    const dv = parDatas(cell(r,c.cal), cell(r,c.venc), validade);
+    const dias = dv ? Math.round((dv.getTime() - hoje) / 86400000) : null;
+    /* sem data de calibração a balança não tem vencimento: é o caso mais grave
+       de todos, porque ninguém sabe desde quando ela está solta. */
+    const est = dias == null ? "sem"
+              : dias < 0      ? "vencida"
+              : dias <= avisar ? "breve"
+              : dias <= avisar*2 ? "programar"
+              : "ok";
+    out.push({
+      pre, obra: cell(r,c.obra), venc: brDate(dv),
+      dias, avisar, est,
+      sitCal: cell(r,c.sitCal), sitEq: cell(r,c.sitEq) || "—",
+      loc: cell(r,c.loc),
+      naSede: /sede/i.test(cell(r,c.loc))
+    });
+  }
+  return out;
+}
+
+/* ordem da tela: o que aperta primeiro fica em cima */
+const PESO_CAL = { vencida:0, sem:1, breve:2, programar:3, ok:4 };
+const ROTULO_CAL = {
+  vencida:"VENCIDA", sem:"SEM CALIBRAÇÃO", breve:"VENCE EM BREVE",
+  programar:"PROGRAMAR", ok:"EM DIA"
+};
+const CLASSE_CAL = { vencida:"p-bad", sem:"p-mute", breve:"p-warn", programar:"p-warn", ok:"p-ok" };
+
+function calibracao(){
+  const tb = $("cal-tb"), vazio = $("cal-empty"), topo = $("cal-topo");
+  if(!CALIB.length){
+    tb.innerHTML = ""; topo.innerHTML = "";
+    vazio.hidden = false;
+    vazio.textContent = "Não consegui ler a aba CALIBRAÇÃO BALANÇAS da planilha.";
+    $("cal-note").textContent = "—";
+    return;
+  }
+  vazio.hidden = true;
+
+  const lista = CALIB.slice().sort((a,b) =>
+    (PESO_CAL[a.est] - PESO_CAL[b.est]) || ((a.dias ?? 9999) - (b.dias ?? 9999)) || a.pre.localeCompare(b.pre));
+
+  const vencidas = lista.filter(x => x.est === "vencida");
+  const breves   = lista.filter(x => x.est === "breve");
+  const sem      = lista.filter(x => x.est === "sem");
+  const presas   = [...vencidas, ...breves].filter(x => x.naSede);
+
+  /* a faixa de cima: o anel de néon com o caso mais urgente */
+  if(vencidas.length || breves.length){
+    const pior = vencidas[0] || breves[0];
+    const cor  = vencidas.length ? "vencida" : "breve";
+    const n    = vencidas.length || breves.length;
+    const tit  = vencidas.length
+      ? `${n} balança${n>1?"s":""} com calibração vencida`
+      : `${n} balança${n>1?"s":""} vencendo em até ${pior.avisar} dias`;
+    const quem = (vencidas.length ? vencidas : breves).map(x=>x.pre).join(", ");
+    const dias = pior.dias == null ? "—" : Math.abs(pior.dias);
+    const uni  = vencidas.length ? (Math.abs(pior.dias)===1?"dia atrás":"dias atrás")
+                                 : (pior.dias===1?"dia":"dias");
+    topo.innerHTML = `
+      <div class="cal-faixa acesa" style="--neon:${cor==="vencida"?"#FF3B2F":"#FFE600"}">
+        <div class="neon ${cor}"><span class="n">${dias}<span class="u">${uni}</span></span></div>
+        <div class="txt">
+          <div class="tit">${esc(tit)}</div>
+          <p class="sub">${esc(quem)}${presas.length
+            ? ` &middot; ${presas.length === 1 ? "uma está" : presas.length + " estão"} na sede, aguardando retorno para calibração na obra`
+            : ""}</p>
+        </div>
+      </div>`;
+  }else{
+    topo.innerHTML = `
+      <div class="cal-faixa">
+        <div class="txt">
+          <div class="tit">Nenhuma calibração vencendo</div>
+          <p class="sub">${lista.length} balança${lista.length>1?"s":""} acompanhada${lista.length>1?"s":""}${
+            sem.length ? ` &middot; ${sem.length} ainda sem data de calibração` : ""}.</p>
+        </div>
+      </div>`;
+  }
+
+  $("cal-note").textContent =
+    `${lista.length} balanças · 731 vence a cada 30 dias, 720 a cada 60 · aviso ${lista[0].avisar} dias antes`;
+
+  tb.innerHTML = lista.map(x => {
+    const alerta = x.est === "vencida" || x.est === "breve";
+    const num = x.dias == null ? "—" : Math.abs(x.dias);
+    const uni = x.dias == null ? "" : (x.dias < 0 ? "atrás" : "dias");
+    const cel = alerta
+      ? `<div class="neon mini ${x.est}"><span class="n">${num}<span class="u">${uni}</span></span></div>`
+      : `<span class="plano">${x.dias == null ? "—" : x.dias}</span>`;
+    return `<tr>
+      <td data-l="Prefixo"><b>${esc(x.pre)}</b></td>
+      <td data-l="Obra">${esc(x.obra)}</td>
+      <td data-l="Vencimento">${esc(x.venc) || "—"}</td>
+      <td data-l="Dias a vencer"><div class="cal-dias">${cel}</div></td>
+      <td data-l="Calibração"><div class="cal-cel"><span class="pill ${CLASSE_CAL[x.est]}">${ROTULO_CAL[x.est]}</span>${
+        alerta && x.naSede ? `<div class="cal-sede">Na sede, aguardando retorno para calibração na obra</div>` : ""}</div></td>
+      <td data-l="Equipamento">${esc(x.sitEq)}</td>
+      <td data-l="Local">${esc(x.loc) || "—"}</td>
+    </tr>`;
+  }).join("");
+}
+
+/* ---------- emissões atmosféricas (teste de fumaça, opacímetro) ----------
+   Mesma cozinha da calibração: os dias a vencer são recontados aqui a partir do
+   VENCIMENTO, e o par data-do-teste + vencimento desempata o formato da data
+   conferindo com a validade. A diferença é que aqui o ciclo é longo (180 dias),
+   então vale a pena mostrar quanto dele já foi gasto. */
+function lerEmissoes(rows){
+  const h = headerRow(rows,"PREFIXO","VALIDADE");
+  if(h<0) return [];
+  const H = rows[h];
+  /* O Google serve o cabeçalho com alguns minutos de atraso depois de uma
+     mudança na aba, e nesse intervalo as últimas colunas chegam em branco.
+     Então cada coluna é procurada pelo nome e, se não achar, cai na posição
+     conhecida — a seção continua de pé enquanto o cache não vira. */
+  const ou = (achado, posicao) => achado >= 0 ? achado : posicao;
+  const c = {
+    pre:   ou(colIndex(H,"PREFIXO"), 0),
+    eq:    ou(colIndex(H,"EQUIPAMENTO"), 1),
+    validade: ou(colIndex(H,"VALIDADE"), 2),
+    avisar:ou(colIndex(H,"AVISAR"), 3),
+    teste: ou(colIndex(H,"DATA DO TESTE","DATA DO"), 4),
+    venc:  ou(colIndex(H,"VENCIMENTO"), 5),
+    sitEq: ou(colIndex(H,"SITUAÇÃO DO EQUIPAMENTO","SITUACAO DO EQUIPAMENTO"), 8),
+    loc:   ou(colIndex(H,"LOCAL"), 9)
+  };
+  const hoje = meiaNoite(new Date()).getTime();
+  const out = [];
+  for(let i=h+1;i<rows.length;i++){
+    const r = rows[i];
+    const pre = cell(r,c.pre);
+    if(!pre || /^prefixo$/i.test(pre)) continue;
+    const validade = isNum(cell(r,c.validade)) ? Number(cell(r,c.validade)) : 180;
+    const avisar   = isNum(cell(r,c.avisar))   ? Number(cell(r,c.avisar))   : 25;
+    const dv = parDatas(cell(r,c.teste), cell(r,c.venc), validade);
+    /* a data do teste sai do vencimento menos a validade — exata, sem depender
+       de adivinhar o formato de mais uma coluna */
+    const dt = dv ? new Date(dv.getFullYear(), dv.getMonth(), dv.getDate()-validade) : null;
+    const dias = dv ? Math.round((dv.getTime() - hoje) / 86400000) : null;
+    const est = dias == null ? "sem"
+              : dias < 0        ? "vencido"
+              : dias <= avisar  ? "breve"
+              : dias <= avisar*2 ? "programar"
+              : "ok";
+    /* quanto do ciclo já foi gasto — 0 no dia do teste, 100 no vencimento */
+    const usado = dias == null ? null
+                : Math.max(0, Math.min(100, Math.round((validade - dias) / validade * 100)));
+    out.push({
+      pre, eq: cell(r,c.eq) || "—", validade, avisar,
+      teste: brDate(dt), venc: brDate(dv), dias, est, usado,
+      sitEq: cell(r,c.sitEq) || "—", loc: cell(r,c.loc) || "—"
+    });
+  }
+  return out;
+}
+
+const PESO_EMI = { vencido:0, sem:1, breve:2, programar:3, ok:4 };
+const ROTULO_EMI = { vencido:"VENCIDO", sem:"SEM TESTE", breve:"VENCE EM BREVE", programar:"PROGRAMAR", ok:"EM DIA" };
+const CLASSE_EMI = { vencido:"p-bad", sem:"p-mute", breve:"p-warn", programar:"p-warn", ok:"p-ok" };
+
+/* os botões de filtro: cada um já mostra quantos são */
+const FILTROS_EMI = [
+  {id:"atencao",   rot:"Precisa de ação", cor:"c-bad",  ok:x => x.est==="vencido" || x.est==="breve" || x.est==="sem"},
+  {id:"vencido",   rot:"Vencidos",        cor:"c-bad",  ok:x => x.est==="vencido"},
+  {id:"breve",     rot:"Vence em breve",  cor:"c-warn", ok:x => x.est==="breve"},
+  {id:"programar", rot:"Programar",       cor:"c-warn", ok:x => x.est==="programar"},
+  {id:"sem",       rot:"Sem teste",       cor:"c-mute", ok:x => x.est==="sem"},
+  {id:"ok",        rot:"Em dia",          cor:"c-ok",   ok:x => x.est==="ok"},
+  {id:"todos",     rot:"Todos",           cor:"c-all",  ok:() => true}
+];
+
+function emissoes(){
+  const tb = $("emi-tb"), vazio = $("emi-empty"), topo = $("emi-topo"), chips = $("emi-chips");
+  if(!EMISSOES.length){
+    tb.innerHTML = ""; topo.innerHTML = ""; chips.innerHTML = "";
+    vazio.hidden = false;
+    vazio.textContent = "Não consegui ler a aba EMISSOES ATMOSFERICAS da planilha.";
+    $("emi-note").textContent = "—";
+    return;
+  }
+
+  const ordenada = EMISSOES.slice().sort((a,b) =>
+    (PESO_EMI[a.est] - PESO_EMI[b.est]) || ((a.dias ?? 9999) - (b.dias ?? 9999)) || a.pre.localeCompare(b.pre));
+
+  const vencidos = ordenada.filter(x => x.est === "vencido");
+  const breves   = ordenada.filter(x => x.est === "breve");
+  const sem      = ordenada.filter(x => x.est === "sem");
+  const avisar   = ordenada[0].avisar;
+
+  /* faixa do topo, com o anel de néon, igual ao da calibração */
+  const acao = vencidos.length + breves.length;
+  if(acao){
+    const pior = vencidos[0] || breves[0];
+    const cor  = vencidos.length ? "vencida" : "breve";
+    const n    = vencidos.length || breves.length;
+    const tit  = vencidos.length
+      ? `${n} equipamento${n>1?"s":""} com teste de fumaça vencido`
+      : `${n} equipamento${n>1?"s":""} vencendo em até ${avisar} dias`;
+    const dias = pior.dias == null ? "—" : Math.abs(pior.dias);
+    const uni  = vencidos.length ? (Math.abs(pior.dias)===1?"dia atrás":"dias atrás")
+                                 : (pior.dias===1?"dia":"dias");
+    const quem = (vencidos.length ? vencidos : breves).map(x=>x.pre).join(", ");
+    topo.innerHTML = `
+      <div class="cal-faixa acesa" style="--neon:${cor==="vencida"?"#FF3B2F":"#FFE600"}">
+        <div class="neon ${cor}"><span class="n">${dias}<span class="u">${uni}</span></span></div>
+        <div class="txt">
+          <div class="tit">${esc(tit)}</div>
+          <p class="sub">${esc(quem)}${vencidos.length && breves.length
+            ? ` &middot; e mais ${breves.length} vencendo em até ${avisar} dias` : ""}</p>
+        </div>
+      </div>`;
+  }else{
+    topo.innerHTML = `
+      <div class="cal-faixa">
+        <div class="txt">
+          <div class="tit">Nenhum teste vencendo</div>
+          <p class="sub">${ordenada.length} equipamentos acompanhados${
+            sem.length ? ` &middot; ${sem.length} ainda sem teste registrado` : ""}.</p>
+        </div>
+      </div>`;
+  }
+
+  /* se não há nada pedindo ação, "Precisa de ação" não deve ser o filtro aberto */
+  if(filtroEmi === "atencao" && !acao && !sem.length) filtroEmi = "todos";
+
+  chips.innerHTML = FILTROS_EMI.map(f => {
+    const n = ordenada.filter(f.ok).length;
+    return `<button class="emi-chip ${f.cor}" type="button" data-emi="${f.id}"
+      aria-pressed="${String(f.id === filtroEmi)}"><i class="pt"></i>${f.rot} <b>${n}</b></button>`;
+  }).join("");
+
+  const filtro = FILTROS_EMI.find(f => f.id === filtroEmi) || FILTROS_EMI[FILTROS_EMI.length-1];
+  const lista = ordenada.filter(filtro.ok);
+
+  $("emi-note").textContent =
+    `${ordenada.length} equipamentos · teste de fumaça com opacímetro · validade de ${ordenada[0].validade} dias · aviso ${avisar} dias antes`;
+
+  $("emi-aside").innerHTML =
+    `A barra mostra quanto do ciclo de ${ordenada[0].validade} dias já passou desde o último teste. ` +
+    `Quem não tem data registrada aparece como SEM TESTE — é o caso mais grave, porque não dá para saber desde quando está sem medição.`;
+
+  vazio.hidden = lista.length > 0;
+  if(!lista.length) vazio.textContent = "Nenhum equipamento nesta situação.";
+
+  tb.innerHTML = lista.map(x => {
+    const alerta = x.est === "vencido" || x.est === "breve";
+    const num = x.dias == null ? "—" : Math.abs(x.dias);
+    const uni = x.dias == null ? "" : (x.dias < 0 ? "atrás" : "dias");
+    const cel = alerta
+      ? `<div class="neon mini ${x.est === "vencido" ? "vencida" : "breve"}"><span class="n">${num}<span class="u">${uni}</span></span></div>`
+      : `<span class="plano">${x.dias == null ? "—" : x.dias}</span>`;
+    const naFrota = FROTA.some(e => normPre(e.pre) === normPre(x.pre));
+    const barra = x.usado == null
+      ? `<span class="emi-sem">sem teste registrado</span>`
+      : `<div class="ciclo"><div class="ciclo-trilho"><i class="${x.est==="vencido"?"b":(x.est==="breve"||x.est==="programar")?"w":""}"
+           style="width:${x.usado}%"></i></div><span class="ciclo-pct">${x.usado}%</span></div>`;
+    return `<tr>
+      <td data-l="Prefixo">${naFrota ? `<b data-eq="${esc(x.pre)}">${esc(x.pre)}</b>` : `<b>${esc(x.pre)}</b>`}</td>
+      <td data-l="Equipamento">${esc(x.eq)}</td>
+      <td data-l="Último teste">${esc(x.teste) || "—"}</td>
+      <td data-l="Vencimento">${esc(x.venc) || "—"}</td>
+      <td data-l="Dias a vencer"><div class="cal-dias">${cel}</div></td>
+      <td data-l="Ciclo">${barra}</td>
+      <td data-l="Situação"><span class="pill ${CLASSE_EMI[x.est]}">${ROTULO_EMI[x.est]}</span></td>
+      <td data-l="Local">${esc(x.loc)}</td>
+    </tr>`;
+  }).join("");
+}
+
+const ehUtil = dt => dt.getDay()>=1 && dt.getDay()<=5 && !FERIADOS.has(chaveDe(dt));
+
+/* essa linha de demanda está valendo no instante dt? */
+function emRegime(l, dt){
+  if(!l.ativo) return false;
+  if(!l.todoDia && !ehUtil(dt)) return false;
+  if(l.ini === l.fim) return true;
+  const h = dt.getHours() + dt.getMinutes()/60;
+  if(l.ini <= 0 && l.fim >= 24) return true;
+  return l.ini < l.fim ? (h >= l.ini && h < l.fim) : (h >= l.ini || h < l.fim);
+}
+
+/* quantos equipamentos dessa categoria (ou desse prefixo) estão de pé.
+   A obra do cadastro é ignorada de propósito: a frota atende as duas. */
+function contaFrota(alvo){
+  if(alvo.pre){
+    const alvoPre = normPre(alvo.pre);
+    const e = FROTA.find(x => normPre(x.pre) === alvoPre);
+    if(!e) return {tem:0, parados:0, total:0, achou:false};
+    const cl = pillClass(e.st);
+    return {tem: cl==="p-ok"?1:0, parados: cl==="p-bad"?1:0, total:1, achou:true};
+  }
+  /* a demanda pode pedir uma CATEGORIA ("CAMINHÃO") ou um TIPO dentro dela
+     ("CAMINHÃO BASCULANTE") — assim os basculantes não contam cavalo nem munck */
+  const n = normCat(alvo.cat);
+  let l = FROTA.filter(x => normCat(x.cat) === n);
+  if(!l.length) l = FROTA.filter(x => normCat(x.tipo) === n);
+  return {
+    tem: l.filter(x=>pillClass(x.st)==="p-ok").length,
+    parados: l.filter(x=>pillClass(x.st)==="p-bad").length,
+    total: l.length, achou: l.length>0
+  };
+}
+
+/* junta as linhas que estão em regime e confere contra a frota */
+function cobertura(dt){
+  const mapa = new Map();
+  DEMANDA.filter(l => emRegime(l, dt)).forEach(l=>{
+    const chave = l.pre ? "pre:"+normPre(l.pre) : "cat:"+normCat(l.cat);
+    const cur = mapa.get(chave) || {pre:l.pre, cat:l.cat, precisa:0, frentes:{}};
+    cur.precisa += l.qtd;
+    const f = l.frente || ("obra "+l.obra);
+    cur.frentes[f] = (cur.frentes[f]||0) + l.qtd;
+    mapa.set(chave, cur);
+  });
+  const itens = [...mapa.values()].map(it=>{
+    const f = contaFrota(it);
+    return Object.assign({}, it, f, {falta: Math.max(0, it.precisa - f.tem), sobra: Math.max(0, f.tem - it.precisa)});
+  });
+  itens.sort((a,b)=> (b.falta-a.falta) || (b.precisa-a.precisa) || a.cat.localeCompare(b.cat,"pt"));
+  return {
+    itens,
+    precisa: itens.reduce((s,i)=>s+i.precisa,0),
+    falta:   itens.reduce((s,i)=>s+i.falta,0)
+  };
+}
+
+/* as quatro fotos que os botões mostram */
+const DIAS_PT = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+function momentoData(qual){
+  const agora = new Date();
+  if(qual === "agora") return {dt:agora, rot:`agora — ${DIAS_PT[agora.getDay()]}, ${String(agora.getHours()).padStart(2,"0")}h${String(agora.getMinutes()).padStart(2,"0")}`};
+  if(qual === "noite"){
+    const d = new Date(agora); d.setHours(23,0,0,0);
+    return {dt:d, rot:"turno da noite — todo dia, das 18h às 06h"};
+  }
+  if(qual === "fds"){
+    const d = new Date(agora); d.setHours(10,0,0,0);
+    for(let i=0;i<14 && ehUtil(d);i++) d.setDate(d.getDate()+1);
+    return {dt:d, rot:"fim de semana e feriado, de dia — das 06h às 18h"};
+  }
+  const d = new Date(agora); d.setHours(10,0,0,0);
+  for(let i=0;i<14 && !ehUtil(d);i++) d.setDate(d.getDate()+1);
+  return {dt:d, rot:"pico do dia útil — segunda a sexta, das 06h às 18h"};
+}
+
+function plural(n, um, muitos){ return n===1 ? um : muitos; }
+
+function compromisso(){
+  const vd = $("cp-vd"), grade = $("cp-grade"), aside = $("cp-aside");
+  if(!vd) return;
+  if(!DEMANDA.length){
+    vd.className = "veredito";
+    vd.innerHTML = `<div class="vd-txt"><div class="vd-tit">Sem demanda cadastrada</div>
+      <div class="vd-sub">Preencha a aba <b>DEMANDA</b> da planilha com o que cada frente precisa e esta parte se acende sozinha.</div></div>`;
+    grade.innerHTML = ""; aside.innerHTML = "&nbsp;";
+    return;
+  }
+  const {dt, rot} = momentoData(momentoCP);
+  const c = cobertura(dt);
+
+  if(!c.precisa){
+    vd.className = "veredito";
+    vd.innerHTML = `<div class="vd-txt"><div class="vd-tit">Nenhum equipamento em regime</div>
+      <div class="vd-sub">${esc(rot)} — nada na aba DEMANDA está valendo neste horário.</div></div>`;
+    grade.innerHTML = ""; aside.innerHTML = "&nbsp;";
+    return;
+  }
+
+  const atendidos = c.precisa - c.falta;
+  if(c.falta){
+    vd.className = "veredito bad";
+    const quais = c.itens.filter(i=>i.falta).map(i=>{
+      const nome = i.pre || (i.falta===1 ? i.cat.replace(/S$/i,"") : i.cat);
+      return `${i.falta} ${i.pre ? nome : nome.toLowerCase()}`;
+    }).join(", ");
+    vd.innerHTML = `<div class="vd-num">${c.falta}</div>
+      <div class="vd-txt">
+        <div class="vd-tit">${plural(c.falta,"máquina em falta","máquinas em falta")}</div>
+        <div class="vd-sub">${esc(rot)}. Faltando ${esc(quais)}. Precisamos de ${c.precisa} e temos ${atendidos} atendendo.</div>
+      </div>`;
+  } else {
+    vd.className = "veredito ok";
+    const reserva = c.itens.reduce((s,i)=>s+i.sobra,0);
+    vd.innerHTML = `<div class="vd-num">✓</div>
+      <div class="vd-txt">
+        <div class="vd-tit">Frota em dia</div>
+        <div class="vd-sub">${esc(rot)}. As ${c.precisa} ${plural(c.precisa,"máquina contratada está coberta","máquinas contratadas estão cobertas")}${reserva?`, com ${reserva} de folga`:", sem folga"}.</div>
+      </div>`;
+  }
+
+  grade.innerHTML = `<div class="cp-cab"><span>Equipamento</span><span>Precisa</span><span>Tem</span><span>Situação</span></div>` +
+    c.itens.map(i=>{
+      const nome = i.pre ? `${esc(i.pre)}` : esc(i.cat);
+      const sit = i.falta ? `<span class="cp-sit falta">falta ${i.falta}</span>`
+                : i.sobra ? `<span class="cp-sit sobra">${i.sobra} de reserva</span>`
+                : `<span class="cp-sit limite">no limite</span>`;
+      const extra = !i.achou ? "não encontrei esse equipamento na frota"
+                  : i.parados ? `${i.parados} ${plural(i.parados,"parado","parados")} na manutenção` : "";
+      return `<div class="cp-linha${i.falta?" falta":""}">
+        <div class="cp-nome">${nome}<div class="cp-frente">${Object.entries(i.frentes).map(([f,q])=>`${q} em ${f.toLowerCase()}`).concat(extra?[extra]:[]).map(esc).join(" &middot; ")}</div></div>
+        <div class="cp-n">${i.precisa}<small>precisa</small></div>
+        <div class="cp-n" style="color:${i.falta?"var(--bad-solid)":"var(--ok-solid)"}">${i.tem}<small>tem</small></div>
+        ${sit}
+      </div>`;
+    }).join("");
+
+  const nf = FERIADOS.size;
+  aside.innerHTML = `A conta usa o total da frota, sem separar por obra — os equipamentos atendem 720 e 731.
+    Emprestados e sucata ficam de fora. O regime ADM não roda em fim de semana nem
+    ${nf ? `nos ${nf} feriados cadastrados` : "em feriado (nenhum feriado cadastrado ainda)"}.`;
+}
+
+/* ---------- desenho ---------- */
+const pillClass = st => {
+  const s = String(st).toLowerCase();
+  if(s.startsWith("dispon")) return "p-ok";
+  if(s.startsWith("indispon")) return "p-bad";
+  return "p-mute";
+};
+const pill = st => `<span class="pill ${pillClass(st)}">${esc(st)}</span>`;
+
+/* uma linha de equipamento — usada na tabela geral e nas categorias expandidas */
+const eqBtn = pre => `<button type="button" class="eqbtn" data-eq="${esc(pre)}">${esc(pre)}</button>`;
+
+const linhaTabela = e => `<tr>
+  <td class="pre" data-l="Prefixo">${eqBtn(e.pre)}</td>
+  <td class="catlabel hide-m" data-l="Categoria">${esc(e.cat)}</td>
+  <td data-l="Modelo">${esc(e.mod||"—")}</td>
+  <td class="dim num" data-l="Obra">${esc(e.obra||"—")}</td>
+  <td class="dim" data-l="Local">${esc(e.loc||"—")}</td>
+  <td data-l="Status">${pill(e.st)}</td>
+  <td class="def opt${e.def||e.obs?"":" void"}" data-l="Defeito">${e.def?esc(e.def):(e.obs?"":"—")}${e.obs?`${e.def?"<br>":""}<span class="pl-mod">Obs.: ${esc(e.obs)}</span>`:""}</td>
+  <td class="dim num opt${e.dt?"":" void"}" data-l="Parado desde">${esc(e.dt||"—")}</td>
+  <td class="num opt${e.dias!=null?"":" void"}" data-l="Dias">${e.dias!=null?e.dias:"—"}</td>
+  <td class="dim num opt${e.prev?"":" void"}" data-l="Previsão">${esc(e.prev||"—")}</td>
+</tr>`;
+
+const CABECALHO_TABELA = `<thead><tr>
+  <th>Prefixo</th><th>Categoria</th><th>Modelo</th><th>Obra</th><th>Local</th><th>Status</th>
+  <th>Defeito / intervenção</th><th>Parado desde</th><th>Dias</th><th>Previsão</th>
+</tr></thead>`;
+
+const agendaPill = st => {
+  const s = String(st).toLowerCase();
+  let c = "p-warn";
+  /* "parado" vem da aba do soprador: o gerador está indisponível na frota,
+     então não adianta programar limpeza — vermelho, igual ao atrasado. */
+  if(s.includes("atrasad") || s.includes("parad")) c="p-bad";
+  else if(s.includes("execut") || s.includes("antecip") || s.includes("em dia") ||
+          s.includes("feito") || s.includes("concl")) c="p-ok";
+  else if(s.includes("hoje") || s.includes("limpar")) c="p-info";
+  else if(s.includes("sede") || s.includes("reserva") || s.includes("aguard") ||
+          s.includes("previst") || s.includes("program")) c="p-mute";
+  return `<span class="pill ${c}">${esc(st||"—")}</span>`;
+};
+
+/* ---------- dias sem limpeza: escala de um tom só ----------
+   As faixas são medidas em voltas do rodízio, não em números fixos:
+   se o ciclo mudar de tamanho, a escala acompanha. */
+const CORTES = [.5, 1, 1.5, 2.5];
+const ordemAgenda = { esteiras:"ciclo", geradores:"ciclo" };
+
+function faixaDias(dias, ciclo){
+  if(dias == null || isNaN(dias)) return 0;
+  const c = ciclo > 2 ? ciclo : 16;
+  for(let i=0;i<CORTES.length;i++) if(dias <= c*CORTES[i]) return i+1;
+  return 5;
+}
+
+const chipDias = (dias, ciclo) => {
+  const f = faixaDias(dias, ciclo);
+  return f === 0
+    ? `<span class="dias d0">— <small>dias</small></span>`
+    : `<span class="dias d${f}" title="${dias} ${dias===1?"dia":"dias"} sem limpeza">${dias} <small>${dias===1?"dia":"dias"}</small></span>`;
+};
+
+function legendaEscala(ciclo){
+  const c = ciclo > 2 ? ciclo : 16;
+  const lim = CORTES.map(x=>Math.round(c*x));
+  const faixa = i => i < 4 ? `até ${lim[i]} dias` : `mais de ${lim[3]} dias`;
+  const passos = [0,1,2,3,4].map(i=>`<i class="d${i+1}" title="${faixa(i)}"></i>`).join("");
+  return `<span>dias sem limpeza</span><span class="passos">${passos}</span>` +
+         `<span>menos &rarr; mais &middot; último passo: +${lim[3]} dias</span>`;
+}
+
+/** Monta a lista de um painel de agenda, na ordem do rodízio ou pelos dias. */
+function listaAgenda(itens, ciclo, chave, ehHoje, vazio){
+  const ord = ordemAgenda[chave] === "dias"
+    ? itens.slice().sort((a,b) => (b.dias==null?-1:b.dias) - (a.dias==null?-1:a.dias))
+    : itens;
+  return ord.map(e=>`
+    <li class="f${faixaDias(e.dias,ciclo)}${ehHoje.test(e.st)?" today":""}">
+      <div class="pl-main"><span class="pl-pre">${eqBtn(e.pre)}</span><span class="pl-mod">${esc(e.mod)}</span></div>
+      <div class="pl-tags">${agendaPill(e.st)}${chipDias(e.dias,ciclo)}</div>
+      <div class="pl-sub">Programado ${esc(e.prog||"—")} &middot; última limpeza ${esc(e.ult||"—")}${e.extra?` &middot; ${esc(e.extra)}`:""}</div>
+    </li>`).join("") || `<li><div class="pl-sub">${vazio}</div></li>`;
+}
+
+/* ---------- cartões do Panorama: mini-gráfico e variação desde ontem ----------
+   Padrão do "KPI card" do 21st: o número, a linha dos últimos dias ao lado e a
+   variação colorida pelo que é bom — disponibilidade subir é bom, parados subir é ruim. */
+const SETA_SOBE = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M4.2 3H9v4.8"/></svg>`;
+const SETA_DESCE = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 4.2V9H4.2"/></svg>`;
+
+function spark(id, vals){
+  const el = $(id); if(!el) return;
+  const v = vals.filter(x => x != null && isFinite(x));
+  if(v.length < 2){ el.innerHTML = ""; el.removeAttribute("viewBox"); return; }
+  const W = 104, H = 36, p = 3;
+  const mn = Math.min(...v), mx = Math.max(...v), rg = (mx - mn) || 1;
+  const pts = v.map((y,i) => [p + i*(W-2*p)/(v.length-1), H - p - (y-mn)/rg*(H-2*p)]);
+  const d = pts.map((q,i) => (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" ");
+  const ult = pts[pts.length-1];
+  el.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  el.innerHTML = `<path class="sp-area" d="${d} L${ult[0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z"/>` +
+    `<path class="sp-line" d="${d}"/><circle class="sp-dot" cx="${ult[0].toFixed(1)}" cy="${ult[1].toFixed(1)}" r="2.8"/>`;
+}
+
+function variacao(id, agora, antes, bomSobe, fmt){
+  const el = $(id); if(!el) return;
+  if(agora == null || antes == null){ el.innerHTML = "&nbsp;"; return; }
+  const dif = agora - antes;
+  if(Math.abs(dif) < 0.05){ el.innerHTML = ""; return; }
+  const sobe = dif > 0, bom = sobe === bomSobe;
+  el.innerHTML = `<span class="dl ${bom ? "bom" : "ruim"}">${sobe ? SETA_SOBE : SETA_DESCE}${fmt(Math.abs(dif))}</span><span class="dl-p">desde ontem</span>`;
+}
+
+function kpiTendencia(disp, ind, base){
+  const S = (typeof serieHistorico === "function" && MOVS_BRUTO.length) ? serieHistorico(15) : [];
+  if(S.length < 2){
+    ["s-pct","s-disp","s-ind"].forEach(i => spark(i, []));
+    ["d-pct","d-disp","d-ind"].forEach(i => { const el = $(i); if(el) el.innerHTML = "&nbsp;"; });
+  } else {
+    const ontem = S[S.length-2];
+    spark("s-pct", S.map(x => x.pct)); spark("s-disp", S.map(x => x.ok)); spark("s-ind", S.map(x => x.ind));
+    variacao("d-pct", base ? disp/base*100 : null, ontem.pct, true, v => v.toFixed(1).replace(".",",") + " p.p.");
+    variacao("d-disp", disp, ontem.ok, true, v => String(Math.round(v)));
+    variacao("d-ind", ind, ontem.ind, false, v => String(Math.round(v)));
+  }
+  const nCat = new Set(FROTA.map(e => e.cat)).size;
+  const dt = $("d-tot"); if(dt) dt.innerHTML = `<span class="dl-p">${nCat} categorias</span>`;
+}
+
+/* ---------- quadro da frota ----------
+   O quadro de placas da oficina, na tela: cada equipamento é uma placa com o
+   prefixo, agrupada pela categoria. Rodando fica quieto; parado acende em
+   vermelho com os dias parado. Clicar abre a ficha. */
+const nomeCat = c => { const t = String(c||"").toLowerCase(); return t.charAt(0).toUpperCase() + t.slice(1); };
+let quadroAceso = false;
+function quadro(){
+  const box = $("q-placas"); if(!box) return;
+  const curtos = {};
+  FROTA.forEach(e => { const k = String(e.pre).replace(/\s*\(.*?\)\s*/g,"").trim(); curtos[k] = (curtos[k]||0) + 1; });
+  const curto = pre => { const k = String(pre).replace(/\s*\(.*?\)\s*/g,"").trim(); return curtos[k] > 1 ? pre : k; };
+  const ordem = []; FROTA.forEach(e => { if(!ordem.includes(e.cat)) ordem.push(e.cat); });
+  let i = 0;
+  box.innerHTML = ordem.map(cat => {
+    const l = FROTA.filter(e => e.cat === cat);
+    const parados = l.filter(e => classeEstado(e.st) === "ind").length;
+    return `<div class="q-linha"><div class="q-cat">${esc(nomeCat(cat))}${parados ? `<span>${parados} parado${parados === 1 ? "" : "s"}</span>` : ""}</div>
+      <div class="q-tags">${l.map(e => {
+        const c = classeEstado(e.st);
+        const dias = c === "ind" && e.dias != null ? `<small>${e.dias}d</small>` : "";
+        const dica = c === "ind" ? `${e.pre} — parado${e.dias != null ? ` há ${e.dias} dia${e.dias === 1 ? "" : "s"}` : ""}${e.def ? ": " + e.def : ""}`
+                   : `${e.pre} — ${e.st}`;
+        return `<button type="button" class="placa ${c}" data-eq="${esc(e.pre)}" style="--i:${i++}" title="${esc(dica)}" aria-label="${esc(dica)}">${esc(curto(e.pre))}${dias}</button>`;
+      }).join("")}</div></div>`;
+  }).join("");
+  if(!quadroAceso && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+    box.classList.add("acende"); quadroAceso = true;
+    setTimeout(() => box.classList.remove("acende"), 2200);
+  }
+}
+
+function desenhar(){
+  const disp = FROTA.filter(e=>pillClass(e.st)==="p-ok").length;
+  const ind  = FROTA.filter(e=>pillClass(e.st)==="p-bad").length;
+  const fora = FROTA.length - disp - ind;
+  const base = disp + ind;
+
+  $("k-pct").textContent = base ? (disp/base*100).toFixed(1).replace(".",",")+"%" : "—";
+  $("k-tot").textContent = FROTA.length;
+  $("k-disp").textContent = disp;
+  $("k-ind").textContent = ind;
+  kpiTendencia(disp, ind, base);
+  quadro();
+
+  const forasCont = {};
+  FROTA.filter(e=>pillClass(e.st)==="p-mute").forEach(e=>{ forasCont[e.st]=(forasCont[e.st]||0)+1; });
+  const foraTxt = Object.entries(forasCont).map(([k,v])=>`${v} ${k.toLowerCase()}`).join(", ");
+  $("k-aside").textContent = fora
+    ? `${foraTxt} ${fora===1?"fica":"ficam"} fora da base de cálculo (${base} equipamentos).`
+    : `Todos os ${base} equipamentos entram na base de cálculo.`;
+
+  /* categorias na ordem em que aparecem na planilha */
+  const ordem=[]; FROTA.forEach(e=>{ if(!ordem.includes(e.cat)) ordem.push(e.cat); });
+  const CHEV = `<svg class="chev" viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2.5 1 L7 5 L2.5 9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  const barra = (nome,a) => {
+    const dw = a.b ? a.d/a.b*100 : 0, iw = a.b ? a.i/a.b*100 : 0;
+    const seg = `${a.d?`<i class="d${a.i?"":" full"}" style="width:${dw}%"></i>`:""}${a.i?`<i class="i${a.d?"":" only"}" style="width:${iw}%"></i>`:""}`;
+    const pct = a.b ? (a.d/a.b*100).toFixed(0)+"%" : "—";
+    return `<div class="bar" role="img" aria-label="${esc(nome)}: ${a.d} disponíveis, ${a.i} indisponíveis">${seg}</div>
+      <div class="catnums"><span class="num">${a.d}/${a.b}</span><b>${pct}</b></div>`;
+  };
+
+  const grupo = (cat, lista, a, idx) => {
+    const fora = lista.length - a.b;
+    const resumo = [
+      `<b>${lista.length}</b> ${lista.length===1?"equipamento":"equipamentos"}`,
+      `<b>${a.d}</b> ${a.d===1?"disponível":"disponíveis"}`,
+      `<b>${a.i}</b> ${a.i===1?"parado":"parados"}`,
+      fora ? `<b>${fora}</b> fora da base` : ""
+    ].filter(Boolean).join(" &middot; ");
+    const aberto = abertas.has(cat);
+    return `<div class="catgroup">
+      <div class="catrow" role="button" tabindex="0" aria-expanded="${aberto}" aria-controls="det-${idx}" data-cat="${esc(cat)}">
+        <div class="catname">${CHEV}${esc(cat)}</div>
+        ${barra(cat,a)}
+      </div>
+      <div class="catdet" id="det-${idx}"${aberto?"":" hidden"}>
+        <div class="cabecalho">${resumo}</div>
+        <div class="rolagem"><table>${CABECALHO_TABELA}<tbody>${lista.map(linhaTabela).join("")}</tbody></table></div>
+      </div>
+    </div>`;
+  };
+
+  let html = ordem.map((cat,idx)=>{
+    const l = FROTA.filter(e=>e.cat===cat);
+    const d = l.filter(e=>pillClass(e.st)==="p-ok").length;
+    const i = l.filter(e=>pillClass(e.st)==="p-bad").length;
+    return grupo(cat,l,{d,i,b:d+i},idx);
+  }).join("");
+  html += `<div class="catrow total"><div class="catname">Total geral</div>${barra("Total geral",{d:disp,i:ind,b:base})}</div>`;
+  $("cats").innerHTML = html;
+  ligarCategorias();
+
+  /* parados */
+  const parados = FROTA.filter(e=>pillClass(e.st)==="p-bad").sort((a,b)=>(b.dias??-1)-(a.dias??-1));
+  $("parados-note").textContent = parados.length
+    ? `${parados.length} indisponíveis, do mais antigo para o mais recente`
+    : "nenhum equipamento parado";
+  $("downs").innerHTML = parados.map(e=>`
+    <article class="dcard${(e.dias??0)>=30?" long":""}">
+      <div class="dtop">
+        <div><div class="dpre">${eqBtn(e.pre)}</div><div class="dmodel">${esc(e.mod)} &middot; ${esc(e.cat.toLowerCase())}</div></div>
+        ${e.dias!=null?`<div class="ddays">${e.dias}<small>dias parado</small></div>`:""}
+      </div>
+      <div class="ddef">${esc(e.def||"Sem descrição na planilha")}</div>
+      ${e.obs?`<div class="dmodel">Obs.: ${esc(e.obs)}</div>`:""}
+      <div class="dmeta">
+        <span>Obra <b>${esc(e.obra||"—")}</b></span>
+        <span>Local <b>${esc(e.loc||"—")}</b></span>
+        <span>Parado desde <b>${esc(e.dt||"—")}</b></span>
+        <span>Previsão <b>${esc(e.prev||"—")}</b></span>
+      </div>
+    </article>`).join("");
+
+  /* filtros dinâmicos */
+  const encher = (sel,vals,rotulo) => {
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">${rotulo}</option>` + vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+    if(vals.includes(cur)) sel.value = cur;
+  };
+  const uniq = k => [...new Set(FROTA.map(e=>e[k]).filter(Boolean))];
+  encher($("f-cat"), ordem, "Todas as categorias");
+  encher($("f-obra"), uniq("obra").sort(), "Todas as obras");
+  encher($("f-local"), uniq("loc").sort(), "Obra e sede");
+
+  tabela();
+  agendas();
+}
+
+/* abre e fecha a lista de equipamentos de cada categoria */
+function ligarCategorias(){
+  document.querySelectorAll('#cats .catrow[role="button"]').forEach(linha=>{
+    const painel = document.getElementById(linha.getAttribute("aria-controls"));
+    const cat = linha.dataset.cat;
+    const alternar = () => {
+      const abrindo = linha.getAttribute("aria-expanded") !== "true";
+      linha.setAttribute("aria-expanded", String(abrindo));
+      painel.hidden = !abrindo;
+      if(abrindo) abertas.add(cat); else abertas.delete(cat);
+    };
+    linha.addEventListener("click", alternar);
+    linha.addEventListener("keydown", ev=>{
+      if(ev.key==="Enter" || ev.key===" " || ev.key==="Spacebar"){ ev.preventDefault(); alternar(); }
+    });
+  });
+}
+
+function tabela(){
+  const q = filtros.q.trim().toLowerCase();
+  const lista = FROTA.filter(e=>{
+    const cls = pillClass(e.st);
+    if(filtros.st==="Disponível" && cls!=="p-ok") return false;
+    if(filtros.st==="Indisponível" && cls!=="p-bad") return false;
+    if(filtros.st==="outros" && cls!=="p-mute") return false;
+    if(filtros.cat && e.cat!==filtros.cat) return false;
+    if(filtros.obra && e.obra!==filtros.obra) return false;
+    if(filtros.loc && e.loc!==filtros.loc) return false;
+    if(filtros.especial){
+      const t = instante(e.prev,"00:00"), hj = meiaNoite(new Date()).getTime();
+      if(filtros.especial === "longos"   && (e.dias ?? 0) < PARADO_LONGO) return false;
+      if(filtros.especial === "vencidos" && !(t != null && t < hj))       return false;
+      if(filtros.especial === "semprev"  && t != null)                    return false;
+    }
+    if(q){
+      const hay=[e.pre,e.mod,e.tipo,e.cat,e.def,e.obs].filter(Boolean).join(" ").toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  $("tb").innerHTML = lista.map(linhaTabela).join("");
+  $("tb-empty").textContent = "Nenhum equipamento com esses filtros.";
+  $("tb-empty").hidden = lista.length>0;
+  const rotulo = { longos:`parados há mais de ${PARADO_LONGO} dias`, vencidos:"passaram da previsão", semprev:"sem previsão" };
+  $("f-count").textContent = `${lista.length} de ${FROTA.length} equipamentos` +
+    (filtros.especial ? ` · ${rotulo[filtros.especial] || filtros.especial}` : "");
+}
+
+function statBox(k,v,cor,cls){
+  return `<div class="pstat"><div class="k">${esc(k)}</div><div class="v ${cls||""}"${cor?` style="color:${cor}"`:""}>${esc(v)}</div></div>`;
+}
+
+function agendas(){
+  /* esteiras */
+  $("c-sub").textContent = [
+    META.ciclo ? `Ciclo ${META.ciclo}` : "",
+    META.inicioCiclo ? `iniciado em ${META.inicioCiclo}` : "",
+    LIMPEZA.length ? `${LIMPEZA.length} equipamentos no rodízio` : ""
+  ].filter(Boolean).join(" · ") || "—";
+  const atrasados = LIMPEZA.filter(e=>/atrasad/i.test(e.st)).length;
+  $("c-stats").innerHTML =
+    (META.diaCiclo ? statBox("Dia do ciclo", META.diaCiclo) : "") +
+    (META.equipDia ? statBox("Equipamento de hoje", META.equipDia, null, "mono") : "") +
+    statBox("Atrasados", atrasados, atrasados? "var(--bad)" : "var(--ok)");
+  const cicloEsteiras = LIMPEZA.length;
+  $("c-escala").innerHTML = legendaEscala(cicloEsteiras);
+  $("c-ord").textContent = ordemAgenda.esteiras === "dias" ? "Ordem do rodízio" : "Mais dias primeiro";
+  $("esteiras").innerHTML = listaAgenda(LIMPEZA, cicloEsteiras, "esteiras", /hoje/i, "Sem itens no cronograma.");
+
+  /* soprador */
+  $("g-sub").textContent = META.progSoprador || "Preventiva dos geradores";
+  const pend = SOPRADOR.filter(g=>/atrasad|limpar/i.test(g.st)).length;
+  $("g-stats").innerHTML =
+    (META.hojeSoprador ? statBox("Hoje é dia?", META.hojeSoprador) : "") +
+    (META.proxSoprador ? statBox("Próxima data", META.proxSoprador, null, "sm") : "") +
+    statBox("Pendentes", pend, pend? "var(--bad)" : "var(--ok)");
+  const cicloSoprador = SOPRADOR.length;
+  $("g-escala").innerHTML = legendaEscala(cicloSoprador);
+  $("g-ord").textContent = ordemAgenda.geradores === "dias" ? "Ordem do rodízio" : "Mais dias primeiro";
+  $("geradores").innerHTML = listaAgenda(SOPRADOR, cicloSoprador, "geradores", /limpar hoje/i, "Sem geradores no controle.");
+}
+
+
+/* ---------- evolução: linha do tempo e indicadores ---------- */
+const DIA = 86400000;
+const meiaNoite = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+const ptDia = d => `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
+const classeEstado = st => { const c = pillClass(st); return c==="p-ok" ? "ok" : c==="p-bad" ? "ind" : "fora"; };
+
+/**
+ * Reconstrói a disponibilidade dia a dia andando de trás para frente:
+ * parte do estado de hoje e desfaz cada movimentação registrada.
+ * Só vai até o dia da movimentação mais antiga — antes disso não há o que reconstruir.
+ */
+function serieHistorico(dias){
+  if(!FROTA.length) return [];
+  const eventos = MOVS_BRUTO
+    .filter(m => m.ts != null && (m.tipo === "disp" || m.tipo === "ind"))
+    .slice().sort((a,b) => b.ts - a.ts);
+  if(!eventos.length) return [];
+  const inicio = meiaNoite(eventos[eventos.length-1].ts).getTime();
+
+  const estado = {};
+  FROTA.forEach(e => estado[e.pre] = classeEstado(e.st));
+
+  const hoje = meiaNoite(new Date()).getTime();
+  const serie = [];
+  let i = 0;
+  for(let d = 0; d < dias; d++){
+    const t = hoje - d*DIA;
+    if(t < inicio) break;
+    let ok = 0, ind = 0;
+    for(const k in estado){ if(estado[k] === "ok") ok++; else if(estado[k] === "ind") ind++; }
+    serie.push({ dia:new Date(t), ok, ind, pct: (ok+ind) ? ok/(ok+ind)*100 : null });
+    while(i < eventos.length && eventos[i].ts >= t){
+      const m = eventos[i];
+      if(m.pre in estado) estado[m.pre] = classeEstado(m.de);
+      i++;
+    }
+  }
+  return serie.reverse();
+}
+
+let SERIE = [];
+function desenhaGrafico(){
+  const box = $("graf-svg"), dica = $("graf-dica");
+  if(!box) return;
+  dica.hidden = true;
+  SERIE = serieHistorico(periodoHist);
+
+  if(SERIE.length < 2){
+    $("graf-sub").textContent = "o histórico se forma sozinho conforme as movimentações vão sendo registradas";
+    box.innerHTML = `<div class="grafvazio">Ainda não há dias suficientes registrados para desenhar a linha.</div>`;
+    return;
+  }
+  $("graf-sub").textContent =
+    `${ptDia(SERIE[0].dia)} a ${ptDia(SERIE[SERIE.length-1].dia)} · ${SERIE.length} dias · reconstruído do registro de movimentações`;
+
+  const L = 42, R = 12, T = 12, B = 24, H = 230;
+  const W = Math.max(320, box.clientWidth || 880);
+  const iw = W - L - R, ih = H - T - B;
+
+  const vals = SERIE.map(p => p.pct).filter(v => v != null);
+  let min = Math.floor((Math.min.apply(null, vals) - 4) / 5) * 5;
+  let max = Math.ceil((Math.max.apply(null, vals) + 4) / 5) * 5;
+  min = Math.max(0, min); max = Math.min(100, max);
+  if(max - min < 10) max = Math.min(100, min + 10);
+  if(max === min) min = Math.max(0, max - 10);
+
+  const px = i => L + iw * (i / (SERIE.length - 1));
+  const py = v => T + ih - ih * ((v - min) / (max - min));
+
+  const linhas = [], rotulos = [];
+  for(let g = 0; g <= 4; g++){
+    const v = min + (max - min) * g / 4, yy = py(v).toFixed(1);
+    linhas.push(`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/>`);
+    rotulos.push(`<text x="${L-8}" y="${yy}" text-anchor="end" dominant-baseline="middle">${Math.round(v)}%</text>`);
+  }
+
+  const passo = Math.max(1, Math.round((SERIE.length - 1) / 5));
+  const marcas = [];
+  for(let i = 0; i < SERIE.length; i += passo) marcas.push(i);
+  const ultimo = SERIE.length - 1;
+  /* o último dia sempre aparece; se ficar colado no anterior, esse sai */
+  if(marcas[marcas.length-1] !== ultimo){
+    if(ultimo - marcas[marcas.length-1] < passo*0.6) marcas.pop();
+    marcas.push(ultimo);
+  }
+  const datas = marcas.map(i => {
+    const anc = i === 0 ? "start" : i === ultimo ? "end" : "middle";
+    return `<text x="${px(i).toFixed(1)}" y="${H-6}" text-anchor="${anc}">${ptDia(SERIE[i].dia)}</text>`;
+  });
+
+  const pts = SERIE.map((p,i) => `${px(i).toFixed(1)},${py(p.pct == null ? min : p.pct).toFixed(1)}`);
+  const linha = "M" + pts.join(" L");
+  const area  = `${linha} L${px(SERIE.length-1).toFixed(1)},${(T+ih).toFixed(1)} L${L},${(T+ih).toFixed(1)} Z`;
+  const med = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const ym = py(med).toFixed(1);
+
+  box.innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img"
+        aria-label="Disponibilidade da frota nos últimos ${SERIE.length} dias, média ${med.toFixed(1)}%">
+      <g class="gy">${linhas.join("")}${rotulos.join("")}</g>
+      <g class="gx">${datas.join("")}</g>
+      <path class="garea" d="${area}"/>
+      <line class="gmeta" x1="${L}" y1="${ym}" x2="${W-R}" y2="${ym}"><title>média do período: ${med.toFixed(1).replace(".",",")}%</title></line>
+      <path class="glinha" d="${linha}"/>
+      <g id="graf-cursor" style="display:none">
+        <line class="gcursor" y1="${T}" y2="${T+ih}"/>
+        <circle class="gponto" r="4.5"/>
+      </g>
+      <rect id="graf-alvo" x="${L}" y="${T}" width="${iw}" height="${ih}" fill="transparent" style="cursor:crosshair"/>
+    </svg>`;
+
+  const svg = box.querySelector("svg");
+  const alvo = box.querySelector("#graf-alvo");
+  const cursor = box.querySelector("#graf-cursor");
+
+  const mostrar = ev => {
+    const r = svg.getBoundingClientRect();
+    const k = (r.width || W) / W;
+    const mx = (ev.clientX - r.left) / k;
+    let i = Math.round((mx - L) / iw * (SERIE.length - 1));
+    i = Math.max(0, Math.min(SERIE.length - 1, i));
+    const pt = SERIE[i], vy = py(pt.pct == null ? min : pt.pct);
+    cursor.style.display = "";
+    cursor.querySelector("line").setAttribute("x1", px(i));
+    cursor.querySelector("line").setAttribute("x2", px(i));
+    cursor.querySelector("circle").setAttribute("cx", px(i));
+    cursor.querySelector("circle").setAttribute("cy", vy);
+    dica.hidden = false;
+    dica.innerHTML = `<b>${pt.pct==null ? "—" : pt.pct.toFixed(1).replace(".",",")+"%"}</b><br>
+      <span>${ptDia(pt.dia)} &middot; ${pt.ok} disponíveis &middot; ${pt.ind} parados</span>`;
+    const larg = dica.offsetWidth || 160;
+    let esq = px(i) * k + 12;
+    if(esq + larg > r.width) esq = px(i) * k - larg - 12;
+    dica.style.left = Math.max(0, esq) + "px";
+    dica.style.top  = Math.max(0, vy * k - 48) + "px";
+  };
+  alvo.addEventListener("mousemove", mostrar);
+  alvo.addEventListener("mouseleave", () => { cursor.style.display = "none"; dica.hidden = true; });
+}
+
+function indicadores(){
+  /* tempo médio de parada: casa cada "ficou parado" com o "voltou a operar" seguinte */
+  const porPre = {};
+  MOVS_BRUTO.filter(m => m.ts != null && (m.tipo === "disp" || m.tipo === "ind"))
+    .slice().sort((a,b) => a.ts - b.ts)
+    .forEach(m => { (porPre[m.pre] = porPre[m.pre] || []).push(m); });
+
+  const duracoes = [];
+  Object.keys(porPre).forEach(k => {
+    let aberto = null;
+    porPre[k].forEach(m => {
+      if(m.tipo === "ind") aberto = m.ts;
+      else if(aberto != null){ duracoes.push((m.ts - aberto) / DIA); aberto = null; }
+    });
+  });
+  const media = duracoes.length ? duracoes.reduce((a,b) => a+b, 0) / duracoes.length : null;
+  $("i-mttr").innerHTML = media == null ? "—" : `${media.toFixed(1).replace(".",",")}<small>dias</small>`;
+  $("i-mttr-sub").textContent = duracoes.length
+    ? `média de ${duracoes.length} parada${duracoes.length===1?"":"s"} que já terminaram`
+    : "nenhuma parada concluída no registro ainda";
+
+  /* parados que já passaram da data prevista de retorno */
+  const hoje = meiaNoite(new Date()).getTime();
+  const parados = FROTA.filter(e => pillClass(e.st) === "p-bad");
+  const venc = parados.filter(e => { const t = instante(e.prev, "00:00"); return t != null && t < hoje; });
+  const sem  = parados.filter(e => instante(e.prev, "00:00") == null).length;
+  $("i-atraso").innerHTML = `${venc.length}<small>de ${parados.length}</small>`;
+  $("i-atraso-sub").textContent = parados.length
+    ? (venc.length ? `${venc.map(e=>e.pre).slice(0,4).join(", ")}${venc.length>4?"…":""} · ${sem} sem previsão`
+                   : `nenhum passou da previsão · ${sem} sem previsão`)
+    : "nenhum equipamento parado";
+
+  /* quem mais parou nos últimos 90 dias */
+  const corte = Date.now() - 90*DIA;
+  const cont = {};
+  MOVS_BRUTO.filter(m => m.tipo === "ind" && m.ts != null && m.ts >= corte)
+            .forEach(m => cont[m.pre] = (cont[m.pre] || 0) + 1);
+  const top = Object.keys(cont).map(k => [k, cont[k]]).sort((a,b) => b[1] - a[1]).slice(0,5);
+  $("i-rein-per").textContent = "· últimos 90 dias";
+  const maior = top.length ? top[0][1] : 1;
+  $("i-rein").innerHTML = top.length
+    ? top.map(function(par){
+        const pre = par[0], n = par[1];
+        const eq = FROTA.filter(e => e.pre === pre)[0];
+        return `<li><span class="pre">${eqBtn(pre)}</span>
+          <span class="barra" style="width:${Math.round(n/maior*100)}%" title="${n} parada${n===1?"":"s"}"></span>
+          <span class="qt">${n}&times;</span>
+          ${eq ? `<span class="pl-mod" style="grid-column:1/-1;font-size:11px">${esc(eq.mod)} · ${esc(String(eq.cat).toLowerCase())}</span>` : ""}</li>`;
+      }).join("")
+    : `<li><span class="vazio">Nenhuma parada registrada no período.</span></li>`;
+}
+
+function evolucao(){
+  $("ev-note").textContent = MOVS_BRUTO.length
+    ? `calculado a partir de ${MOVS_BRUTO.length} registros de movimentação`
+    : "aguardando os primeiros registros";
+  desenhaGrafico();
+  indicadores();
+}
+
+/* ---------- movimentações ---------- */
+const CLASSE_MOV = { disp:"voltou", ind:"parou", motivo:"motivo", outro:"" };
+const PILL_MOV   = { disp:"p-ok forte", ind:"p-bad forte", motivo:"p-warn", outro:"p-mute" };
+const classeMov = tipo => CLASSE_MOV[tipo] || "";
+const pillMov = tipo =>
+  `<span class="pill ${PILL_MOV[tipo]||"p-mute"}">${esc(TEXTO_MOV[tipo]||TEXTO_MOV.outro)}</span>`;
+
+function movimentacoes(){
+  const lista = MOVS.slice(0, movVisiveis);
+  $("mov-note").textContent = MOVS.length
+    ? `${MOVS.length} registrada${MOVS.length===1?"":"s"} — mostrando ${lista.length}`
+    : "nenhuma movimentação registrada ainda";
+
+  $("mov").innerHTML = lista.map(m=>`
+    <li class="${classeMov(m.tipo)}">
+      <div class="quando"><b>${esc(m.data||"—")}</b>${m.hora?esc(m.hora):"&nbsp;"}</div>
+      <div class="oque">
+        <div class="eq">
+          <span class="pre">${eqBtn(m.pre)}</span>
+          <span class="mod">${esc(m.mod)}${m.cat?" · "+esc(m.cat.toLowerCase()):""}</span>
+          ${pillMov(m.tipo)}
+        </div>
+        <div class="por">${esc(m.motivo||"Sem motivo informado")}</div>
+      </div>
+      <div class="onde">${esc(m.obra||"—")} · ${esc(m.loc||"—")}</div>
+    </li>`).join("")
+    || `<li><div class="oque"><div class="por">O histórico começa a partir de agora: assim que um equipamento mudar de status na planilha, a movimentação aparece aqui.</div></div></li>`;
+
+  const btn = $("mov-mais");
+  btn.hidden = MOVS.length <= movVisiveis;
+  btn.textContent = `Ver mais ${Math.min(POR_PAGINA, MOVS.length - movVisiveis)} movimentações`;
+}
+
+
+/* ---------- faixa de alertas ---------- */
+const PARADO_LONGO = 30;
+/* Desligada a pedido. Trocar para true traz a faixa de volta como estava. */
+const MOSTRAR_ALERTAS = false;
+
+function alertas(){
+  const caixa = $("alertas");
+  if(!MOSTRAR_ALERTAS || !FROTA.length){ caixa.hidden = true; return; }
+  const hoje = meiaNoite(new Date()).getTime();
+  const parados = FROTA.filter(e => pillClass(e.st) === "p-bad");
+  const longos  = parados.filter(e => (e.dias ?? 0) >= PARADO_LONGO);
+  const vencidos= parados.filter(e => { const t = instante(e.prev,"00:00"); return t != null && t < hoje; });
+  const semPrev = parados.filter(e => instante(e.prev,"00:00") == null);
+  const limpAtr = LIMPEZA.filter(e => /atrasad/i.test(e.st));
+
+  const itens = [];
+  if(longos.length)   itens.push(["bad","longos",  longos.length,  `parado${longos.length>1?"s":""} há mais de ${PARADO_LONGO} dias`]);
+  if(vencidos.length) itens.push(["bad","vencidos",vencidos.length,`passaram da previsão de retorno`]);
+  if(semPrev.length)  itens.push(["warn","semprev",semPrev.length, `sem previsão de retorno`]);
+  if(limpAtr.length)  itens.push(["warn","limpeza",limpAtr.length, `atrasado${limpAtr.length>1?"s":""} na limpeza de esteiras`]);
+  const calVenc = CALIB.filter(x => x.est === "vencida");
+  const calBrev = CALIB.filter(x => x.est === "breve");
+  if(calVenc.length) itens.push(["bad","calibracao",calVenc.length,`com calibração da balança vencida`]);
+  if(calBrev.length) itens.push(["warn","calibracao",calBrev.length,`com calibração da balança vencendo`]);
+
+  caixa.hidden = false;
+  caixa.innerHTML = `<span class="tit">Precisa de atenção</span>` + (itens.length
+    ? itens.map(([cor,acao,n,txt]) =>
+        `<button class="al ${cor}" type="button" data-alerta="${acao}"><b>${n}</b> ${txt}</button>`).join("")
+    : `<span class="al ok"><b>0</b> nada pendente por aqui</span>`);
+}
+
+/** Cada alerta leva direto para a lista já filtrada. */
+function irPara(acao){
+  const hoje = meiaNoite(new Date()).getTime();
+  if(acao === "limpeza"){
+    ordemAgenda.esteiras = "dias"; agendas();
+    document.getElementById("rodante").scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  if(acao === "calibracao"){
+    document.getElementById("calibracao").scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  filtros.st = "Indisponível"; filtros.cat = ""; filtros.obra = ""; filtros.loc = "";
+  filtros.q = "";
+  filtros.especial = acao;                       /* longos | vencidos | semprev */
+  sincronizaControles();
+  tabela();
+  document.getElementById("frota").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* ---------- histórico da ficha: uma parada por cartão ----------
+   A planilha grava cada mudança numa linha: parou, mudou o motivo, voltou.
+   Na ficha isso vira UMA parada só — motivo, data de parada e data de
+   liberação —, para não repetir "ficou disponível / ficou indisponível". */
+const semTexto = t => !t || /^[\s—–\-]*$/.test(String(t));
+
+function montarParadas(hist){
+  const asc = hist.slice().reverse();          /* MOVS vem da mais recente para a mais antiga */
+  const out = [];
+  let aberta = null;
+  const anotaMotivo = (p, m) => {
+    if(semTexto(m.motivo)) return;
+    const ult = p.motivos[p.motivos.length-1];
+    if(!ult || ult.txt.trim().toUpperCase() !== String(m.motivo).trim().toUpperCase())
+      p.motivos.push({ txt:m.motivo, data:m.data });
+  };
+  asc.forEach(m => {
+    if(m.tipo === "ind"){
+      if(aberta){ anotaMotivo(aberta, m); return; }   /* já estava parado: só reforça o motivo */
+      aberta = { inicio:m, fim:null, motivos:[] };
+      anotaMotivo(aberta, m);
+      out.push(aberta);
+    } else if(m.tipo === "motivo"){
+      if(aberta) anotaMotivo(aberta, m);
+      else out.push({ avulso:m });
+    } else if(m.tipo === "disp"){
+      if(aberta){ aberta.fim = m; aberta = null; }
+      else out.push({ inicio:null, fim:m, motivos:[] });  /* parou antes do registro começar */
+    } else {
+      out.push({ avulso:m });
+    }
+  });
+  return out.reverse();                         /* mais recente em cima */
+}
+
+function duracaoTxt(ms){
+  /* até 24 h: "17 h 31 min"; passou de 24 h: "7 dias e 2 horas" */
+  if(ms == null || ms < 0) return "";
+  const totalMin = Math.max(1, Math.round(ms/60000));
+  const h = Math.floor(totalMin/60), min = totalMin % 60;
+  if(!h) return `${min} min`;
+  if(h < 24) return min ? `${h} h ${min} min` : `${h} h`;
+  const d = Math.floor(h/24), hr = h % 24;
+  const dTxt = `${d} dia${d === 1 ? "" : "s"}`;
+  return hr ? `${dTxt} e ${hr} hora${hr === 1 ? "" : "s"}` : dTxt;
+}
+
+const quandoTxt = m => m ? `${m.data || "—"}${m.hora ? " " + m.hora : ""}` : "";
+
+function cartaoParada(p){
+  if(p.avulso){
+    const m = p.avulso;
+    return `<li class="fpar avulso">
+      <div class="fpar-top">${pillMov(m.tipo)}<span class="fpar-dur">${esc(quandoTxt(m))}</span></div>
+      <div class="fpar-mot">${esc(semTexto(m.motivo) ? "Sem motivo informado" : m.motivo)}</div>
+    </li>`;
+  }
+  const aberta = !p.fim;
+  const ini = p.inicio, fim = p.fim;
+  const fimTs = aberta ? Date.now() : fim.ts;
+  const dur = (ini && ini.ts != null && fimTs != null) ? duracaoTxt(fimTs - ini.ts) : "";
+  const motivo = p.motivos.length ? p.motivos[p.motivos.length-1].txt : "Sem motivo informado";
+  const antes = p.motivos.slice(0, -1);
+  return `<li class="fpar ${aberta ? "aberta" : "fechada"}">
+    <div class="fpar-top">
+      <span class="pill ${aberta ? "p-bad forte" : "p-ok forte"}">${esc(aberta ? TEXTO_MOV.ind : TEXTO_MOV.disp)}</span>
+      ${dur ? `<span class="fpar-dur">${aberta ? "parado há " : ""}${esc(dur)}${aberta ? "" : " parado"}</span>` : ""}
+    </div>
+    <div class="fpar-mot">${esc(motivo)}</div>
+    ${antes.length ? `<div class="fpar-antes">Antes: ${antes.map(a => `${esc(a.txt)} <span>(${esc(a.data)})</span>`).join(" · ")}</div>` : ""}
+    <div class="fpar-datas">
+      <div><span class="k">Data de parada</span><span class="v">${ini ? esc(quandoTxt(ini)) : "antes do registro"}</span></div>
+      <div><span class="k">Data de liberação</span><span class="v${aberta ? " ainda" : ""}">${aberta ? "Ainda parado" : esc(quandoTxt(fim))}</span></div>
+    </div>
+  </li>`;
+}
+
+/* ---------- ficha: últimos 30 dias, um tracinho por dia ----------
+   Padrão da "Status Bar" do 21st (página de status): cada dia é uma barra,
+   verde quando rodou o dia todo, vermelha na parte do dia em que ficou parado.
+   Passando o dedo/mouse aparece o dia, as horas paradas e o motivo. */
+function faixa30(pre, hist){
+  const DIAS = 30, agora = Date.now();
+  const inicioReg = MOVS_BRUTO.reduce((m,x) => (x.ts != null && x.ts < m) ? x.ts : m, Infinity);
+  const pars = montarParadas(hist).filter(p => !p.avulso).map(p => ({
+    a: (p.inicio && p.inicio.ts != null) ? p.inicio.ts : inicioReg,
+    b: (p.fim && p.fim.ts != null) ? p.fim.ts : agora,
+    mot: p.motivos.length ? p.motivos[p.motivos.length-1].txt : "Sem motivo informado"
+  }));
+  const e = FROTA.find(x => x.pre === pre);
+  if(e && classeEstado(e.st) === "ind" && !pars.some(p => p.b >= agora)){
+    const t = instante(e.dt, "00:00");
+    if(t != null) pars.push({ a:t, b:agora, mot:e.def || "Sem motivo informado" });
+  }
+  const hoje0 = meiaNoite(new Date()).getTime();
+  const inicio = isFinite(inicioReg) ? inicioReg : (pars.length ? Math.min(...pars.map(p => p.a)) : hoje0);
+  const dias = [];
+  for(let d = DIAS-1; d >= 0; d--){
+    const ini = hoje0 - d*DIA, fim = Math.min(ini + DIA, agora);
+    if(fim <= inicio){ dias.push({ ini, sem:true }); continue; }
+    const a0 = Math.max(ini, inicio);
+    let parado = 0; const mots = [];
+    pars.forEach(p => {
+      const o = Math.min(p.b, fim) - Math.max(p.a, a0);
+      if(o > 0){ parado += o; if(!mots.includes(p.mot)) mots.push(p.mot); }
+    });
+    const tot = fim - a0;
+    dias.push({ ini, frac: tot > 0 ? Math.min(1, parado/tot) : 0, ms: parado, mots });
+  }
+  return dias;
+}
+
+const DIA_SEM = ["dom","seg","ter","qua","qui","sex","sáb"];
+function blocoFaixa(pre, hist){
+  const dias = faixa30(pre, hist);
+  const com = dias.filter(x => !x.sem);
+  if(!com.length) return "";
+  const pct = 1 - com.reduce((s,x) => s + x.frac, 0) / com.length;
+  const diasParado = com.filter(x => x.frac > 0).length;
+  const barras = dias.map(x => {
+    const dt = new Date(x.ini);
+    const rot = `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()} · ${DIA_SEM[dt.getDay()]}`;
+    let cls, txt;
+    if(x.sem){ cls = "sem"; txt = "Antes do início dos registros"; }
+    else if(x.frac <= 0){ cls = "ok"; txt = "Disponível o dia todo"; }
+    else {
+      cls = x.frac >= 0.999 ? "bad" : "meio";
+      txt = (x.frac >= 0.999 ? "Parado o dia todo" : `Parado ${duracaoTxt(x.ms)}`) + (x.mots.length ? " — " + x.mots.join(" / ") : "");
+    }
+    const h = x.sem ? 0 : Math.round(x.frac * 100);
+    return `<button type="button" class="sb ${cls}" style="--p:${h}%" data-dica="${esc(rot)}|${esc(txt)}" aria-label="${esc(rot)}: ${esc(txt)}"><i></i></button>`;
+  }).join("");
+  const d0 = new Date(dias[0].ini);
+  return `<div class="fbloco"><h4>Últimos 30 dias</h4>
+    <div class="sbar-head"><span><b>${(pct*100).toFixed(0)}%</b> do tempo disponível</span>
+      <span>${diasParado ? `${diasParado} dia${diasParado === 1 ? "" : "s"} com parada` : "nenhuma parada"}</span></div>
+    <div class="sbar" role="group" aria-label="Disponibilidade dia a dia nos últimos 30 dias">${barras}</div>
+    <div class="sbar-eixo"><span>${String(d0.getDate()).padStart(2,"0")}/${String(d0.getMonth()+1).padStart(2,"0")}</span><span>hoje</span></div>
+    <div class="sb-dica" id="sb-dica" hidden></div></div>`;
+}
+
+function dicaFaixa(alvo){
+  const box = $("sb-dica"); if(!box) return;
+  if(!alvo){ box.hidden = true; return; }
+  const [rot, txt] = String(alvo.dataset.dica || "").split("|");
+  box.innerHTML = `<b>${rot}</b><span>${txt}</span>`;
+  box.hidden = false;
+  const pai = box.parentElement.getBoundingClientRect(), r = alvo.getBoundingClientRect();
+  const w = box.offsetWidth;
+  let x = r.left - pai.left + r.width/2 - w/2;
+  x = Math.max(0, Math.min(x, pai.width - w));
+  box.style.left = x + "px";
+  box.style.top = (r.top - pai.top - box.offsetHeight - 8) + "px";
+}
+
+/* ---------- ficha do equipamento ---------- */
+let fichaAberta = null;
+
+function abrirFicha(pre){
+  const e = FROTA.filter(x => x.pre === pre)[0];
+  const lim = LIMPEZA.filter(x => x.pre === pre)[0] || SOPRADOR.filter(x => x.pre === pre)[0];
+  const hist = MOVS.filter(m => m.pre === pre);
+  const brutos = MOVS_BRUTO.filter(m => m.pre === pre && m.ts != null)
+                           .slice().sort((a,b) => a.ts - b.ts);
+
+  /* quantas paradas e quantos dias parado no que está registrado */
+  let paradas = 0, diasParado = 0, aberto = null;
+  brutos.forEach(m => {
+    if(m.tipo === "ind"){ paradas++; aberto = m.ts; }
+    else if(m.tipo === "disp" && aberto != null){ diasParado += (m.ts - aberto)/DIA; aberto = null; }
+  });
+  if(aberto != null) diasParado += (Date.now() - aberto)/DIA;
+
+  $("ficha-tit").textContent = pre;
+  $("ficha-cat").textContent = e ? e.cat : "Equipamento";
+  $("ficha-mod").textContent = e ? [e.mod, e.tipo].filter(Boolean).join(" · ") : "não está na aba Controle de Frota";
+  $("ficha-st").innerHTML = e ? pill(e.st) + (e.loc ? `<span class="ficha-loc">${e.obra ? "Obra " + esc(e.obra) + " · " : ""}${esc(e.loc)}</span>` : "") : "";
+
+  const linha = (k,v) => `<div><span class="k">${k}</span><span class="v">${esc(v || "—")}</span></div>`;
+  let html = "";
+
+  if(e){
+    html += `<div class="fbloco"><h4>Situação agora</h4>
+      <div class="fgrid">
+        ${linha("Obra", e.obra)}${linha("Local", e.loc)}
+        ${linha("Parado desde", e.dt)}${linha("Previsão de retorno", e.prev)}
+        ${e.dias != null ? linha("Dias parado", String(e.dias)) : ""}
+        ${e.def ? `<div class="larga"><span class="k">Defeito / intervenção</span><span class="v">${esc(e.def)}</span></div>` : ""}
+        ${e.obs ? `<div class="larga"><span class="k">Observações</span><span class="v">${esc(e.obs)}</span></div>` : ""}
+      </div></div>`;
+  }
+
+  html += `<div class="fbloco"><h4>No período registrado</h4>
+    <div class="fnum">
+      <div><div class="n">${paradas}</div><div class="k">paradas</div></div>
+      <div><div class="n">${Math.round(diasParado)}</div><div class="k">dias parado</div></div>
+      <div><div class="n">${paradas ? (diasParado/paradas).toFixed(1).replace(".",",") : "—"}</div><div class="k">média por parada</div></div>
+    </div></div>`;
+
+  if(lim){
+    html += `<div class="fbloco"><h4>Material rodante</h4>
+      <div style="margin-bottom:10px">${agendaPill(lim.st)} ${chipDias(lim.dias, LIMPEZA.length)}</div>
+      <div class="fgrid">${linha("Programado", lim.prog)}${linha("Última limpeza", lim.ult)}</div></div>`;
+  }
+
+  html += blocoFaixa(pre, hist);
+
+  html += `<div class="fbloco"><h4>Histórico de paradas</h4>` + (hist.length
+    ? `<ul class="fpars">` + montarParadas(hist).map(cartaoParada).join("") + `</ul>`
+    : `<p class="fvazio">Nenhuma movimentação registrada para este equipamento ainda.</p>`) + `</div>`;
+
+  $("ficha-corpo").innerHTML = html;
+  $("ficha-corpo").scrollTop = 0;
+  $("ficha").hidden = false;
+  fichaAberta = pre;
+  document.body.style.overflow = "hidden";
+  $("ficha-x").focus();
+}
+
+function fecharFicha(){
+  $("ficha").hidden = true;
+  fichaAberta = null;
+  document.body.style.overflow = "";
+}
+
+/* ---------- links que já abrem filtrados ---------- */
+function sincronizaControles(){
+  document.querySelectorAll("#frota .chip").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.st === filtros.st)));
+  if($("f-cat"))   $("f-cat").value   = filtros.cat  || "";
+  if($("f-obra"))  $("f-obra").value  = filtros.obra || "";
+  if($("f-local")) $("f-local").value = filtros.loc  || "";
+  if($("f-q"))     $("f-q").value     = filtros.q    || "";
+}
+
+function lerParametros(){
+  const q = new URLSearchParams(location.search);
+  const mapaSt = { parados:"Indisponível", disponiveis:"Disponível", outros:"outros", todos:"todos" };
+  if(q.get("status")) filtros.st  = mapaSt[q.get("status").toLowerCase()] || "todos";
+  if(q.get("cat"))    filtros.cat = q.get("cat");
+  if(q.get("obra"))   filtros.obra= q.get("obra");
+  if(q.get("local"))  filtros.loc = q.get("local");
+  if(q.get("busca"))  filtros.q   = q.get("busca");
+  if(q.get("especial")) filtros.especial = q.get("especial");
+  const dias = Number(q.get("dias"));
+  if([30,60,90].indexOf(dias) >= 0){
+    periodoHist = dias;
+    document.querySelectorAll(".periodos .chip").forEach(b =>
+      b.setAttribute("aria-pressed", String(Number(b.dataset.dias) === dias)));
+  }
+  return q.has("status") || q.has("cat") || q.has("obra") || q.has("local") || q.has("busca") || q.has("especial");
+}
+
+function linkDoFiltro(){
+  const q = new URLSearchParams();
+  const inv = { "Indisponível":"parados", "Disponível":"disponiveis", "outros":"outros" };
+  if(filtros.st && filtros.st !== "todos") q.set("status", inv[filtros.st] || filtros.st);
+  if(filtros.cat)  q.set("cat", filtros.cat);
+  if(filtros.obra) q.set("obra", filtros.obra);
+  if(filtros.loc)  q.set("local", filtros.loc);
+  if(filtros.q)    q.set("busca", filtros.q);
+  if(filtros.especial) q.set("especial", filtros.especial);
+  const s = q.toString();
+  return location.origin + location.pathname + (s ? "?" + s : "") + "#frota";
+}
+
+async function copiar(texto, botao, ok){
+  const antes = botao.textContent;
+  try{
+    await navigator.clipboard.writeText(texto);
+    botao.textContent = ok;
+  }catch(err){
+    const ta = document.createElement("textarea");
+    ta.value = texto; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    botao.textContent = document.execCommand("copy") ? ok : "Copie manualmente";
+    ta.remove();
+  }
+  setTimeout(() => botao.textContent = antes, 2200);
+}
+
+
+/* ---------- modo TV ---------- */
+const TV_SEGUNDOS = 15;
+let tvLigado = false, tvTela = 0, tvTimer = null, tvRelogio = null, tvT0 = 0;
+
+/** Um gráfico pequeno, só a linha, para caber no cartão da TV. */
+function miniGrafico(serie, W, H){
+  if(serie.length < 2) return `<p class="tv-vazio">Sem histórico ainda</p>`;
+  const L = 40, R = 8, T = 8, B = 20;
+  const iw = W-L-R, ih = H-T-B;
+  const vals = serie.map(p=>p.pct).filter(v=>v!=null);
+  let min = Math.max(0, Math.floor((Math.min.apply(null,vals)-4)/5)*5);
+  let max = Math.min(100, Math.ceil((Math.max.apply(null,vals)+4)/5)*5);
+  if(max-min < 10) max = Math.min(100, min+10);
+  const px = i => L + iw*(i/(serie.length-1));
+  const py = v => T + ih - ih*((v-min)/(max-min));
+  const g = [];
+  for(let k=0;k<=3;k++){
+    const v = min + (max-min)*k/3, yy = py(v).toFixed(1);
+    g.push(`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text x="${L-6}" y="${yy}" text-anchor="end" dominant-baseline="middle">${Math.round(v)}%</text>`);
+  }
+  const d = "M" + serie.map((p,i)=>`${px(i).toFixed(1)},${py(p.pct==null?min:p.pct).toFixed(1)}`).join(" L");
+  return `<svg viewBox="0 0 ${W} ${H}">
+    <g class="gy">${g.join("")}</g>
+    <g class="gx"><text x="${L}" y="${H-4}" text-anchor="start">${ptDia(serie[0].dia)}</text>
+      <text x="${W-R}" y="${H-4}" text-anchor="end">${ptDia(serie[serie.length-1].dia)}</text></g>
+    <path class="garea" d="${d} L${px(serie.length-1).toFixed(1)},${(T+ih).toFixed(1)} L${L},${(T+ih).toFixed(1)} Z"/>
+    <path class="glinha" d="${d}"/>
+  </svg>`;
+}
+
+const TELAS = [
+  { nome:"Compromisso da frota", monta(){
+      if(!DEMANDA.length) return `<p class="tv-vazio">Nenhuma demanda cadastrada na aba DEMANDA.</p>`;
+      const {dt, rot} = momentoData("agora");
+      const c = cobertura(dt);
+      if(!c.precisa) return `<p class="tv-vazio">Nenhum equipamento em regime ${esc(rot)}.</p>`;
+      const cards = c.itens.map(i=>`
+        <div class="tv-cp${i.falta?" falta":(i.sobra?"":" limite")}">
+          <div class="nome">${esc(i.pre || i.cat)}</div>
+          <div class="par"><b>${i.tem}</b><span>/ ${i.precisa}</span></div>
+          <div class="sit">${i.falta?`falta ${i.falta}`:(i.sobra?`+${i.sobra} de reserva`:"no limite")}</div>
+        </div>`).join("");
+      return `<div class="tv-hero" style="grid-template-columns:1fr 1.5fr">
+        <div class="tv-big tv-vd ${c.falta?"bad":"ok"}">
+          <div class="k">Estamos devendo equipamento?</div>
+          <div class="n">${c.falta ? c.falta : "N&Atilde;O"}</div>
+          <div class="p">${c.falta
+            ? `${c.falta===1?"m&aacute;quina em falta":"m&aacute;quinas em falta"} &middot; ${c.precisa} contratadas, ${c.precisa-c.falta} atendendo`
+            : `as ${c.precisa} m&aacute;quinas contratadas est&atilde;o cobertas`}</div>
+          <div class="q">${esc(rot)}</div>
+        </div>
+        <div class="tv-cx"><h2>Por equipamento &mdash; tem / precisa</h2>
+          <div class="tv-cps">${cards}</div></div>
+      </div>`;
+    }},
+  { nome:"Panorama", monta(){
+      const disp = FROTA.filter(e=>pillClass(e.st)==="p-ok").length;
+      const ind  = FROTA.filter(e=>pillClass(e.st)==="p-bad").length;
+      const base = disp + ind;
+      const pct  = base ? (disp/base*100).toFixed(1).replace(".",",")+"%" : "—";
+      return `<div class="tv-hero">
+        <div class="tv-esq">
+          <div class="tv-big"><div class="k">Disponibilidade</div><div class="n">${pct}</div></div>
+          <div class="tv-tres" style="margin-top:0">
+            <div><div class="k">Frota</div><div class="n">${FROTA.length}</div></div>
+            <div class="ok"><div class="k">Disponíveis</div><div class="n">${disp}</div></div>
+            <div class="bad"><div class="k">Parados</div><div class="n">${ind}</div></div>
+          </div>
+        </div>
+        <div class="tv-cx"><h2>Últimos 30 dias</h2>
+          <div class="graf">${miniGrafico(serieHistorico(30), 900, 620)}</div></div>
+      </div>`;
+    }},
+  { nome:"Equipamentos parados", monta(){
+      const parados = FROTA.filter(e=>pillClass(e.st)==="p-bad").sort((a,b)=>(b.dias??-1)-(a.dias??-1)).slice(0,9);
+      if(!parados.length) return `<p class="tv-vazio">Nenhum equipamento parado. Frota 100% disponível.</p>`;
+      return `<div class="tv-grade">` + parados.map(e=>`
+        <div class="tv-card">
+          <div class="top">
+            <div><div class="pre">${esc(e.pre)}</div><div class="mod">${esc(e.mod)} &middot; ${esc(String(e.cat).toLowerCase())}</div></div>
+            ${e.dias!=null?`<div class="d">${e.dias}<small>dias</small></div>`:""}
+          </div>
+          <div class="def">${esc(e.def||"Sem descrição na planilha")}</div>
+        </div>`).join("") + `</div>`;
+    }},
+  { nome:"Disponibilidade por categoria", monta(){
+      const cats = {};
+      FROTA.forEach(e=>{ const c = e.cat || "SEM CATEGORIA"; (cats[c] = cats[c] || []).push(e); });
+      const linhas = Object.keys(cats).sort().map(nome=>{
+        const l = cats[nome];
+        const d = l.filter(e=>pillClass(e.st)==="p-ok").length;
+        const i = l.filter(e=>pillClass(e.st)==="p-bad").length;
+        const base = d + i, pc = base ? Math.round(d/base*100) : null;
+        return `<div class="l">
+          <span class="nome">${esc(nome)}</span>
+          <span class="bar">${base?`<i style="width:${d/base*100}%;background:var(--ok)"></i><i style="width:${i/base*100}%;background:var(--bad)"></i>`:""}</span>
+          <span class="pc">${pc==null?"—":pc+"%"}</span></div>`;
+      });
+      return `<div class="tv-barras">${linhas.join("")}</div>`;
+    }},
+  { nome:"Limpeza de esteiras", monta(){
+      const atr = LIMPEZA.filter(e=>/atrasad/i.test(e.st))
+        .sort((a,b)=>(b.dias??-1)-(a.dias??-1)).slice(0,9);
+      if(!LIMPEZA.length) return `<p class="tv-vazio">Cronograma de limpeza não carregado.</p>`;
+      if(!atr.length) return `<p class="tv-vazio">Nenhum equipamento atrasado no rodízio de limpeza.</p>`;
+      return `<div class="tv-grade">` + atr.map(e=>`
+        <div class="tv-card" style="border-left-color:var(--warn)">
+          <div class="top">
+            <div><div class="pre">${esc(e.pre)}</div><div class="mod">${esc(e.mod)}</div></div>
+            ${e.dias!=null?`<div class="d" style="color:var(--warn-ink)">${e.dias}<small>dias sem limpar</small></div>`:""}
+          </div>
+          <div class="def">Programado ${esc(e.prog||"—")} &middot; última ${esc(e.ult||"—")}</div>
+        </div>`).join("") + `</div>`;
+    }},
+  { nome:"Últimas movimentações", monta(){
+      const l = MOVS.slice(0,6);
+      if(!l.length) return `<p class="tv-vazio">Nenhuma movimentação registrada ainda.</p>`;
+      return `<ul class="tv-lista">` + l.map(m=>`
+        <li class="${classeMov(m.tipo)}">
+          <span><span class="pre">${esc(m.pre)}</span><br><span class="q">${esc(m.data)} ${esc(m.hora||"")}</span></span>
+          <span class="txt">${esc(TEXTO_MOV[m.tipo]||"")}<br><span class="q">${esc(m.motivo||"Sem motivo informado")}</span></span>
+          <span class="q">${esc(m.obra||"")} &middot; ${esc(m.loc||"")}</span>
+        </li>`).join("") + `</ul>`;
+    }}
+];
+
+function pintaTV(){
+  const t = TELAS[tvTela];
+  $("tv-tit").textContent = t.nome;
+  $("tv-corpo").innerHTML = t.monta();
+  $("tv-pontos").innerHTML = TELAS.map((_,i)=>`<i class="${i===tvTela?"on":""}"></i>`).join("");
+  $("tv-car").textContent = META.carimboData ? `planilha salva em ${META.carimboData} ${META.carimboHora||""}` : "";
+  tvT0 = Date.now();
+}
+
+function passoTV(){
+  tvTela = (tvTela + 1) % TELAS.length;
+  pintaTV();
+}
+
+function tickTV(){
+  const agora = new Date();
+  $("tv-hora").textContent = `${String(agora.getHours()).padStart(2,"0")}:${String(agora.getMinutes()).padStart(2,"0")}`;
+  const p = Math.min(1, (Date.now() - tvT0) / (TV_SEGUNDOS*1000));
+  $("tv-barra").style.width = (p*100).toFixed(1) + "%";
+}
+
+function ligaTV(){
+  if(tvLigado) return;
+  tvLigado = true; tvTela = 0;
+  document.body.classList.add("tv-on");
+  $("tv").hidden = false;
+  pintaTV();
+  tvTimer   = setInterval(passoTV, TV_SEGUNDOS*1000);
+  tvRelogio = setInterval(tickTV, 250);
+  tickTV();
+  const el = document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+}
+
+function desligaTV(){
+  if(!tvLigado) return;
+  tvLigado = false;
+  clearInterval(tvTimer); clearInterval(tvRelogio);
+  $("tv").hidden = true;
+  document.body.classList.remove("tv-on");
+  if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+}
+
+
+/* ---------- resumo, exportação e impressão ---------- */
+function resumoDoDia(){
+  const disp = FROTA.filter(e => pillClass(e.st) === "p-ok").length;
+  const ind  = FROTA.filter(e => pillClass(e.st) === "p-bad").length;
+  const base = disp + ind;
+  const pct  = base ? (disp/base*100).toFixed(1).replace(".",",") + "%" : "—";
+  const parados = FROTA.filter(e => pillClass(e.st) === "p-bad")
+                       .sort((a,b) => (b.dias ?? -1) - (a.dias ?? -1));
+  const atrLimp = LIMPEZA.filter(e => /atrasad/i.test(e.st));
+
+  const L = [];
+  L.push(`*DISPONIBILIDADE DA FROTA*`);
+  L.push(`Obras 720 & 731 — manutenção`);
+  L.push(META.carimboData ? `Dados de ${META.carimboData}${META.carimboHora ? " às " + META.carimboHora : ""}` : null);
+  L.push("");
+  L.push(`*${pct}* de disponibilidade`);
+  L.push(`Frota ${FROTA.length} · Disponíveis ${disp} · Parados ${ind}`);
+  L.push("");
+  L.push(`*PARADOS (${parados.length})*`);
+  if(parados.length){
+    parados.slice(0,20).forEach(e => {
+      const partes = [`${e.pre} (${e.mod})`];
+      if(e.dias != null) partes.push(`${e.dias} ${e.dias === 1 ? "dia" : "dias"}`);
+      if(e.def) partes.push(e.def);
+      if(e.prev) partes.push(`prev. ${e.prev}`);
+      L.push("• " + partes.join(" — "));
+    });
+    if(parados.length > 20) L.push(`… e mais ${parados.length - 20}`);
+  } else L.push("Nenhum. Frota 100% disponível.");
+
+  if(LIMPEZA.length){
+    L.push("");
+    L.push(`*LIMPEZA DE ESTEIRAS*`);
+    L.push(META.equipDia ? `Hoje: ${stripEmoji(META.equipDia)}` : null);
+    L.push(atrLimp.length ? `${atrLimp.length} atrasado(s): ${atrLimp.map(e=>e.pre).join(", ")}` : "Nenhum atrasado.");
+  }
+  L.push("");
+  L.push(location.origin + location.pathname);
+  return L.filter(x => x !== null).join("\n");
+}
+
+/* ---------- resumo para o WhatsApp ----------
+   Pedido do Vinícius: só as máquinas de linha — carregadeiras, escavadeiras,
+   caminhões (menos os cavalos CAM-185 e CAM-312), motoniveladora,
+   retroescavadeira, trator de esteira, mini escavadeira e mini carregadeira.
+   Para cada uma: prefixo, se está disponível e, se parada, o motivo.
+   Para mudar quem entra, é só mexer nas duas listas abaixo. */
+const WHATS_CATEGORIAS = ["CARREGADEIRAS","ESCAVADEIRAS","CAMINHÃO","MOTONIVELADORA","RETROESCAVADEIRA",
+                          "TRATOR DE ESTEIRA","MINI ESCAVADEIRA","MINI CARREGADEIRA"];
+const WHATS_FORA = ["CAM-185","CAM-312"];
+
+function resumoWhats(){
+  const cats = WHATS_CATEGORIAS.map(normCat);
+  const fora = WHATS_FORA.map(normPre);
+  const lista = FROTA.filter(e => cats.includes(normCat(e.cat)) && !fora.includes(normPre(e.pre)));
+  const disp = lista.filter(e => pillClass(e.st) === "p-ok").length;
+  const ind  = lista.filter(e => pillClass(e.st) === "p-bad").length;
+  const base = disp + ind;
+  const pct  = base ? (disp/base*100).toFixed(1).replace(".",",") + "%" : "—";
+  const agora = new Date();
+  const hoje = `${String(agora.getDate()).padStart(2,"0")}/${String(agora.getMonth()+1).padStart(2,"0")}/${agora.getFullYear()} às ${String(agora.getHours()).padStart(2,"0")}h${String(agora.getMinutes()).padStart(2,"0")}`;
+
+  const L = [];
+  L.push(`*DISPONIBILIDADE DOS EQUIPAMENTOS*`);
+  L.push(hoje);
+  L.push("");
+  L.push(`*${pct} disponível* (${disp} de ${base})`);
+  L.push(`✅ ${disp} disponíve${disp === 1 ? "l" : "is"}   🔴 ${ind} parado${ind === 1 ? "" : "s"}`);
+
+  /* na ordem da planilha, uma categoria por bloco */
+  const ordem = []; lista.forEach(e => { if(!ordem.includes(e.cat)) ordem.push(e.cat); });
+  ordem.forEach(cat => {
+    const l = lista.filter(e => e.cat === cat);
+    const d = l.filter(e => pillClass(e.st) === "p-ok").length;
+    const b = l.filter(e => pillClass(e.st) !== "p-mute").length;
+    L.push("");
+    L.push(`*${String(cat).toUpperCase()}* (${d}/${b})`);
+    l.forEach(e => {
+      const c = pillClass(e.st);
+      const pre = String(e.pre).replace(/\s*\(.*?\)\s*/g, "").trim() || e.pre;
+      if(c === "p-ok") L.push(`✅ ${pre}`);
+      else if(c === "p-bad") L.push(`🔴 ${pre} — ${(e.def || e.obs || "sem motivo informado").trim()}`);
+      else L.push(`⚪ ${pre} — ${e.st}`);
+    });
+  });
+  return L.join("\n");
+}
+
+async function enviarWhats(botao){
+  if(!FROTA.length){ botao.textContent = "Aguarde a planilha carregar"; setTimeout(() => botao.textContent = "Resumo para o WhatsApp", 2200); return; }
+  const texto = resumoWhats();
+  /* no celular abre o compartilhar (WhatsApp aparece na lista); no computador copia */
+  if(navigator.share && matchMedia("(pointer: coarse)").matches){
+    try{ await navigator.share({ text: texto }); return; }catch(e){ if(e && e.name === "AbortError") return; }
+  }
+  copiar(texto, botao, "Copiado — é só colar no WhatsApp");
+}
+
+function baixar(nome, texto, tipo){
+  const blob = new Blob(["﻿" + texto], {type: tipo + ";charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/** CSV com ; e vírgula decimal — é o que o Excel em português espera. */
+function csvDaFrota(){
+  const campo = v => {
+    const t = String(v == null ? "" : v);
+    return /[;"\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  };
+  const q = filtros.q.trim().toLowerCase();
+  const hj = meiaNoite(new Date()).getTime();
+  const lista = FROTA.filter(e => {
+    const cls = pillClass(e.st);
+    if(filtros.st === "Disponível"   && cls !== "p-ok")   return false;
+    if(filtros.st === "Indisponível" && cls !== "p-bad")  return false;
+    if(filtros.st === "outros"       && cls !== "p-mute") return false;
+    if(filtros.cat  && e.cat  !== filtros.cat)  return false;
+    if(filtros.obra && e.obra !== filtros.obra) return false;
+    if(filtros.loc  && e.loc  !== filtros.loc)  return false;
+    if(filtros.especial){
+      const t = instante(e.prev,"00:00");
+      if(filtros.especial === "longos"   && (e.dias ?? 0) < PARADO_LONGO) return false;
+      if(filtros.especial === "vencidos" && !(t != null && t < hj))       return false;
+      if(filtros.especial === "semprev"  && t != null)                    return false;
+    }
+    if(q){
+      const hay = [e.pre,e.mod,e.tipo,e.cat,e.def,e.obs].filter(Boolean).join(" ").toLowerCase();
+      if(hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  const cab = ["ITEM","PREFIXO","CATEGORIA","TIPO","MODELO","OBRA","LOCAL","STATUS",
+               "DEFEITO / INTERVENCAO","PARADO DESDE","DIAS PARADO","PREVISAO","OBSERVACOES"];
+  const linhas = lista.map(e => [e.n ?? "", e.pre, e.cat, e.tipo, e.mod, e.obra, e.loc, e.st,
+                                 e.def, e.dt, e.dias ?? "", e.prev, e.obs].map(campo).join(";"));
+  return [cab.join(";")].concat(linhas).join("\r\n");
+}
+
+const hojeArquivo = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+
+
+/* ---------- instalar no celular, logo e aviso de falta de sinal ---------- */
+function ligarLogo(){
+  const img = $("logo");
+  if(!img) return;
+  img.addEventListener("load", () => { img.hidden = false; });
+  img.addEventListener("error", () => { img.remove(); });
+  img.src = "logo.png";           /* basta subir logo.png no repositório */
+}
+
+function ligarOffline(){
+  const aviso = $("offline");
+  const ver = () => { aviso.hidden = navigator.onLine !== false; };
+  window.addEventListener("online",  ver);
+  window.addEventListener("offline", ver);
+  ver();
+}
+
+let convite = null;
+function ligarInstalar(){
+  window.addEventListener("beforeinstallprompt", ev => {
+    ev.preventDefault();
+    convite = ev;
+    const b = document.createElement("button");
+    b.className = "copiar destaque"; b.type = "button"; b.id = "a-instalar";
+    b.textContent = "Instalar no celular";
+    b.addEventListener("click", async () => {
+      if(!convite) return;
+      convite.prompt();
+      await convite.userChoice;
+      convite = null; b.remove();
+    });
+    const barra = document.querySelector(".acoes");
+    if(barra) barra.appendChild(b);
+  });
+}
+
+function ligarServiceWorker(){
+  if(!("serviceWorker" in navigator)) return;
+  if(location.protocol !== "https:" && location.hostname !== "localhost") return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+
+/* ---------- carimbo e avisos ---------- */
+function carimbo(estado){
+  const dot=$("s-dot");
+  dot.className = "dot " + (estado==="ok"?"live":estado==="erro"?"err":"load");
+  $("s-state").textContent = estado==="ok" ? "Última alteração" : estado==="erro" ? "Falha ao ler" : "Lendo a planilha…";
+  if(META.carimboData){
+    $("s-date").textContent = `${META.carimboData} ${META.carimboHora}`;
+    $("s-time").textContent = "horário de Brasília";
+  } else if(META.atualizado){
+    $("s-date").textContent = META.atualizado;
+    $("s-time").textContent = "data informada na planilha";
+  } else {
+    $("s-date").textContent = "—";
+    $("s-time").innerHTML = "&nbsp;";
+  }
+}
+function aviso(html, erro){
+  $("alert").innerHTML = html ? `<div class="banner${erro?" err":""}">${html}</div>` : "";
+}
+
+/* ---------- ciclo de vida ---------- */
+async function carregar(){
+  const btn=$("s-reload");
+  btn.disabled=true; carimbo("carregando");
+  try{
+    const [rf,rl,rs,rm,rd,rc,re,cb] = await Promise.all([
+      pegar(ABAS.frota,"Controle de Frota"),
+      pegar(ABAS.limpeza,"Cronograma Limpeza").catch(()=>null),
+      pegar(ABAS.soprador,"Preventiva Soprador").catch(()=>null),
+      pegar(ABAS.movimentacoes,"Movimentações").catch(()=>null),
+      pegar(ABAS.demanda,"Demanda").catch(()=>null),
+      pegar(ABAS.calibracao,"Calibração Balanças").catch(()=>null),
+      pegar(ABAS.emissoes,"Emissões Atmosféricas").catch(()=>null),
+      pegarCarimbo().catch(()=>null)
+    ]);
+    if(cb){ META.carimboData = cb.data; META.carimboHora = cb.hora; }
+    MOVS = rm ? lerMovimentacoes(rm) : [];
+    FROTA = lerFrota(rf);
+    LIMPEZA = rl ? lerAgenda(rl,"LOCAL") : [];
+    SOPRADOR = rs ? lerAgenda(rs,"SITUA") : [];
+    if(rl){
+      META.ciclo = kv(rl,"Ciclo Atual");
+      META.diaCiclo = kv(rl,"Dia do Ciclo");
+      META.inicioCiclo = fmtDate(kv(rl,"Início do Ciclo Atual"));
+      META.equipDia = kv(rl,"EQUIPAMENTO DO DIA");
+    }
+    if(rs){
+      META.progSoprador = kv(rs,"PROGRAMAÇÃO");
+      META.hojeSoprador = kv(rs,"Hoje é dia de soprador");
+      META.proxSoprador = fmtDate(kv(rs,"Próxima data prevista"));
+    }
+    if(rd){ const d = lerDemanda(rd); DEMANDA = d.linhas; FERIADOS = d.feriados; }
+    CALIB = rc ? lerCalibracao(rc) : [];
+    EMISSOES = re ? lerEmissoes(re) : [];
+    desenhar();
+    compromisso();
+    alertas();
+    if(tvLigado) pintaTV();
+    evolucao();
+    calibracao();
+    emissoes();
+    movimentacoes();
+    const faltando = [!rl && "Cronograma Limpeza", !rs && "Preventiva Soprador", !rm && "Movimentações", !rd && "Demanda", !rc && "Calibração Balanças", !re && "Emissões Atmosféricas"].filter(Boolean);
+    aviso(faltando.length ? `Não consegui ler ${faltando.join(" e ")}. O restante da página está atualizado.` : "", true);
+    carimbo("ok");
+  }catch(e){
+    carimbo("erro");
+    const semResposta = /sem resposta|Failed to fetch|NetworkError/i.test(e.message);
+    aviso(`<b>Não consegui ler a planilha.</b> ${esc(e.message)}.<br>
+      Os números abaixo podem estar vazios ou desatualizados — não use para decidir.<br>
+      ${semResposta
+        ? `O Google não respondeu. Isso quase sempre é a rede barrando o endereço
+           <code>googleusercontent.com</code>, que é de onde a planilha vem.
+           Teste abrir esta página no celular usando o 4G, fora do wi-fi da obra:
+           se funcionar no 4G, o bloqueio é da rede.`
+        : `Se o problema continuar, confira se a planilha ainda está publicada em
+           <code>Arquivo → Compartilhar → Publicar na Web</code>.`}`, true);
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+document.querySelectorAll("#cp-chips .chip").forEach(b=>b.addEventListener("click",()=>{
+  momentoCP = b.dataset.mom;
+  document.querySelectorAll("#cp-chips .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  compromisso();
+}));
+
+document.querySelectorAll("#frota .chip").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#frota .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  filtros.st=b.dataset.st; filtros.especial=""; tabela();
+}));
+$("f-cat").addEventListener("change",e=>{filtros.cat=e.target.value;tabela();});
+$("f-obra").addEventListener("change",e=>{filtros.obra=e.target.value;tabela();});
+$("f-local").addEventListener("change",e=>{filtros.loc=e.target.value;tabela();});
+$("f-q").addEventListener("input",e=>{filtros.q=e.target.value;filtros.especial="";tabela();});
+$("f-link").addEventListener("click", ev => copiar(linkDoFiltro(), ev.currentTarget, "Link copiado!"));
+
+/* clique em qualquer prefixo abre a ficha; clique num alerta leva para a lista */
+document.addEventListener("click", ev => {
+  const eq = ev.target.closest("[data-eq]");
+  if(eq){ abrirFicha(eq.dataset.eq); return; }
+  const ec = ev.target.closest("[data-emi]");
+  if(ec){ filtroEmi = ec.dataset.emi; emissoes(); return; }
+  const al = ev.target.closest("[data-alerta]");
+  if(al) irPara(al.dataset.alerta);
+});
+/* Os botões de resumo, CSV e impressão saíram da tela a pedido.
+   As funções continuam aqui: para trazer de volta, é só recriar os botões. */
+if($("a-resumo")) $("a-resumo").addEventListener("click", ev => copiar(resumoDoDia(), ev.currentTarget, "Resumo copiado!"));
+if($("a-csv"))    $("a-csv").addEventListener("click", () => baixar(`frota-${hojeArquivo()}.csv`, csvDaFrota(), "text/csv"));
+if($("a-print"))  $("a-print").addEventListener("click", () => { if(tvLigado) desligaTV(); window.print(); });
+/* Ctrl+P continua saindo na folha A4 limpa, com ou sem botão */
+window.addEventListener("beforeprint", () => { if(tvLigado) desligaTV(); });
+$("s-tv").addEventListener("click", ligaTV);
+$("s-whats").addEventListener("click", ev => enviarWhats(ev.currentTarget));
+$("tv-sair").addEventListener("click", desligaTV);
+$("tv-corpo").addEventListener("click", passoTV);
+document.addEventListener("keydown", ev => {
+  if(!tvLigado) return;
+  if(ev.key === "Escape") desligaTV();
+  if(ev.key === "ArrowRight" || ev.key === " ") { ev.preventDefault(); passoTV(); }
+});
+$("ficha-x").addEventListener("click", fecharFicha);
+$("ficha-fundo").addEventListener("click", fecharFicha);
+document.addEventListener("keydown", ev => { if(ev.key === "Escape" && fichaAberta) fecharFicha(); });
+$("s-reload").addEventListener("click",carregar);
+document.querySelectorAll(".periodos .chip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".periodos .chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  periodoHist = Number(b.dataset.dias) || 30;
+  desenhaGrafico();
+}));
+let redesenho;
+window.addEventListener("resize", () => { clearTimeout(redesenho); redesenho = setTimeout(desenhaGrafico, 200); });
+$("f-versao").textContent = "v" + VERSAO;
+ligarLogo();
+ligarOffline();
+ligarInstalar();
+ligarServiceWorker();
+$("mov-mais").addEventListener("click",()=>{ movVisiveis += POR_PAGINA; movimentacoes(); });
+$("c-ord").addEventListener("click",()=>{ ordemAgenda.esteiras   = ordemAgenda.esteiras==="dias"   ? "ciclo" : "dias"; agendas(); });
+$("g-ord").addEventListener("click",()=>{ ordemAgenda.geradores  = ordemAgenda.geradores==="dias"  ? "ciclo" : "dias"; agendas(); });
+
+/* ---------- vídeos nas laterais ---------- */
+function laterais(){
+  if(!VIDEOS.length) return;
+  const semMovimento = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let ligado = !semMovimento;
+  try{ const g = localStorage.getItem("frota-videos"); if(g) ligado = g === "on"; }catch(e){}
+  const cabe = matchMedia("(min-width:1560px)");
+  const tocar = v => { if(ligado && cabe.matches && !document.hidden) v.play().catch(()=>{}); else v.pause(); };
+
+  const tocadores = ["esq","dir"].map((lado,n)=>{
+    const trilho = document.createElement("div");
+    trilho.className = "rail " + lado;
+    trilho.setAttribute("aria-hidden","true");
+    const v = document.createElement("video");
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.preload = "auto";
+    v.setAttribute("muted",""); v.setAttribute("playsinline","");
+    if(VIDEOS.length === 1) v.loop = true;
+    let i = n % VIDEOS.length, falhas = 0;
+    const trocar = () => { v.src = VIDEOS[i]; v.load(); tocar(v); };
+    v.addEventListener("ended", ()=>{ i=(i+1)%VIDEOS.length; falhas=0; trocar(); });
+    v.addEventListener("error", ()=>{ if(++falhas > VIDEOS.length) return; i=(i+1)%VIDEOS.length; trocar(); });
+    trilho.appendChild(v);
+    document.body.appendChild(trilho);
+    trocar();
+    return v;
+  });
+
+  const botao = document.createElement("button");
+  botao.className = "railbtn"; botao.type = "button";
+  document.body.appendChild(botao);
+
+  const aplicar = () => {
+    document.body.classList.toggle("vid", ligado);
+    botao.textContent = ligado ? "Pausar vídeos" : "Mostrar vídeos";
+    botao.setAttribute("aria-pressed", String(ligado));
+    tocadores.forEach(tocar);
+    try{ localStorage.setItem("frota-videos", ligado ? "on" : "off"); }catch(e){}
+  };
+  botao.addEventListener("click", ()=>{ ligado = !ligado; aplicar(); });
+  /* nada de gastar dados rodando escondido: tela estreita ou aba em segundo plano param */
+  cabe.addEventListener("change", ()=>tocadores.forEach(tocar));
+  document.addEventListener("visibilitychange", ()=>tocadores.forEach(tocar));
+  document.body.classList.add("temvid");
+  aplicar();
+}
+laterais();
+
+const veioComFiltro = lerParametros();
+const querTV = new URLSearchParams(location.search).get("tv") === "1";
+carregar().then(() => {
+  if(veioComFiltro){
+    sincronizaControles();
+    tabela();
+    const alvo = document.getElementById("frota");
+    if(alvo) alvo.scrollIntoView({block:"start"});
+  }
+  if(querTV) ligaTV();
+});
+/* de 5 em 5 minutos no uso normal; de 2 em 2 quando está numa TV */
+let ultimaCarga = Date.now();
+setInterval(() => {
+  const intervalo = tvLigado ? 2*60*1000 : 5*60*1000;
+  if(Date.now() - ultimaCarga >= intervalo){ ultimaCarga = Date.now(); carregar(); }
+}, 30*1000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) carregar(); });
+/* dica dos tracinhos de 30 dias (mouse, toque e teclado) */
+(function(){
+  const corpo = $("ficha-corpo"); if(!corpo) return;
+  const achar = ev => ev.target.closest && ev.target.closest(".sb");
+  corpo.addEventListener("pointerover", ev => { const b = achar(ev); if(b) dicaFaixa(b); });
+  corpo.addEventListener("pointerleave", () => dicaFaixa(null));
+  corpo.addEventListener("focusin", ev => { const b = achar(ev); dicaFaixa(b || null); });
+  corpo.addEventListener("click", ev => { const b = achar(ev); if(b) dicaFaixa(b); });
+  corpo.addEventListener("scroll", () => dicaFaixa(null), {passive:true});
+})();
+
+/* marca na barra de navegação a seção que está na tela */
+(function(){
+  if(!("IntersectionObserver" in window)) return;
+  const links = [...document.querySelectorAll("nav.jump a[href^='#']")];
+  const mapa = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    const a = mapa.get(en.target.id);
+    if(a && en.isIntersecting){ links.forEach(l => l.classList.remove("ativo")); a.classList.add("ativo"); }
+  }), { rootMargin: "-45% 0px -50% 0px" });
+  mapa.forEach((a, id) => { const sec = document.getElementById(id); if(sec) io.observe(sec); });
+})();
+</script>
+</body>
+</html>
