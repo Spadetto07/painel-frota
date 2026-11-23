@@ -1147,7 +1147,7 @@ h2{font-size:24px}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.7";
+const VERSAO = "2.8";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1500,12 +1500,36 @@ const chaveDe = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,
    Para casar com a demanda tiramos o que está entre parênteses e os espaços. */
 const normPre = v => String(v==null?"":v).toUpperCase().replace(/\(.*?\)/g,"").replace(/\s+/g,"").trim();
 
-/* "CARREGADEIRAS" e "Carregadeira" viram a mesma coisa */
+/* Nome de categoria/tipo comparável, venha como vier escrito na planilha:
+   "CAMINHÕES BASCULANTES" = "Caminhão basculante", "TRATORES DE ESTEIRA" =
+   "TRATOR ESTEIRA", "MINIESCAVADEIRA" = "MINI-ESCAVADEIRA".
+   Cada palavra vai para o singular, "de/da/do" somem e MINI gruda na palavra
+   seguinte. Apelidos comuns estão em APELIDOS_CAT (chave e valor já no formato
+   normalizado). Os dois lados da comparação passam por aqui. */
+const APELIDOS_CAT = {
+  "pa carregadeira": "carregadeira",
+  "retro": "retroescavadeira",
+  "escavadeira hidraulica": "escavadeira",
+  "gerador": "grupo gerador",
+  "cavalo": "cavalo trator"
+};
+const LIGACOES_CAT = new Set(["de","da","do","das","dos","e"]);
+function singularPt(w){
+  if(w.length <= 3) return w;
+  if(/(oes|aes|aos)$/.test(w)) return w.slice(0,-3) + "ao";
+  if(/[rz]es$/.test(w))        return w.slice(0,-2);
+  if(/ns$/.test(w))            return w.slice(0,-2) + "m";
+  if(/is$/.test(w))            return w.slice(0,-2) + "l";
+  if(/s$/.test(w))             return w.slice(0,-1);
+  return w;
+}
 function normCat(v){
-  return String(v==null?"":v).toLowerCase()
+  const t = String(v==null?"":v).toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
     .replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim()
-    .replace(/s$/,"");
+    .split(" ").filter(w => w && !LIGACOES_CAT.has(w)).map(singularPt).join(" ")
+    .replace(/^mini /,"mini");
+  return APELIDOS_CAT[t] || t;
 }
 
 function lerDemanda(rows){
