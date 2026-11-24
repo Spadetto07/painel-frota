@@ -1147,7 +1147,7 @@ h2{font-size:24px}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.7";
+const VERSAO = "2.8";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -1324,6 +1324,52 @@ async function pegar(gid, nome){
   });
 }
 
+/* ---------- datas sem ano e dias parado ----------
+   Na PREVISÃO muita gente digita só "28/09". Sem o ano o site não sabia se a
+   previsão já tinha passado, e a máquina caía em "sem previsão". Aqui o ano é
+   deduzido: entre o ano passado, este e o próximo, vale a data que fica a
+   menos de seis meses de hoje e não antes do dia em que a máquina parou (uma
+   previsão não pode ser anterior à parada). Se nenhuma cumprir isso, fica a
+   mais perto de hoje — assim "28/09" numa máquina parada em novembro vira
+   28/09 deste ano e aparece como previsão vencida, que é o que ela é. Para a DATA PARADA sem ano vale a mais recente que não esteja no futuro. */
+function comAno(txt, depoisDe){
+  const m = String(txt||"").match(/^(\d{2})\/(\d{2})(?!\/\d)(.*)$/);
+  if(!m) return txt;                                    /* já tem ano, ou não é data */
+  const dia = Number(m[1]), mes = Number(m[2]);
+  const hoje = meiaNoite(new Date());
+  const ok = y => { const d = new Date(y, mes-1, dia); return d.getMonth() === mes-1 ? d : null; };
+  const anos = [hoje.getFullYear()-1, hoje.getFullYear(), hoje.getFullYear()+1]
+                 .map(y => ok(y)).filter(Boolean);
+  if(!anos.length) return txt;
+  const perto = l => l.slice().sort((a,b) => Math.abs(a-hoje) - Math.abs(b-hoje))[0];
+  let d;
+  if(depoisDe === "passado"){
+    d = anos.filter(x => x <= hoje).pop() || perto(anos);
+  } else {
+    const meioAno = 183 * 86400000;
+    const validos = anos.filter(x => (!depoisDe || x >= depoisDe) && Math.abs(x - hoje) <= meioAno);
+    d = perto(validos.length ? validos : anos);
+  }
+  return `${m[1]}/${m[2]}/${d.getFullYear()}${m[3]||""}`;
+}
+/* "20/11/2026" -> Date à meia-noite, ou null */
+function dataDe(txt){
+  const m = String(txt||"").match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(!m) return null;
+  const d = new Date(+m[3], +m[2]-1, +m[1]);
+  return d.getDate() === +m[1] ? d : null;
+}
+/* Dias parado recontados aqui a partir da DATA PARADA, como já é feito na
+   calibração e nas emissões: a coluna DIAS da planilha só muda quando alguém
+   abre e recalcula a planilha, e o painel ficava com o número de dias atrás.
+   Sem data de parada legível, vale o que a planilha escreveu. */
+function diasParado(dt, diasPlanilha){
+  const d = dataDe(dt);
+  if(!d) return diasPlanilha;
+  const n = Math.round((meiaNoite(new Date()) - d) / 86400000);
+  return n >= 0 ? n : diasPlanilha;
+}
+
 function lerFrota(rows){
   const h = headerRow(rows,"PREFIXO","STATUS","CATEGORIA");
   if(h<0) throw new Error("Controle de Frota: não achei a linha de cabeçalho (ITEM / CATEGORIA / PREFIXO / STATUS)");
@@ -1348,13 +1394,15 @@ function lerFrota(rows){
     const pre=cell(r,c.pre); if(!pre || /^prefixo$/i.test(pre)) continue;
     if(!cell(r,c.cat)) continue;
     const d=cell(r,c.dias);
+    const dt = comAno(fmtDate(cell(r,c.dt), mdDt), "passado");
+    const prev = comAno(fmtDate(cell(r,c.prev), mdPrev), dataDe(dt));
     out.push({
       n: isNum(cell(r,c.item)) ? Number(cell(r,c.item)) : null,
       cat:cell(r,c.cat)||"SEM CATEGORIA", tipo:cell(r,c.tipo),
       mod:cell(r,c.mod), obra:cell(r,c.obra), loc:cell(r,c.loc), pre,
       st:cell(r,c.st)||"Sem status", def:cell(r,c.def),
-      dt:fmtDate(cell(r,c.dt), mdDt), prev:fmtDate(cell(r,c.prev), mdPrev),
-      dias: isNum(d)?Number(d):null, obs:cell(r,c.obs)
+      dt, prev,
+      dias: diasParado(dt, isNum(d)?Number(d):null), obs:cell(r,c.obs)
     });
   }
   if(!out.length) throw new Error("Controle de Frota: cabeçalho encontrado, mas nenhuma linha de equipamento");
@@ -3162,12 +3210,17 @@ function resumoWhats(){
   const ind  = lista.filter(e => pillClass(e.st) === "p-bad").length;
   const base = disp + ind;
   const pct  = base ? (disp/base*100).toFixed(1).replace(".",",") + "%" : "—";
-  const agora = new Date();
-  const hoje = `${String(agora.getDate()).padStart(2,"0")}/${String(agora.getMonth()+1).padStart(2,"0")}/${agora.getFullYear()} às ${String(agora.getHours()).padStart(2,"0")}h${String(agora.getMinutes()).padStart(2,"0")}`;
+  /* A hora do resumo é a da última alteração da planilha (o mesmo carimbo do
+     topo da página), não a hora do clique: quem recebe precisa saber de quando
+     são os dados. Sem o carimbo, vale a data escrita na própria planilha. */
+  const hora = META.carimboHora ? String(META.carimboHora).replace(/^(\d{1,2}):(\d{2}).*$/, "$1h$2") : "";
+  const hoje = META.carimboData ? `Planilha atualizada em ${META.carimboData}${hora ? " às " + hora : ""}`
+             : META.atualizado  ? `Planilha atualizada em ${META.atualizado}`
+             : null;
 
   const L = [];
   L.push(`*DISPONIBILIDADE DOS EQUIPAMENTOS*`);
-  L.push(hoje);
+  if(hoje) L.push(hoje);
   L.push("");
   L.push(`*${pct} disponível* (${disp} de ${base})`);
   L.push(`✅ ${disp} disponíve${disp === 1 ? "l" : "is"}   🔴 ${ind} parado${ind === 1 ? "" : "s"}`);
