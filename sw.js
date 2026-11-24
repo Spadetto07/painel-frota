@@ -1,6 +1,6 @@
 /* Painel da frota — cache leve para o painel abrir mesmo sem sinal na obra.
    Regra: rede primeiro. O cache só entra quando a rede falha. */
-const CACHE = "frota-v1.5";
+const CACHE = "frota-v1.6";
 const CASCA = ["./", "./index.html", "./manifest.webmanifest",
                "./icone-192.png", "./icone-512.png"];
 
