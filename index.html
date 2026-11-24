@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://docs.google.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root{
   --bg:#F4F6F8; --surf:#FFFFFF; --surf2:#EDF1F4; --surf3:#E4EAEF;
@@ -871,6 +871,65 @@ h2{font-size:24px}
   .placa.ind{background:#000!important;color:#fff!important}
 }
 @media (prefers-reduced-motion:reduce){ .q-placas.acende .placa{animation:none} }
+/* ---- v3.0: Panorama com fonte nova e mais interativo ----
+   Mesma disposição e mesmas informações; muda a letra e a resposta ao toque.
+   Archivo (larga nos números, estreita nos nomes) + JetBrains Mono nas placas. */
+#panorama{--pf-num:"Archivo","Barlow Condensed",sans-serif;--pf-mono:"JetBrains Mono","IBM Plex Mono",monospace}
+#panorama h2{font-family:var(--pf-num);font-stretch:112%;font-weight:800;letter-spacing:.04em}
+.q-pct{font-family:var(--pf-num);font-stretch:104%;font-weight:800;letter-spacing:-.04em;font-size:clamp(52px,5.2vw,74px)}
+.q-num dd{font-family:var(--pf-num);font-stretch:110%;font-weight:800;font-size:28px;transition:transform .25s var(--ease)}
+.q-cat{font-family:var(--pf-num);font-stretch:88%;font-weight:700;font-size:15px;letter-spacing:.005em}
+.q-cat span{font-family:inherit;font-stretch:100%;font-weight:600;font-size:11px}
+.placa{font:600 11.5px/1 var(--pf-mono);letter-spacing:0;border-radius:6px;padding:7px 9px 6px;position:relative;
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease),opacity .25s var(--ease),filter .18s var(--ease),border-color .18s var(--ease)}
+.placa small{font:700 10.5px/1 var(--pf-num);font-stretch:100%;padding:2px 4px;margin:-2px -3px -2px 0;border-radius:3px;
+  background:color-mix(in srgb,var(--on-solid) 16%,transparent)}
+.placa:hover,.placa.aberta{transform:translateY(-2px);filter:none;border-color:currentColor;
+  box-shadow:0 6px 16px -8px color-mix(in srgb,currentColor 70%,transparent)}
+.placa.ind:hover,.placa.ind.aberta{box-shadow:0 8px 20px -8px var(--bad-solid),0 0 0 3px color-mix(in srgb,var(--bad-solid) 22%,transparent)}
+.placa:active{transform:translateY(0) scale(.97)}
+/* linha da categoria: acende ao passar e ganha uma régua de disponibilidade */
+.q-linha{transition:background .2s var(--ease),opacity .25s var(--ease);margin:0 -10px;padding:8px 10px;border-radius:10px}
+.q-linha:hover{background:color-mix(in srgb,var(--surf2) 70%,transparent)}
+.q-regua{display:block;height:3px;border-radius:3px;margin-top:5px;max-width:110px;background:color-mix(in srgb,var(--bad) 55%,var(--surf3));overflow:hidden}
+.q-regua i{display:block;height:100%;width:var(--p);background:var(--ok);border-radius:3px;transition:width .6s var(--ease)}
+/* contadores viram filtro */
+.q-num>div[data-filtro]{cursor:pointer;margin:0 -10px;padding:9px 10px;border-top:0;border-radius:0;
+  box-shadow:inset 0 1px 0 var(--line-soft);transition:background .18s var(--ease),box-shadow .18s var(--ease),border-radius .18s var(--ease)}
+.q-num>div[data-filtro]:hover,.q-num>div[aria-pressed="true"]:not(.tot){border-radius:10px;box-shadow:none}
+.q-num>div[data-filtro]:hover{background:color-mix(in srgb,var(--surf) 55%,transparent)}
+.q-num>div[data-filtro]:hover dd{transform:scale(1.08)}
+.q-num>div[aria-pressed="true"]:not(.tot){background:var(--surf);box-shadow:0 0 0 1px var(--ring),0 6px 18px -12px rgba(0,0,0,.6)}
+.q-num>div.ok[aria-pressed="true"]{box-shadow:0 0 0 1px color-mix(in srgb,var(--ok) 45%,transparent)}
+.q-num>div.bad[aria-pressed="true"]{box-shadow:0 0 0 1px color-mix(in srgb,var(--bad) 45%,transparent)}
+.q-num>div[data-filtro]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.q-filtro-aviso{display:none;font-size:11.5px;color:var(--ink3);margin-top:12px}
+.q-filtro-aviso button{font:inherit;font-weight:600;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.quadro.filtrando .q-filtro-aviso{display:block}
+.q-placas.so-ok .placa:not(.ok),.q-placas.so-ind .placa:not(.ind){opacity:.14;transform:scale(.94);pointer-events:none}
+.q-placas.so-ok .q-linha.sem-ok,.q-placas.so-ind .q-linha.sem-ind{opacity:.35}
+/* cartão de detalhe ao passar o mouse (ou focar com o teclado) */
+.q-dica{position:fixed;z-index:60;pointer-events:none;width:290px;
+  background:var(--surf);border:1px solid var(--line);border-radius:12px;box-shadow:var(--lift);
+  padding:11px 13px 10px;font-size:12.5px;line-height:1.4;color:var(--ink2);
+  opacity:0;transform:translateY(4px) scale(.98);transition:opacity .14s var(--ease),transform .14s var(--ease)}
+.q-dica.on{opacity:1;transform:none}
+.q-dica .t{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
+.q-dica .t b{font:700 14px/1.1 var(--pf-mono);color:var(--ink)}
+.q-dica .st{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.q-dica .st.ok{color:var(--ok);background:var(--ok-bg)} .q-dica .st.ind{color:var(--bad);background:var(--bad-bg)} .q-dica .st.fora{color:var(--ink3);background:var(--mute-bg)}
+.q-dica .m{color:var(--ink3);font-size:11.5px}
+.q-dica .def{margin-top:7px;color:var(--ink);font-weight:500}
+.q-dica .ds{display:grid;grid-template-columns:repeat(3,auto);justify-content:space-between;gap:10px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line-soft)}
+.q-dica .ds div{display:flex;flex-direction:column}
+.q-dica .ds span{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.q-dica .ds b{font-family:var(--pf-num);font-weight:700;font-size:13.5px;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums}
+.q-dica .ds b.r{color:var(--bad)}
+.q-dica .pe{margin-top:7px;font-size:11px;color:var(--ink3)}
+@media (hover:none){ .q-dica{display:none} }
+@media (max-width:560px){ .q-linha{margin:0;padding:8px 0} }
+@media print{ .q-regua,.q-dica,.q-filtro-aviso{display:none!important} }
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (prefers-reduced-motion:reduce){.rail{display:none!important}}
 </style>
@@ -930,10 +989,11 @@ h2{font-size:24px}
         <p class="q-leg">da frota disponível agora</p>
         <div class="q-tend"><svg class="spark" id="s-pct" aria-hidden="true"></svg><div class="kpi-delta" id="d-pct">&nbsp;</div></div>
         <dl class="q-num">
-          <div class="ok"><dt>Rodando</dt><dd id="k-disp">—</dd><div class="kpi-delta" id="d-disp">&nbsp;</div></div>
-          <div class="bad"><dt>Parados</dt><dd id="k-ind">—</dd><div class="kpi-delta" id="d-ind">&nbsp;</div></div>
-          <div class="tot"><dt>Na frota</dt><dd id="k-tot">—</dd><div class="kpi-delta" id="d-tot">&nbsp;</div></div>
+          <div class="ok" data-filtro="ok" role="button" tabindex="0" aria-pressed="false" title="Mostrar só os que estão rodando"><dt>Rodando</dt><dd id="k-disp">—</dd><div class="kpi-delta" id="d-disp">&nbsp;</div></div>
+          <div class="bad" data-filtro="ind" role="button" tabindex="0" aria-pressed="false" title="Mostrar só os parados"><dt>Parados</dt><dd id="k-ind">—</dd><div class="kpi-delta" id="d-ind">&nbsp;</div></div>
+          <div class="tot" data-filtro="" role="button" tabindex="0" aria-pressed="true" title="Mostrar a frota toda"><dt>Na frota</dt><dd id="k-tot">—</dd><div class="kpi-delta" id="d-tot">&nbsp;</div></div>
         </dl>
+        <p class="q-filtro-aviso" id="q-filtro-aviso"></p>
       </div>
       <div class="q-placas" id="q-placas" role="group" aria-label="Quadro da frota: uma placa por equipamento, vermelho é parado"></div>
     </div>
@@ -1147,7 +1207,7 @@ h2{font-size:24px}
 "use strict";
 const PUB = "2PACX-1vRyZmbTeA1au3Ftdbt_SZaGtlKrmUS1ONMamNbJLe3PYrA5Vdvo_vLrWVCV8YmP2-vrzcKdrDJnqHjM";
 const ABAS = { frota:740441377, limpeza:164106912, soprador:1472859452, movimentacoes:907639108, demanda:1066326488, calibracao:289743956, emissoes:502193807 };
-const VERSAO = "2.9";
+const VERSAO = "3.0";
 const POR_PAGINA = 20;
 
 /* Vídeos curtos que rodam nas laterais, em loop infinito.
@@ -2233,19 +2293,92 @@ function quadro(){
   box.innerHTML = ordem.map(cat => {
     const l = FROTA.filter(e => e.cat === cat);
     const parados = l.filter(e => classeEstado(e.st) === "ind").length;
-    return `<div class="q-linha"><div class="q-cat">${esc(nomeCat(cat))}${parados ? `<span>${parados} parado${parados === 1 ? "" : "s"}</span>` : ""}</div>
+    const rodando = l.filter(e => classeEstado(e.st) === "ok").length, base = rodando + parados;
+    const regua = base ? `<i class="q-regua" title="${rodando} de ${base} rodando"><i style="--p:${(rodando/base*100).toFixed(0)}%"></i></i>` : "";
+    return `<div class="q-linha${rodando ? "" : " sem-ok"}${parados ? "" : " sem-ind"}"><div class="q-cat">${esc(nomeCat(cat))}${parados ? `<span>${parados} parado${parados === 1 ? "" : "s"}</span>` : ""}${regua}</div>
       <div class="q-tags">${l.map(e => {
         const c = classeEstado(e.st);
         const dias = c === "ind" && e.dias != null ? `<small>${e.dias}d</small>` : "";
         const dica = c === "ind" ? `${e.pre} — parado${e.dias != null ? ` há ${e.dias} dia${e.dias === 1 ? "" : "s"}` : ""}${e.def ? ": " + e.def : ""}`
                    : `${e.pre} — ${e.st}`;
-        return `<button type="button" class="placa ${c}" data-eq="${esc(e.pre)}" style="--i:${i++}" title="${esc(dica)}" aria-label="${esc(dica)}">${esc(curto(e.pre))}${dias}</button>`;
+        return `<button type="button" class="placa ${c}" data-eq="${esc(e.pre)}" style="--i:${i++}" aria-label="${esc(dica)}">${esc(curto(e.pre))}${dias}</button>`;
       }).join("")}</div></div>`;
   }).join("");
   if(!quadroAceso && !matchMedia("(prefers-reduced-motion: reduce)").matches){
     box.classList.add("acende"); quadroAceso = true;
     setTimeout(() => box.classList.remove("acende"), 2200);
   }
+  aplicaFiltroQuadro();
+}
+
+/* v3.0 — o quadro responde: contadores filtram, placa mostra detalhe ao passar */
+let filtroQuadro = "";
+function aplicaFiltroQuadro(){
+  const box = $("q-placas"); if(!box) return;
+  box.classList.toggle("so-ok", filtroQuadro === "ok");
+  box.classList.toggle("so-ind", filtroQuadro === "ind");
+  document.querySelectorAll(".q-num [data-filtro]").forEach(d => d.setAttribute("aria-pressed", String(d.dataset.filtro === filtroQuadro)));
+  const q = document.querySelector(".quadro"); if(q) q.classList.toggle("filtrando", !!filtroQuadro);
+  const av = $("q-filtro-aviso");
+  if(av) av.innerHTML = filtroQuadro ? `Mostrando só os ${filtroQuadro === "ok" ? "que estão rodando" : "parados"}. <button type="button" data-filtro-limpa>Ver todos</button>` : "";
+}
+document.querySelectorAll(".q-num [data-filtro]").forEach(d => {
+  const vai = () => { const f = d.dataset.filtro; filtroQuadro = (f && f !== filtroQuadro) ? f : ""; aplicaFiltroQuadro(); };
+  d.addEventListener("click", vai);
+  d.addEventListener("keydown", ev => { if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); vai(); } });
+});
+document.addEventListener("click", ev => { if(ev.target.closest("[data-filtro-limpa]")){ filtroQuadro = ""; aplicaFiltroQuadro(); } });
+
+const dicaQ = document.createElement("div"); dicaQ.className = "q-dica"; dicaQ.setAttribute("aria-hidden","true");
+document.body.appendChild(dicaQ);
+let placaDica = null;
+function mostraDica(pl){
+  const e = FROTA.find(x => x.pre === pl.dataset.eq); if(!e) return;
+  const c = classeEstado(e.st);
+  const sub = [e.tipo, e.mod].filter(x => x && x !== "-").join(" · ");
+  const onde = [e.obra && `Obra ${e.obra}`, e.loc && nomeCat(e.loc)].filter(Boolean).join(" · ");
+  const datas = c === "ind" ? [
+      e.dt && `<div><span>Desde</span><b>${esc(e.dt)}</b></div>`,
+      e.dias != null && `<div><span>Parado há</span><b class="r">${e.dias} dia${e.dias === 1 ? "" : "s"}</b></div>`,
+      `<div><span>Previsão</span><b>${esc(/sem/i.test(e.prev||"") ? "Sem previsão" : (e.prev || "—"))}</b></div>`
+    ].filter(Boolean).join("") : "";
+  dicaQ.innerHTML = `<div class="t"><b>${esc(e.pre)}</b><span class="st ${c}">${c === "ind" ? "Parado" : c === "ok" ? "Rodando" : esc(e.st)}</span></div>
+    ${sub ? `<div class="m">${esc(sub)}</div>` : ""}${onde ? `<div class="m">${esc(onde)}</div>` : ""}
+    ${c !== "ok" && e.def ? `<div class="def">${esc(e.def)}</div>` : ""}
+    ${datas ? `<div class="ds">${datas}</div>` : ""}
+    <div class="pe">Clique para abrir a ficha</div>`;
+  if(placaDica) placaDica.classList.remove("aberta");
+  placaDica = pl; pl.classList.add("aberta");
+  const r = pl.getBoundingClientRect(), w = dicaQ.offsetWidth, h = dicaQ.offsetHeight;
+  let x = Math.min(Math.max(8, r.left + r.width/2 - w/2), innerWidth - w - 8);
+  let y = r.bottom + 10; if(y + h > innerHeight - 8) y = r.top - h - 10;
+  dicaQ.style.left = x + "px"; dicaQ.style.top = y + "px";
+  dicaQ.classList.add("on");
+}
+function escondeDica(){ dicaQ.classList.remove("on"); if(placaDica){ placaDica.classList.remove("aberta"); placaDica = null; } }
+const boxQ = $("q-placas");
+if(boxQ){
+  boxQ.addEventListener("pointerover", ev => { const pl = ev.target.closest(".placa"); if(pl && ev.pointerType === "mouse" && pl !== placaDica) mostraDica(pl); });
+  boxQ.addEventListener("pointerleave", escondeDica);
+  boxQ.addEventListener("pointerout", ev => { if(!ev.relatedTarget || !ev.relatedTarget.closest || !ev.relatedTarget.closest(".placa")) escondeDica(); });
+  boxQ.addEventListener("focusin", ev => { const pl = ev.target.closest(".placa"); if(pl && pl.matches(":focus-visible")) mostraDica(pl); });
+  boxQ.addEventListener("focusout", escondeDica);
+  addEventListener("scroll", escondeDica, {passive:true});
+  boxQ.addEventListener("click", escondeDica);
+}
+
+/* o número grande conta até o valor na primeira leitura */
+let pctContou = false;
+function contaPct(alvo){
+  const el = $("k-pct"); if(!el) return;
+  const fmt = v => v.toFixed(1).replace(".",",") + "%";
+  if(alvo == null){ el.textContent = "—"; return; }
+  if(pctContou || matchMedia("(prefers-reduced-motion: reduce)").matches){ el.textContent = fmt(alvo); return; }
+  pctContou = true;
+  const t0 = performance.now(), dur = 900;
+  const passo = t => { const k = Math.min(1, (t - t0)/dur), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt(alvo * e); if(k < 1) requestAnimationFrame(passo); else el.textContent = fmt(alvo); };
+  requestAnimationFrame(passo);
 }
 
 function desenhar(){
@@ -2254,7 +2387,7 @@ function desenhar(){
   const fora = FROTA.length - disp - ind;
   const base = disp + ind;
 
-  $("k-pct").textContent = base ? (disp/base*100).toFixed(1).replace(".",",")+"%" : "—";
+  contaPct(base ? Math.round(disp/base*1000)/10 : null);
   $("k-tot").textContent = FROTA.length;
   $("k-disp").textContent = disp;
   $("k-ind").textContent = ind;
