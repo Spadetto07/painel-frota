@@ -1,6 +1,6 @@
 /* Painel da frota — cache leve para o painel abrir mesmo sem sinal na obra.
    Regra: rede primeiro. O cache só entra quando a rede falha. */
-const CACHE = "frota-v1.8";
+const CACHE = "frota-v1.9";
 const CASCA = ["./", "./index.html", "./manifest.webmanifest",
                "./icone-192.png", "./icone-512.png"];
 
@@ -27,7 +27,9 @@ self.addEventListener("fetch", ev => {
 
   if(daCasa || dados){
     ev.respondWith(
-      fetch(req).then(r => {
+      /* "no-cache": sempre confere com o servidor. Sem isso o navegador podia
+         devolver o index.html velho guardado por até 10 minutos depois de uma versão nova. */
+      fetch(req, daCasa ? { cache: "no-cache" } : undefined).then(r => {
         if(r && r.ok && r.type !== "opaque"){
           const copia = r.clone();
           caches.open(CACHE).then(c => c.put(req, copia)).catch(() => {});
